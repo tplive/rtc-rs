@@ -1,13 +1,8 @@
-mod geometry;
+mod rtc;
 
 fn main() {
-    use crate::geometry::Point;
+    use crate::rtc::geometry::Point;
 
-    let point = Point {
-        x: 0.2,
-        y: 0.3,
-        z: 0.4,
-        w: 1,
-    };
+    let point = Point::new(0.2, 0.3, 0.4);
     print!("WTF, {:?}", point);
 }
