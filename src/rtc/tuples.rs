@@ -1,5 +1,12 @@
 use std::ops::Deref;
 
+const EPSILON:f32 = 0.00001_f32;
+
+fn equal(a: f32, b: f32) -> bool {
+    // Compare two f32 values for equality within the constant EPSILON
+    (a - b).abs() < EPSILON
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Tuple {
     pub x: f32,
@@ -105,5 +112,21 @@ mod tests {
         assert_eq!(a.w, 0.0);
         assert!(!a.is_point());
         assert!(a.is_vector());
+    }
+
+    #[test]
+    fn point_creates_tuple_with_w_1_0() {
+        let p = Point::new(4.0, -4.0, 3.0);
+        assert_eq!(p.w, 1.0);
+        assert!(p.is_point());
+        assert!(!p.is_vector());
+    }
+    
+    #[test]
+    fn vector_creates_tuple_with_w_0_0() {
+        let v = Vector::new(4.0, -4.0, 3.0);
+        assert_eq!(v.w, 0.0);
+        assert!(!v.is_point());
+        assert!(v.is_vector());
     }
 }
