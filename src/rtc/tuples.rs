@@ -12,6 +12,14 @@ impl Tuple {
     fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Self { x, y, z, w }
     }
+
+    fn is_point(&self) -> bool {
+        self.w == 1.0
+    }
+
+    fn is_vector(&self) -> bool {
+        self.w == 0.0
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -56,6 +64,8 @@ mod tests {
 
     use crate::rtc::tuples::{Point, Vector};
 
+    use super::Tuple;
+
     #[test]
     fn test_point() {
         let p = Point::new(0.2, 0.3, -2.0);
@@ -69,5 +79,31 @@ mod tests {
         let v = Vector::new(-0.4, 1.1, 2.0);
         assert_eq!(v.w, 0.0); // Ensure w is 0 for vectors.
         assert!(v.x == -0.4 && v.y == 1.1 && v.z == 2.0); // Ensure values match the input.
+    }
+
+    #[test]
+    fn a_tuple_with_w_1_0_is_a_point() {
+        // This is the test from p. 4 of the book.
+
+        let a = Tuple::new(4.3, -4.2, 3.1, 1.0);
+        assert_eq!(a.x, 4.3);
+        assert_eq!(a.y, -4.2);
+        assert_eq!(a.z, 3.1);
+        assert_eq!(a.w, 1.0);
+        assert!(a.is_point());
+        assert!(!a.is_vector());
+    }
+
+    #[test]
+    fn a_tuple_with_w_0_0_is_a_vector() {
+        // This is the test from p. 4 of the book.
+
+        let a = Tuple::new(4.3, -4.2, 3.1, 0.0);
+        assert_eq!(a.x, 4.3);
+        assert_eq!(a.y, -4.2);
+        assert_eq!(a.z, 3.1);
+        assert_eq!(a.w, 0.0);
+        assert!(!a.is_point());
+        assert!(a.is_vector());
     }
 }
