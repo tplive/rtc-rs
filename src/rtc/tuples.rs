@@ -7,7 +7,7 @@ fn equal(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy)]
 pub struct Tuple {
     pub x: f32,
     pub y: f32,
@@ -37,6 +37,15 @@ fn vector(x: f32, y: f32, z: f32) -> Tuple {
     Tuple::new(x, y, z, 0.0)
 }
 
+impl PartialEq for Tuple {
+    fn eq(&self, other: &Tuple) -> bool {
+        equal(self.x, other.x)
+            && equal(self.y, other.y)
+            && equal(self.z, other.z)
+            && equal(self.w, other.w)
+    }
+}
+
 impl ops::Add for Tuple {
     type Output = Self;
 
@@ -46,6 +55,19 @@ impl ops::Add for Tuple {
             self.y + other.y,
             self.z + other.z,
             self.w + other.w,
+        )
+    }
+}
+
+impl ops::Sub for Tuple {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self::new(
+            self.x - other.x,
+            self.y - other.y,
+            self.z - other.z,
+            self.w - other.w,
         )
     }
 }
@@ -116,11 +138,29 @@ mod tests {
     }
 
     #[test]
-    fn can_add_two_points() {
+    fn adding_two_tuples() {
+        // Test from p. 6 in the book
+        let p = Tuple::new(3.0, -2.0, 5.0, 1.0);
+        let v = Tuple::new(-2.0, 3.0, 1.0, 0.0);
+        let expected_result = Tuple::new(1.0, 1.0, 6.0, 1.0);
+        let actual_result = p + v;
+        assert!(expected_result.eq(&actual_result));
+    }
+
+    #[test]
+    fn subtract_two_points() {
+        // Test from p. 6 in the book
+        let p = point(3.0, 2.0, 1.0);
+        let v = point(5.0, 6.0, 7.0);
+        let expected_result = vector(-2.0, -4.0, -6.0);
+        let actual_result = p - v;
+        assert!(expected_result.eq(&actual_result));
+    }
+
+    #[test]
+    fn adding_two_points_should_fail() {
         let p1 = point(1.0, 2.0, 3.0);
         let p2 = point(3.0, 2.0, 1.0);
-        let expected_result = point(4.0, 4.0, 4.0);
-        let actual_result = p1 + p2;
-        assert_eq!(expected_result, actual_result);
+        assert_ne!(point(4.0, 4.0, 4.0), p1 + p2);
     }
 }
