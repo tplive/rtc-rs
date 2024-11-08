@@ -146,3 +146,50 @@ let expected = Tuple::new(0.5, -1.0, 1.5,-2.0);
 let actual = t / s;
 assert!(actual.eq(&expected));
 }
+
+#[test]
+fn compute_magnitude_of_vector() {
+    let v1 = vector(1.0, 0.0, 0.0);
+    assert_eq!(v1.mag(), 1.0);
+
+    let v2 = vector(0.0, 1.0, 0.0);
+    assert_eq!(v2.mag(), 1.0);
+
+    let v3 = vector(0.0, 0.0, 1.0);
+    assert_eq!(v3.mag(), 1.0);
+
+    let v4 = vector(1.0, 2.0, 3.0);
+    assert_eq!(v4.mag(), 14.0_f32.sqrt());
+
+    let v5 = vector(-1.0, -2.0, -3.0);
+    assert_eq!(v5.mag(), 14.0_f32.sqrt());
+}
+
+#[test]
+fn normalize_vector() {
+    let v1 = vector(4.0, 0.0, 0.0);
+    let exp1 = vector(1.0, 0.0, 0.0);
+    assert_eq!(v1.normalize(), exp1);
+
+    let v2 = vector(1.0, 2.0, 3.0);
+    let exp2 = vector(0.26726124, 0.5345225, 0.8017837);
+    assert_eq!(v2.normalize(), exp2);
+}
+
+#[test]
+fn dot_product_of_two_vectors() {
+    let v1 = vector(1.0, 2.0, 3.0);
+    let v2 = vector(2.0, 3.0, 4.0);
+    assert!(v1.dot(v2) == 20.0_f32);
+}
+
+#[test]
+fn cross_product_of_two_vectors() {
+    let v1 = vector(1.0, 2.0, 3.0);
+    let v2 = vector(2.0, 3.0, 4.0);
+    let expected1 = vector(-1.0, 2.0, -1.0);
+    let expected2 = vector(1.0, -2.0, 1.0);
+
+    assert_eq!(v1.cross(v2), expected1);
+    assert_eq!(v2.cross(v1), expected2);
+}
