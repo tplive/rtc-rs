@@ -46,6 +46,14 @@ impl PartialEq for Tuple {
     }
 }
 
+impl ops::Neg for Tuple {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self::new(-self.x, -self.y, -self.z, -self.w)
+    }
+}
+
 impl ops::Add for Tuple {
     type Output = Self;
 
@@ -162,5 +170,35 @@ mod tests {
         let p1 = point(1.0, 2.0, 3.0);
         let p2 = point(3.0, 2.0, 1.0);
         assert_ne!(point(4.0, 4.0, 4.0), p1 + p2);
+    }
+
+    #[test]
+    fn subtract_vector_from_point() {
+        // Test from p. 6
+        let p = point(3.0, 2.0, 1.0);
+        let v = vector(5.0, 6.0, 7.0);
+        assert_eq!(point(-2.0, -4.0, -6.0), p - v);
+    }
+
+    #[test]
+    fn subtract_two_vectors() {
+        // Test from p. 7
+        let v1 = vector(3.0, 2.0, 1.0);
+        let v2 = vector(5.0, 6.0, 7.0);
+        assert_eq!(vector(-2.0, -4.0, -6.0), v1 - v2);
+    }
+
+    #[test]
+    fn subtract_vector_from_zero_vector() {
+        // Test from p. 7
+        let zero = vector(0.0,0.0,0.0);
+        let v = vector(1.0, -2.0, 3.0);
+        assert_eq!(vector(-1.0, 2.0, -3.0), zero - v);
+    }
+
+    #[test]
+    fn negate_tuple() {
+        let t = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        assert_eq!(Tuple::new(-1.0, 2.0, -3.0, 4.0), -t);
     }
 }
