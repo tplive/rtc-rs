@@ -4,7 +4,7 @@ const EPSILON: f32 = 0.00001_f32;
 
 fn equal(a: f32, b: f32) -> bool {
     // Compare two f32 values for equality within the constant EPSILON
-    (a - b).abs() < EPSILON
+    (a - b).abs() <= f32::EPSILON // Try built-in EPSILON value, but change to my constant if it doesn't work out.
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -26,6 +26,28 @@ impl Tuple {
 
     fn is_vector(&self) -> bool {
         self.w == 0.0
+    }
+
+    fn mag(&self) -> f32 {
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
+    }
+
+    fn normalize(&self) -> Self {
+        let m = self.mag();
+        Self::new(self.x / m, self.y / m, self.z / m, self.w / m)
+    }
+
+    fn dot(&self, other: Self) -> f32 {
+        self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
+    }
+
+    fn cross(&self, other: Self) -> Self {
+        Self::new(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+            0.0
+        )
     }
 }
 
