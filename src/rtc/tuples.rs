@@ -28,7 +28,7 @@ impl Tuple {
         self.w == 0.0
     }
 
-    fn mag(&self) -> f32 {
+    pub fn mag(&self) -> f32 {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
     }
 
@@ -37,16 +37,16 @@ impl Tuple {
         Self::new(self.x / m, self.y / m, self.z / m, self.w / m)
     }
 
-    fn dot(&self, other: Self) -> f32 {
+    pub fn dot(&self, other: Self) -> f32 {
         self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
     }
 
-    fn cross(&self, other: Self) -> Self {
+    pub fn cross(&self, other: Self) -> Self {
         Self::new(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
             self.x * other.y - self.y * other.x,
-            0.0
+            0.0,
         )
     }
 }
