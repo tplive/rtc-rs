@@ -30,16 +30,20 @@ fn main() {
         }
     }
 
-    fn tick(env: Environment, proj: Projectile) -> Projectile {
+    fn tick(env: &Environment, proj: Projectile) -> Projectile {
         let pos = proj.position + proj.velocity;
         let vel = proj.velocity + env.gravity + env.wind;
 
         return Projectile::new(pos, vel);
     }
 
-    let p = Projectile::new(point(0.0, 1.0, 0.0), vector(1.0, 1.0, 0.0).normalize());
+    let mut p = Projectile::new(point(0.0, 1.0, 0.0), vector(1.0, 1.0, 0.0).normalize());
     let e = Environment::new(vector(0.0, -0.1,0.0), vector(-0.01, 0.0, 0.0));
 
+    while p.position.y >= 0.0 {
 
-    print!("WTF, {:?}", p);
+        p = tick(&e, p);
+        
+        print!("Position: {:?}\n", p.position);
+    }
 }
