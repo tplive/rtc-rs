@@ -1,29 +1,43 @@
+use std::ops::Index;
+
 use crate::{colors::Color, util::RtcFl};
 
 pub struct Canvas {
-    pub width: u32,
-    pub height: u32,
-    pub data: Vec<RtcFl>,
+    pub width: usize,
+    pub height: usize,
+    data: Vec<RtcFl>,
+    bits: usize,
 }
 
 impl Canvas {
-    pub fn new(width: u32, height: u32) -> Self {
+    pub fn new(width: usize, height: usize) -> Self {
 
-        let bits = 3;
-        let data = vec![0.0; (width * height * bits) as usize];
+        let bits: usize = 3;
+        let mut data: Vec<RtcFl> = vec![0.0; width * height * bits];
 
         Self {
-            width: width,
-            height: height,
-            data:data,
+            width,
+            height,
+            data,
+            bits,
         }
     }
 
-    pub fn write_pixel(&self, x: u32, y: u32, color: Color) {
+    pub fn bits(&self) -> usize { self.bits}
+
+    pub fn write_pixel(&self, x: usize, y: usize, color: Color) {
+        let index: usize = (y * self.width + x) * self.bits;
+        &mut self.data.index(index) = color.red;
+        &mut self.data[index+1] = color.green;
+        &mut self.data[index+2] = color.blue;
     }
 
     pub fn pixel_at(&self, x, y) -> Color {
-        Color::new(0.0, 0.0, 0.0)
+        let index = y * self.width + x;
+        let r = self.data[index];
+        let g = self.data[index+1];
+        let b = self.data[index+2];
+        Color::new(r, g, b)
     }
 
 }
