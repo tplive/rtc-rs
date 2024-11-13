@@ -1,16 +1,16 @@
 use std::ops;
 
-use crate::util::equal;
+use crate::util::{equal, RtcFl};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Color {
-    pub red: f32,
-    pub green: f32,
-    pub blue: f32,
+    pub red: RtcFl,
+    pub green: RtcFl,
+    pub blue: RtcFl,
 }
 
 impl Color {
-    fn new(red: f32, green: f32, blue: f32) -> Self {
+    pub fn new(red: RtcFl, green: RtcFl, blue: RtcFl) -> Self {
         Self {
             red: red,
             green: green,
@@ -43,15 +43,11 @@ impl ops::Sub for Color {
     }
 }
 
-impl ops::Mul<f32> for Color {
+impl ops::Mul<RtcFl> for Color {
     type Output = Self;
 
-    fn mul(self, other: f32) -> Self::Output {
-        Self::new(
-            self.red * other,
-            self.green * other,
-            self.blue * other,
-        )
+    fn mul(self, other: RtcFl) -> Self::Output {
+        Self::new(self.red * other, self.green * other, self.blue * other)
     }
 }
 
@@ -73,8 +69,6 @@ impl PartialEq for Color {
     }
 }
 
-pub fn color(r: f32, g: f32, b: f32) -> Color {
+pub fn color(r: RtcFl, g: RtcFl, b: RtcFl) -> Color {
     Color::new(r, g, b)
 }
-
-

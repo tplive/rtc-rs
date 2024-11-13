@@ -1,17 +1,17 @@
 use std::ops;
 
-use crate::util::equal;
+use crate::util::{equal, RtcFl};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Tuple {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32,
+    pub x: RtcFl,
+    pub y: RtcFl,
+    pub z: RtcFl,
+    pub w: RtcFl,
 }
 
 impl Tuple {
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub fn new(x: RtcFl, y: RtcFl, z: RtcFl, w: RtcFl) -> Self {
         Self { x, y, z, w }
     }
 
@@ -23,7 +23,7 @@ impl Tuple {
         self.w == 0.0
     }
 
-    pub fn mag(&self) -> f32 {
+    pub fn mag(&self) -> RtcFl {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
     }
 
@@ -32,7 +32,7 @@ impl Tuple {
         Self::new(self.x / m, self.y / m, self.z / m, self.w / m)
     }
 
-    pub fn dot(&self, other: Self) -> f32 {
+    pub fn dot(&self, other: Self) -> RtcFl {
         self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
     }
 
@@ -46,11 +46,11 @@ impl Tuple {
     }
 }
 
-pub fn point(x: f32, y: f32, z: f32) -> Tuple {
+pub fn point(x: RtcFl, y: RtcFl, z: RtcFl) -> Tuple {
     Tuple::new(x, y, z, 1.0)
 }
 
-pub fn vector(x: f32, y: f32, z: f32) -> Tuple {
+pub fn vector(x: RtcFl, y: RtcFl, z: RtcFl) -> Tuple {
     Tuple::new(x, y, z, 0.0)
 }
 
@@ -97,10 +97,10 @@ impl ops::Sub for Tuple {
     }
 }
 
-impl ops::Mul<f32> for Tuple {
+impl ops::Mul<RtcFl> for Tuple {
     type Output = Self;
 
-    fn mul(self, scalar: f32) -> Self::Output {
+    fn mul(self, scalar: RtcFl) -> Self::Output {
         Self::new(
             self.x * scalar,
             self.y * scalar,
@@ -110,10 +110,10 @@ impl ops::Mul<f32> for Tuple {
     }
 }
 
-impl ops::Div<f32> for Tuple {
+impl ops::Div<RtcFl> for Tuple {
     type Output = Self;
 
-    fn div(self, scalar: f32) -> Self::Output {
+    fn div(self, scalar: RtcFl) -> Self::Output {
         Self::new(
             self.x / scalar,
             self.y / scalar,
