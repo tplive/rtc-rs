@@ -1,9 +1,7 @@
-
+mod rtc;
 
 use rtc::tuples::{point, vector, Tuple};
 
-
-mod rtc;
 
 fn main() {
     // Putting it together Chapter 1

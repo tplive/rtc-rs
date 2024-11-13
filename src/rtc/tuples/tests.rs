@@ -1,5 +1,6 @@
 use crate::rtc::tuples::{point, vector, Tuple};
 
+
 #[test]
 fn test_point() {
     let p = point(0.2, 0.3, -2.0);
@@ -193,3 +194,4 @@ fn cross_product_of_two_vectors() {
     assert_eq!(v1.cross(v2), expected1);
     assert_eq!(v2.cross(v1), expected2);
 }
+

@@ -1,3 +1,6 @@
+
+mod tests;
+
 use std::ops;
 
 const EPSILON: f32 = 0.00001_f32;
@@ -127,6 +130,3 @@ impl ops::Div<f32> for Tuple {
         )
     }
 }
-
-#[cfg(test)]
-mod tests;
