@@ -1,14 +1,12 @@
-#[cfg(test)]
-mod tests;
-
 use std::ops;
-use super::equal;
+
+use crate::util::equal;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Color {
-    red: f32,
-    green: f32,
-    blue: f32,
+    pub red: f32,
+    pub green: f32,
+    pub blue: f32,
 }
 
 impl Color {

@@ -1,9 +1,6 @@
-
-mod tests;
-
 use std::ops;
 
-use super::equal;
+use crate::util::equal;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Tuple {
@@ -14,15 +11,15 @@ pub struct Tuple {
 }
 
 impl Tuple {
-    fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Self { x, y, z, w }
     }
 
-    fn is_point(&self) -> bool {
+    pub fn is_point(&self) -> bool {
         self.w == 1.0
     }
 
-    fn is_vector(&self) -> bool {
+    pub fn is_vector(&self) -> bool {
         self.w == 0.0
     }
 

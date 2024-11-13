@@ -1,5 +1,5 @@
-use crate::rtc::tuples::{point, vector, Tuple};
-
+#[cfg(test)]
+use crate::tuples::{point, vector, Tuple};
 
 #[test]
 fn test_point() {

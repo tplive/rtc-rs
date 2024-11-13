@@ -1,7 +1,6 @@
-mod rtc;
+extern crate rtc_rs as rtc;
 
 use rtc::tuples::{point, vector, Tuple};
-
 
 fn main() {
     // Putting it together Chapter 1

@@ -1,4 +1,5 @@
-use crate::rtc::colors::color;
+#[cfg(test)]
+use crate::colors::color;
 
 #[test]
 fn colors_are_rgb_tuples() {
