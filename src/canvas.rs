@@ -18,6 +18,17 @@ impl Canvas {
         }
     }
 
+    fn format_pixels_as_ppm(&self) -> String {
+        let ppm_width = 70;
+        let mut formatted = String::from("");
+        for c in &self.data {
+            let color_data_str = format!("{} {} {} ", c.red.to_string(), c.green.to_string(), c.blue.to_string());
+            formatted.push_str(&color_data_str);
+
+        }
+        String::from(formatted)
+    }
+
     pub fn data_size(&self) -> usize {
         self.data.len()
     }
@@ -33,7 +44,9 @@ impl Canvas {
 
     pub fn to_ppm(&self) -> String {
         let head = format!("P3\n{} {}\n255\n", &self.width.to_string(), &self.height.to_string());
-        String::from(head)
+        let pixel_data = self.format_pixels_as_ppm();
+
+        String::from(head + &pixel_data)
     }
 }
 

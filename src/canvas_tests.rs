@@ -48,3 +48,39 @@ fn constructing_ppm_header() {
 
     assert_eq!(ppm, String::from("P3\n5 3\n255\n"));
 }
+
+#[test]
+fn constructing_ppm_pixel_data() {
+    let mut canvas = Canvas::new(5, 3);
+    let color1 = Color::new(1.5, 0.0, 0.0);
+    let color2 = Color::new(0.0, 0.5, 0.0);
+    let color3 = Color::new(-0.5, 0.0, 1.0);
+
+    canvas.write_pixel(0, 0, color1);
+    canvas.write_pixel(2, 1, color2);
+    canvas.write_pixel(4, 2, color3);
+
+    let ppm = canvas.to_ppm();
+    
+    let expected_ppm = String::from("P3\n5 3\n255\n255 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 128 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0 0 0 0 0 0 255\n");
+    let exp_head = expected_ppm.lines().take(3);
+    let exp_data = expected_ppm.lines().take(4);
+    
+    println!("Header:");
+    for n in exp_head {
+        println!("{}", n);
+    }
+
+    println!("Data:");
+    for n in exp_data {
+        print!("{}\n", n);
+
+    }
+    println!();
+    println!("ACTUAL PPM:\n{}", ppm);
+    println!("EXPECTED PPM:\n{}", expected_ppm);
+    
+    assert_eq!(ppm, expected_ppm);
+
+
+}
