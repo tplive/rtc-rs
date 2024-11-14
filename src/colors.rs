@@ -17,6 +17,10 @@ impl Color {
             blue: blue,
         }
     }
+
+    pub fn black() -> Self {
+        Self::new(0.0, 0.0, 0.0)
+    }
 }
 
 impl ops::Add for Color {
