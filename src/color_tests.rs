@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::colors::color;
+use crate::color::color;
 
 #[test]
 fn colors_are_rgb_tuples() {

@@ -1,4 +1,4 @@
-use crate::{colors::Color, util::RtcFl};
+use crate::{color::Color, util::RtcFl};
 #[derive(Debug, Clone)]
 pub struct Canvas {
     pub width: usize,
@@ -23,6 +23,7 @@ impl Canvas {
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
         let index: usize = y * self.width + x;
+        if index >= self.data.len() { return }
         self.data[index] = color;
     }
 

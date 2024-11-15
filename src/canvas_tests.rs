@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::{canvas::Canvas, colors::Color};
+use crate::{canvas::Canvas, color::Color};
 
 
 #[test]
@@ -115,7 +115,7 @@ fn splitting_long_lines_in_ppm_files() {
 fn ppm_ends_in_newline() {
     let c = Canvas::new(10, 2);
     let ppm = c.to_ppm();
-    
+
     assert!(ppm.ends_with('\n'));
 
 }
