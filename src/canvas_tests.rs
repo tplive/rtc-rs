@@ -44,9 +44,14 @@ fn writing_pixels_to_a_canvas() {
 fn constructing_ppm_header() {
     let c = Canvas::new(5, 3);
     
-    let ppm = c.to_ppm();
+    let ppm: String = c.to_ppm();
+    let l1: String = ppm.lines().take(1).collect();
+    let l2: String = ppm.lines().skip(1).take(1).collect();
+    let l3: String = ppm.lines().skip(2).take(1).collect();
 
-    assert_eq!(ppm, String::from("P3\n5 3\n255\n"));
+    assert!(l1 == "P3");
+    assert!(l2 == format!("{} {}", c.width.to_string(), c.height.to_string()));
+    assert!(l3 == "255");
 }
 
 #[test]
@@ -62,9 +67,12 @@ fn constructing_ppm_pixel_data() {
 
     let ppm = canvas.to_ppm();
     
-    let expected_ppm = String::from("P3\n5 3\n255\n255 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 128 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0 0 0 0 0 0 255\n");
+    let expected_ppm = String::from("P3\n5 3\n255\n255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 128 0 0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0 0 0 255\n");
+
+    // Debug data
+    /*
     let exp_head = expected_ppm.lines().take(3);
-    let exp_data = expected_ppm.lines().take(4);
+    let exp_data = expected_ppm.lines().skip(3);
     
     println!("Header:");
     for n in exp_head {
@@ -74,12 +82,13 @@ fn constructing_ppm_pixel_data() {
     println!("Data:");
     for n in exp_data {
         print!("{}\n", n);
-
     }
+
     println!();
     println!("ACTUAL PPM:\n{}", ppm);
     println!("EXPECTED PPM:\n{}", expected_ppm);
-    
+    */
+
     assert_eq!(ppm, expected_ppm);
 
 
