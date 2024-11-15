@@ -1,4 +1,4 @@
-use crate::colors::Color;
+use crate::{colors::Color, util::RtcFl};
 #[derive(Debug, Clone)]
 pub struct Canvas {
     pub width: usize,
@@ -18,17 +18,6 @@ impl Canvas {
         }
     }
 
-    fn format_pixels_as_ppm(&self) -> String {
-        let ppm_width = 70;
-        let mut formatted = String::from("");
-        for c in &self.data {
-            let color_data_str = format!("{} {} {} ", c.red.to_string(), c.green.to_string(), c.blue.to_string());
-            formatted.push_str(&color_data_str);
-
-        }
-        String::from(formatted)
-    }
-
     pub fn data_size(&self) -> usize {
         self.data.len()
     }
@@ -43,10 +32,44 @@ impl Canvas {
     }
 
     pub fn to_ppm(&self) -> String {
-        let head = format!("P3\n{} {}\n255\n", &self.width.to_string(), &self.height.to_string());
-        let pixel_data = self.format_pixels_as_ppm();
 
-        String::from(head + &pixel_data)
+        let max_line: usize = 70;
+
+        let mut ppm = format!(
+            "P3\n{} {}\n255\n",
+            &self.width.to_string(),
+            &self.height.to_string()
+        );
+        let mut line_length = 0;
+
+        for v in &self.data {
+            let cols = vec![v.red, v.green, v.blue]; // Each color component
+
+            for c in cols {
+                let c_str = Self::scale(c).to_string(); // Scaled color 0.0..1.0 --> 0..255
+
+                if line_length + c_str.len() + 1 > max_line {
+                    // If we will overshoot max_line limit, add newline
+                    ppm.push('\n');
+                    line_length = 0;
+                }
+
+                if line_length > 0 {
+                    // If we are in the middle of a line, add space
+                    ppm.push(' ');
+                }
+                ppm.push_str(&c_str); // Push color value
+                line_length += c_str.len() // Add length of value to line length
+            }
+        }
+
+        ppm.push('\n'); // Always end on a newline
+        ppm
+    }
+
+    fn scale(v: RtcFl) -> u8 {
+        let scaled = (v * 255.0).round();
+        scaled.clamp(0.0, 255.0) as u8
     }
 }
 
