@@ -93,3 +93,29 @@ fn constructing_ppm_pixel_data() {
 
 
 }
+
+#[test]
+fn splitting_long_lines_in_ppm_files() {
+    let mut c = Canvas::new(10, 2);
+    for x in 0..10-1 {
+        for y in 0..2-1 {
+            c.write_pixel(x, y, Color::new(1.0, 0.8, 0.6));
+        }
+    }
+
+    let ppm = c.to_ppm();
+    let lines = ppm.lines().skip(3);
+
+    for l in lines {
+        assert!(l.len() <= 70);
+    }
+}
+
+#[test]
+fn ppm_ends_in_newline() {
+    let c = Canvas::new(10, 2);
+    let ppm = c.to_ppm();
+    
+    assert!(ppm.ends_with('\n'));
+
+}
