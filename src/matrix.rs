@@ -16,7 +16,7 @@ impl ops::Mul<Tuple> for Matrix4x4 {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Self::Output {
-        let mut res: Vec<RtcFl> = vec![0.0, 0.0, 0.0, 1.0]; // w = 1.0 makes it a point. Hacky. May bite me later.
+        let mut res: Vec<RtcFl> = vec![rhs.x, rhs.y, rhs.z, rhs.w];
 
         for r in 0..3 {
             res[r] = self[(r, 0)] * rhs.x
@@ -28,3 +28,5 @@ impl ops::Mul<Tuple> for Matrix4x4 {
         Tuple::new(res[0], res[1], res[2], res[3])
     }
 }
+
+
