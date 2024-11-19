@@ -1,7 +1,10 @@
 #[cfg(test)]
 use nalgebra::RowVector4;
 
-use crate::{matrix::{Matrix2x2, Matrix3x3, Matrix4x4}, tuples::Tuple};
+use crate::{
+    matrix::{Matrix2x2, Matrix3x3, Matrix4x4},
+    tuples::Tuple,
+};
 
 #[test]
 fn constructing_and_inspecting_a_4x4_matrix() {
@@ -102,4 +105,73 @@ fn matrix_multiplied_by_tuple() {
     let t_expected = Tuple::new(18.0, 24.0, 33.0, 1.0);
 
     assert_eq!(t_actual, t_expected);
+}
+
+#[test]
+fn multiply_matrix_by_identity_matrix() {
+    let m = Matrix4x4::new(
+        0.0, 1.0, 2.0, 4.0, 1.0, 2.0, 4.0, 8.0, 2.0, 4.0, 8.0, 16.0, 4.0, 8.0, 16.0, 32.0,
+    );
+    let idm = Matrix4x4::identity();
+
+    let actual = m * idm;
+    let expected = m;
+
+    assert_eq!(actual, expected);
+}
+
+#[test]
+fn multiply_identity_matrix_by_tuple() {
+    let t = Tuple::new(1.0, 2.0, 3.0, 4.0);
+
+    let idm = Matrix4x4::identity();
+
+    let actual = idm * t;
+    let expected = t;
+
+    assert_eq!(actual, expected);
+}
+
+#[test]
+fn transposing_a_matrix() {
+    let m = Matrix4x4::new(
+        0.0, 9.0, 3.0, 0.0, 9.0, 8.0, 0.0, 8.0, 1.0, 8.0, 5.0, 3.0, 0.0, 0.0, 5.0, 8.0,
+    );
+
+    let expected = Matrix4x4::new(
+        0.0, 9.0, 1.0, 0.0, 9.0, 8.0, 8.0, 0.0, 3.0, 0.0, 5.0, 5.0, 0.0, 8.0, 3.0, 8.0,
+    );
+
+    let actual = m.transpose();
+
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn transposing_identity_matrix() {
+    let m = Matrix4x4::identity();
+
+    let expected = Matrix4x4::identity();
+
+    let actual = m.transpose();
+
+    println!("{}", m);
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn calculate_determinant_of_2x2_matrix() {
+    let m = Matrix2x2::new(1.0, 5.0, -3.0, 2.0);
+    let actual = m.determinant();
+    let expected = 17.0;
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn submatrix_of_3x3_is_2x2() {
+    let m3x3 = Matrix3x3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
+    let actual = m3x3.view((0, 0), (2, 2));
+    let expected = Matrix2x2::new(-3.0, 2.0, 0.0, 6.0);
+
+    println!("{}", actual);
 }
