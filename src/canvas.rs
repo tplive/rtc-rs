@@ -27,6 +27,14 @@ impl Canvas {
         self.data[index] = color;
     }
 
+    pub fn write_rect(&mut self, x: usize, y:usize, w: usize, h: usize, color: Color) {
+        for i in x..x+w {
+            for j in y..y+h {
+                Self::write_pixel(self, i, j, color);
+            }
+        }
+    }
+
     pub fn pixel_at(&self, x: usize, y: usize) -> &Color {
         &self.data[y * self.width + x]
     }
