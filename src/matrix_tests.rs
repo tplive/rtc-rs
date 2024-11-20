@@ -95,13 +95,13 @@ fn multiply_matrices() {
 
 #[test]
 fn matrix_multiplied_by_tuple() {
-    let A = Matrix4x4::new(
+    let a = Matrix4x4::new(
         1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
     );
 
     let b = Tuple::new(1.0, 2.0, 3.0, 1.0);
 
-    let t_actual = A * b;
+    let t_actual = a * b;
     let t_expected = Tuple::new(18.0, 24.0, 33.0, 1.0);
 
     assert_eq!(t_actual, t_expected);
@@ -195,4 +195,20 @@ fn trait_submatrix_of_3x3_is_2x2() {
     assert_eq!(actual, expected);
 }
 
+#[test]
+fn trait_submatrix_of_4x4_is_3x3() {
+    let m4x4 = Matrix4x4::new(
+        -6.0, 1.0, 1.0, 6.0, -8.0, 5.0, 8.0, 6.0, -1.0, 0.0, 8.0, 2.0, -7.0, 1.0, -1.0, 1.0,
+    );
+    
+    let actual = m4x4.submatrix(2, 1);
+    let expected = Matrix3x3::new(
+        -6.0, 1.0, 6.0, -8.0, 8.0, 6.0, -7.0, -1.0, 1.0);
 
+    // Debug helper info:
+    println!("Initial:{}", m4x4);
+    println!("Actual:{}", actual);
+    println!("Expected:{}", expected);
+
+    assert_eq!(actual, expected);
+}
