@@ -39,7 +39,18 @@ impl Submatrix<Matrix2x2> for Matrix3x3 {
 
         let temp = &self.remove_row(row).remove_column(col);
         let m2x2: Matrix2x2 = temp.clone_owned();
+        
         m2x2
+    }
+}
+
+impl Submatrix<Matrix3x3> for Matrix4x4 {
+
+    fn submatrix(&self, row: usize, col: usize) -> Matrix3x3 {
+        let temp = &self.remove_row(row).remove_column(col);
+        let m3x3: Matrix3x3 = temp.clone_owned();
+
+        m3x3
     }
 }
 
