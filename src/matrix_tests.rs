@@ -1,6 +1,7 @@
 #[cfg(test)]
 use nalgebra::RowVector4;
 
+use crate::util::equal;
 #[cfg(test)]
 use crate::{
     matrix::{Cofactor, Matrix2x2, Matrix3x3, Matrix4x4, Minor, Submatrix},
@@ -294,8 +295,38 @@ fn testing_an_invertible_matrix_for_invertibility() {
 #[test]
 fn testing_a_non_invertible_matrix_for_invertibility() {
     let m4x4 = Matrix4x4::new(
-    -4.0, 2.0, -2.0, -3.0, 9.0, 6.0, 2.0, 6.0, 0.0, -5.0, 1.0, -5.0, 0.0, 0.0, 0.0, 0.0,
+        -4.0, 2.0, -2.0, -3.0, 9.0, 6.0, 2.0, 6.0, 0.0, -5.0, 1.0, -5.0, 0.0, 0.0, 0.0, 0.0,
     );
 
     assert_eq!(m4x4.is_invertible(), m4x4.determinant() != 0.0);
+}
+
+#[test]
+fn calculating_inverse_of_matrix() {
+    let ma = Matrix4x4::new(
+        -5.0, 2.0, 6.0, -8.0, 1.0, -5.0, 1.0, 8.0, 7.0, 7.0, -6.0, -7.0, 1.0, -3.0, 7.0, 4.0,
+    );
+
+    let mb = ma.try_inverse().unwrap();
+    let determinant_a = ma.determinant().round(); // Test fails by a fraction if not rounded
+    let cofactor_a_2_3 = ma.cofactor(2, 3);
+    let b_3_2 = mb[(3, 2)];
+    let cofactor_a_3_2 = ma.cofactor(3, 2);
+    let b_2_3 = mb[(2, 3)];
+    // The book operates with less precision. Instead of rounding the actual matrix
+    // to five decimals, I've added the excess decimals from the actual matrix.
+    // It will be interesting to see what happens here if I change RtcFl to f64.
+    let expected_inverse_matrix_b = Matrix4x4::new(
+        0.21804512, 0.45112783, 0.24060151, -0.04511278, -0.8082707, -1.456767, -0.44360903, 0.52067673, -0.07894737,
+        -0.22368422, -0.05263158, 0.19736843, -0.5225564, -0.81390977, -0.3007519, 0.30639097,
+    );
+
+    //println!("{}", mb);
+    //println!("{}", expected_inverse_matrix_b);
+    assert_eq!(determinant_a, 532.0);
+    assert_eq!(cofactor_a_2_3, -160.0);
+    assert!(equal(b_3_2, -160.0 / 532.0)); // Test fails if not allowed EPSILON
+    assert_eq!(cofactor_a_3_2, 105.0);
+    assert_eq!(b_2_3, 105.0 / 532.0);
+    assert!(mb.eq(&expected_inverse_matrix_b));
 }
