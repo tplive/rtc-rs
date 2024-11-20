@@ -2,7 +2,7 @@
 use nalgebra::RowVector4;
 
 use crate::{
-    matrix::{Matrix2x2, Matrix3x3, Matrix4x4},
+    matrix::{Matrix2x2, Matrix3x3, Matrix4x4, Submatrix},
     tuples::Tuple,
 };
 
@@ -172,7 +172,7 @@ fn submatrix_of_3x3_is_2x2() {
     let m3x3 = Matrix3x3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
     let actual = m3x3.view((1, 0), (2, 2));
     let expected = Matrix2x2::new(-3.0, 2.0, 0.0, 6.0);
-    
+
     // Debug helper info:
     //println!("Initial:{}", m3x3);
     //println!("Actual:{}", actual);
@@ -180,3 +180,19 @@ fn submatrix_of_3x3_is_2x2() {
 
     assert_eq!(actual, expected);
 }
+
+#[test]
+fn trait_submatrix_of_3x3_is_2x2() {
+    let m3x3 = Matrix3x3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
+    let actual = m3x3.submatrix(0, 2);
+    let expected = Matrix2x2::new(-3.0, 2.0, 0.0, 6.0);
+
+    // Debug helper info:
+    //println!("Initial:{}", m3x3);
+    //println!("Actual:{}", actual);
+    //println!("Expected:{}", expected);
+
+    assert_eq!(actual, expected);
+}
+
+
