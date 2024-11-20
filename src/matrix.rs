@@ -65,11 +65,29 @@ impl Minor for Matrix3x3 {
     }
 }
 
+impl Minor for Matrix4x4 {
+
+    fn minor(&self, row:usize, col:usize) -> RtcFl {
+        self.submatrix(row, col).determinant()
+    }
+}
+
 pub trait Cofactor {
     fn cofactor(&self, row:usize, col:usize) -> RtcFl;
 }
 
 impl Cofactor for Matrix3x3 {
+    fn cofactor(&self, row:usize, col:usize) -> RtcFl {
+        let m = self.minor(row, col);
+        if row + col % 2 == 0 {
+            return m;
+        } else {
+            return -m;
+        }
+    }
+}
+
+impl Cofactor for Matrix4x4 {
     fn cofactor(&self, row:usize, col:usize) -> RtcFl {
         let m = self.minor(row, col);
         if row + col % 2 == 0 {
