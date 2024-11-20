@@ -1,5 +1,6 @@
 #[cfg(test)]
 use crate::tuples::{point, vector, Tuple};
+use crate::util::{equal, RtcFl};
 
 #[test]
 fn test_point() {
@@ -123,7 +124,7 @@ fn negate_tuple() {
 fn multiply_tuple_by_scalar() {
     // Test from p. 8
     let t = Tuple::new(1.0, -2.0, 3.0, -4.0);
-    let s: f32 = 3.5;
+    let s: RtcFl = 3.5;
     let expected = Tuple::new(3.5, -7.0, 10.5, -14.0);
     let actual = t * s;
     assert!(actual.eq(&expected)); 
@@ -150,6 +151,7 @@ assert!(actual.eq(&expected));
 
 #[test]
 fn compute_magnitude_of_vector() {
+
     let v1 = vector(1.0, 0.0, 0.0);
     assert_eq!(v1.mag(), 1.0);
 
@@ -160,10 +162,10 @@ fn compute_magnitude_of_vector() {
     assert_eq!(v3.mag(), 1.0);
 
     let v4 = vector(1.0, 2.0, 3.0);
-    assert_eq!(v4.mag(), 14.0_f32.sqrt());
+    assert!(equal(v4.mag(), 14.0_f32.sqrt() as RtcFl)); // Hacky, to accomodated RtcFl
 
     let v5 = vector(-1.0, -2.0, -3.0);
-    assert_eq!(v5.mag(), 14.0_f32.sqrt());
+    assert!(equal(v5.mag() as RtcFl, 14.0_f32.sqrt() as RtcFl)); // Hacky, to accomodated RtcFl
 }
 
 #[test]
@@ -181,7 +183,7 @@ fn normalize_vector() {
 fn dot_product_of_two_vectors() {
     let v1 = vector(1.0, 2.0, 3.0);
     let v2 = vector(2.0, 3.0, 4.0);
-    assert!(v1.dot(v2) == 20.0_f32);
+    assert!(v1.dot(v2) == 20.0);
 }
 
 #[test]
