@@ -1,6 +1,6 @@
-use std::ops;
+use std::{ops, usize};
 
-use nalgebra::{RowVector4, SMatrix, Vector4};
+use nalgebra::SMatrix;
 
 use crate::{tuples::Tuple, util::RtcFl};
 
@@ -26,6 +26,20 @@ impl ops::Mul<Tuple> for Matrix4x4 {
         }
 
         Tuple::new(res[0], res[1], res[2], res[3])
+    }
+}
+
+pub trait Submatrix<T> {
+    fn submatrix(&self, row: usize, col: usize) -> T;
+}
+
+impl Submatrix<Matrix2x2> for Matrix3x3 {
+
+    fn submatrix(&self, row:usize, col:usize) -> Matrix2x2 {
+
+        let temp = &self.remove_row(row).remove_column(col);
+        let m2x2: Matrix2x2 = temp.clone_owned();
+        m2x2
     }
 }
 
