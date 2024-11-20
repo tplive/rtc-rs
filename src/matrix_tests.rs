@@ -200,10 +200,9 @@ fn trait_submatrix_of_4x4_is_3x3() {
     let m4x4 = Matrix4x4::new(
         -6.0, 1.0, 1.0, 6.0, -8.0, 5.0, 8.0, 6.0, -1.0, 0.0, 8.0, 2.0, -7.0, 1.0, -1.0, 1.0,
     );
-    
+
     let actual = m4x4.submatrix(2, 1);
-    let expected = Matrix3x3::new(
-        -6.0, 1.0, 6.0, -8.0, 8.0, 6.0, -7.0, -1.0, 1.0);
+    let expected = Matrix3x3::new(-6.0, 1.0, 6.0, -8.0, 8.0, 6.0, -7.0, -1.0, 1.0);
 
     // Debug helper info:
     println!("Initial:{}", m4x4);
@@ -216,7 +215,7 @@ fn trait_submatrix_of_4x4_is_3x3() {
 #[test]
 fn calculate_minor_of_3x3_matrix() {
     let m3x3 = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
-    let subm = m3x3.submatrix(1,0);
+    let subm = m3x3.submatrix(1, 0);
 
     let expected = 25.0;
     let actual_determinant_of_sm = subm.determinant();
@@ -227,7 +226,6 @@ fn calculate_minor_of_3x3_matrix() {
 
 #[test]
 fn calculate_cofactor_of_3x3_matrix() {
-
     let m3x3 = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
 
     let expected_minor_at_0_0 = -12.0;
@@ -244,5 +242,33 @@ fn calculate_cofactor_of_3x3_matrix() {
     assert_eq!(expected_cofactor_at_0_0, actual_cofactor_at_0_0);
     assert_eq!(expected_minor_at_1_0, actual_minor_at_1_0);
     assert_eq!(expected_cofactor_at_1_0, actual_cofactor_at_1_0);
+}
 
+#[test]
+fn calculate_determinant_of_3x3_matrix() {
+    let m3x3 = Matrix3x3::new(1.0, 2.0, 6.0, -5.0, 8.0, -4.0, 2.0, 6.0, 4.0);
+
+    assert_eq!(m3x3.cofactor(0, 0), 56.0);
+    assert_eq!(m3x3.cofactor(0, 1), 12.0);
+    assert_eq!(m3x3.cofactor(0, 2), -46.0);
+
+    let actual_determinant = m3x3.determinant();
+
+    assert_eq!(actual_determinant, -196.0);
+}
+
+#[test]
+fn calculate_determinant_of_4x4_matrix() {
+    let m4x4 = Matrix4x4::new(
+        -2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0,
+    );
+    
+    assert_eq!(m4x4.cofactor(0, 0), 690.0);
+    assert_eq!(m4x4.cofactor(0, 1), 447.0);
+    assert_eq!(m4x4.cofactor(0, 2), 210.0);
+    assert_eq!(m4x4.cofactor(0, 3), 51.0);
+
+    let actual_determinant = m4x4.determinant();
+
+    assert_eq!(actual_determinant, -4071.0);
 }
