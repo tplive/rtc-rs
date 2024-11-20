@@ -2,7 +2,7 @@
 use nalgebra::RowVector4;
 
 use crate::{
-    matrix::{Matrix2x2, Matrix3x3, Matrix4x4, Submatrix},
+    matrix::{Cofactor, Matrix2x2, Matrix3x3, Matrix4x4, Minor, Submatrix},
     tuples::Tuple,
 };
 
@@ -211,4 +211,38 @@ fn trait_submatrix_of_4x4_is_3x3() {
     println!("Expected:{}", expected);
 
     assert_eq!(actual, expected);
+}
+
+#[test]
+fn calculate_minor_of_3x3_matrix() {
+    let m3x3 = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
+    let subm = m3x3.submatrix(1,0);
+
+    let expected = 25.0;
+    let actual_determinant_of_sm = subm.determinant();
+    let actual_minor = m3x3.minor(1, 0);
+    assert_eq!(actual_determinant_of_sm, expected);
+    assert_eq!(actual_minor, expected);
+}
+
+#[test]
+fn calculate_cofactor_of_3x3_matrix() {
+
+    let m3x3 = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
+
+    let expected_minor_at_0_0 = -12.0;
+    let expected_cofactor_at_0_0 = -12.0;
+    let expected_minor_at_1_0 = 25.0;
+    let expected_cofactor_at_1_0 = -25.0;
+
+    let actual_minor_at_0_0 = m3x3.minor(0, 0);
+    let actual_cofactor_at_0_0 = m3x3.cofactor(0, 0);
+    let actual_minor_at_1_0 = m3x3.minor(1, 0);
+    let actual_cofactor_at_1_0 = m3x3.cofactor(1, 0);
+
+    assert_eq!(expected_minor_at_0_0, actual_minor_at_0_0);
+    assert_eq!(expected_cofactor_at_0_0, actual_cofactor_at_0_0);
+    assert_eq!(expected_minor_at_1_0, actual_minor_at_1_0);
+    assert_eq!(expected_cofactor_at_1_0, actual_cofactor_at_1_0);
+
 }
