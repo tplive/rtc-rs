@@ -34,18 +34,15 @@ pub trait Submatrix<T> {
 }
 
 impl Submatrix<Matrix2x2> for Matrix3x3 {
-
-    fn submatrix(&self, row:usize, col:usize) -> Matrix2x2 {
-
+    fn submatrix(&self, row: usize, col: usize) -> Matrix2x2 {
         let temp = &self.remove_row(row).remove_column(col);
         let m2x2: Matrix2x2 = temp.clone_owned();
-        
+
         m2x2
     }
 }
 
 impl Submatrix<Matrix3x3> for Matrix4x4 {
-
     fn submatrix(&self, row: usize, col: usize) -> Matrix3x3 {
         let temp = &self.remove_row(row).remove_column(col);
         let m3x3: Matrix3x3 = temp.clone_owned();
@@ -54,30 +51,17 @@ impl Submatrix<Matrix3x3> for Matrix4x4 {
     }
 }
 
-pub trait Minor {
-    fn minor(&self, row:usize, col:usize) -> RtcFl;
+pub trait Operations {
+    fn minor(&self, row: usize, col: usize) -> RtcFl;
+    fn cofactor(&self, row: usize, col: usize) -> RtcFl;
 }
 
-impl Minor for Matrix3x3 {
-
-    fn minor(&self, row:usize, col:usize) -> RtcFl {
+impl Operations for Matrix3x3 {
+    fn minor(&self, row: usize, col: usize) -> RtcFl {
         self.submatrix(row, col).determinant()
     }
-}
 
-impl Minor for Matrix4x4 {
-
-    fn minor(&self, row:usize, col:usize) -> RtcFl {
-        self.submatrix(row, col).determinant()
-    }
-}
-
-pub trait Cofactor {
-    fn cofactor(&self, row:usize, col:usize) -> RtcFl;
-}
-
-impl Cofactor for Matrix3x3 {
-    fn cofactor(&self, row:usize, col:usize) -> RtcFl {
+    fn cofactor(&self, row: usize, col: usize) -> RtcFl {
         let m = self.minor(row, col);
         if row + col % 2 == 0 {
             return m;
@@ -87,8 +71,12 @@ impl Cofactor for Matrix3x3 {
     }
 }
 
-impl Cofactor for Matrix4x4 {
-    fn cofactor(&self, row:usize, col:usize) -> RtcFl {
+impl Operations for Matrix4x4 {
+    fn minor(&self, row: usize, col: usize) -> RtcFl {
+        self.submatrix(row, col).determinant()
+    }
+
+    fn cofactor(&self, row: usize, col: usize) -> RtcFl {
         let m = self.minor(row, col);
         if row + col % 2 == 0 {
             return m;
