@@ -117,3 +117,50 @@ fn rotating_point_around_z_axis() {
     assert_eq!(half_quarter * p, point(-sqrt2div2, sqrt2div2, 0.0));
     assert_eq!(full_quarter * p, point(-1.0, 0.0, 0.0,));
 }
+
+#[test]
+fn shearing_x_in_proportion_to_y() {
+    let transform = Transformation::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    let p = point(2.0, 3.0, 4.0);
+
+    assert_eq!(transform * p, point(5.0, 3.0, 4.0));
+}
+
+#[test]
+fn shearing_x_in_proportion_to_z() {
+    let transform = Transformation::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+    let p = point(2.0, 3.0, 4.0);
+
+    assert_eq!(transform * p, point(6.0, 3.0, 4.0));
+}
+
+#[test]
+fn shearing_y_in_proportion_to_x() {
+    let transform = Transformation::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+    let p = point(2.0, 3.0, 4.0);
+
+    assert_eq!(transform * p, point(2.0, 5.0, 4.0));
+}
+
+#[test]
+fn shearing_y_in_proportion_to_z() {
+    let transform = Transformation::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+    let p = point(2.0, 3.0, 4.0);
+
+    assert_eq!(transform * p, point(2.0, 7.0, 4.0));
+}
+
+#[test]
+fn shearing_z_in_proportion_to_x() {
+    let transform = Transformation::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    let p = point(2.0, 3.0, 4.0);
+
+    assert_eq!(transform * p, point(2.0, 3.0, 6.0));
+}
+#[test]
+fn shearing_z_in_proportion_to_y() {
+    let transform = Transformation::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    let p = point(2.0, 3.0, 4.0);
+
+    assert_eq!(transform * p, point(2.0, 3.0, 7.0));
+}

@@ -51,5 +51,17 @@ impl Transformation {
         
         m
     }
+
+    pub fn shearing(xy: RtcFl, xz: RtcFl, yx: RtcFl, yz: RtcFl, zx: RtcFl, zy: RtcFl, ) -> Matrix4x4 {
+        let mut m = Matrix4x4::identity();
+        m[(0, 1)] = xy;
+        m[(0, 2)] = xz;
+        m[(1, 0)] = yx;
+        m[(1, 2)] = yz;
+        m[(2, 0)] = zx;
+        m[(2, 1)] = zy;
+        
+        m
+    }
     
 }
