@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 #[cfg(test)]
 use crate::{
     transformation::Transformation,
@@ -70,3 +72,48 @@ fn reflection_is_scaling_by_negative_value() {
     assert_eq!(point(-2.0, 3.0, 4.0), transform * p);
 }
 
+#[test]
+fn rotating_point_around_x_axis() {
+    let p = point(0.0, 1.0, 0.0);
+    let half_quarter = Transformation::rotation_x(PI / 4.0);
+    let full_quarter = Transformation::rotation_x(PI / 2.0);
+
+    let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
+
+    assert_eq!(half_quarter * p, point(0.0, sqrt2div2, sqrt2div2));
+    assert_eq!(full_quarter * p, point(0.0, 0.0, 1.0,));
+}
+
+#[test]
+fn inverse_of_x_rotation_goes_opposite_direction() {
+    let p = point(0.0, 1.0, 0.0);
+    let half_quarter = Transformation::rotation_x(PI / 4.0).try_inverse().unwrap();
+
+    let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
+
+    assert_eq!(half_quarter * p, point(0.0, sqrt2div2, -sqrt2div2));
+}
+
+#[test]
+fn rotating_point_around_y_axis() {
+    let p = point(0.0, 0.0, 1.0);
+    let half_quarter = Transformation::rotation_y(PI / 4.0);
+    let full_quarter = Transformation::rotation_y(PI / 2.0);
+
+    let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
+
+    assert_eq!(half_quarter * p, point(sqrt2div2, 0.0, sqrt2div2));
+    assert_eq!(full_quarter * p, point(1.0, 0.0, 0.0,));
+}
+
+#[test]
+fn rotating_point_around_z_axis() {
+    let p = point(0.0, 1.0, 0.0);
+    let half_quarter = Transformation::rotation_z(PI / 4.0);
+    let full_quarter = Transformation::rotation_z(PI / 2.0);
+
+    let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
+
+    assert_eq!(half_quarter * p, point(-sqrt2div2, sqrt2div2, 0.0));
+    assert_eq!(full_quarter * p, point(-1.0, 0.0, 0.0,));
+}
