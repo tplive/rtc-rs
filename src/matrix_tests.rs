@@ -410,3 +410,23 @@ fn calculating_inverse_of_a_third_matrix() {
     assert!(expected_inverse.eq(&mb));
     //assert_eq!(expected_inverse, mb);
 }
+
+#[test]
+fn multiply_product_by_inverse() {
+    let ma = Matrix4x4::new(
+        3.0, -9.0, 7.0, 3.0, 3.0, -8.0, 2.0, -9.0, -4.0, 4.0, 4.0, 1.0, -6.0, 5.0, -1.0, 1.0,
+    );
+
+    let mb = Matrix4x4::new(
+        8.0, 2.0, 2.0, 2.0, 3.0, -1.0, 7.0, 0.0, 7.0, 0.0, 5.0, 4.0, 6.0, -2.0, 0.0, 5.0,
+    );
+
+    let mc = ma * mb;
+    let actual = mc * mb.try_inverse().unwrap();
+
+    // println!("{}", ma);
+    // println!("{}", mb);
+    // println!("{}", mc);
+
+    assert!(ma.equals(actual));
+}
