@@ -1,5 +1,6 @@
 use std::f32::consts::PI;
 
+use crate::transformation::{rx, sc, tr};
 #[cfg(test)]
 use crate::{
     transformation::Transformation,
@@ -8,7 +9,7 @@ use crate::{
 
 #[test]
 fn multiplying_by_translation_matrix() {
-    let transform = Transformation::translation(5.0, -3.0, 2.0);
+    let transform = tr(5.0, -3.0, 2.0);
     let p = point(-3.0, 4.0, 5.0);
 
     assert_eq!(point(2.0, 1.0, 7.0), transform * p);
@@ -16,7 +17,7 @@ fn multiplying_by_translation_matrix() {
 
 #[test]
 fn multiplying_by_inverse_of_translation_matrix() {
-    let transform = Transformation::translation(5.0, -3.0, 2.0)
+    let transform = tr(5.0, -3.0, 2.0)
         .try_inverse()
         .unwrap();
     let p = point(-3.0, 4.0, 5.0);
@@ -26,7 +27,7 @@ fn multiplying_by_inverse_of_translation_matrix() {
 
 #[test]
 fn translation_does_not_affect_vectors() {
-    let transform = Transformation::translation(5.0, -3.0, 2.0)
+    let transform = tr(5.0, -3.0, 2.0)
         .try_inverse()
         .unwrap();
     let v = vector(-3.0, 4.0, 5.0);
@@ -36,7 +37,7 @@ fn translation_does_not_affect_vectors() {
 
 #[test]
 fn scaling_matrix_applied_to_point() {
-    let transform = Transformation::scaling(2.0, 3.0, 4.0);
+    let transform = sc(2.0, 3.0, 4.0);
     let p = point(-4.0, 6.0, 8.0);
     //println!("{}", transform);
 
@@ -163,4 +164,35 @@ fn shearing_z_in_proportion_to_y() {
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(2.0, 3.0, 7.0));
+}
+
+#[test]
+fn individual_transformations_are_applied_in_sequence() {
+    let p = point(1.0, 0.0, 1.0);
+    let a = rx(PI / 2.0);
+    let b = sc(5.0, 5.0, 5.0);
+    let c = tr(10.0, 5.0, 7.0);
+
+    // Apply rotation first
+    let p2 = a * p;
+    // Apply scaling
+    let p3 = b * p2;
+    // Apply translation
+    let p4 = c * p3;
+
+    assert_eq!(p2, point(1.0, -1.0, 0.0));
+    assert_eq!(p3, point(5.0, -5.0, 0.0));
+    assert_eq!(p4, point(15.0, 0.0, 7.0));
+}
+
+#[test]
+fn chained_transformation_must_be_applied_in_reverse_order() {
+    let p = point(1.0, 0.0, 1.0);
+    let a = rx(PI / 2.0);
+    let b = sc(5.0, 5.0, 5.0);
+    let c = tr(10.0, 5.0, 7.0);
+
+    let t = c * b * a;
+    
+    assert_eq!(t * p, point(15.0, 0.0, 7.0));
 }
