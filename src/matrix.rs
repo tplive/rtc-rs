@@ -2,7 +2,7 @@ use std::{ops, usize};
 
 use nalgebra::SMatrix;
 
-use crate::{tuples::Tuple, util::RtcFl};
+use crate::{tuples::Tuple, util::{equal, RtcFl}};
 
 /// We are of course using the nalgebra library instead of writing our own.
 /// Been there, done that.
@@ -51,12 +51,13 @@ impl Submatrix<Matrix3x3> for Matrix4x4 {
     }
 }
 
-pub trait Operations {
+pub trait Operations<T> {
     fn minor(&self, row: usize, col: usize) -> RtcFl;
     fn cofactor(&self, row: usize, col: usize) -> RtcFl;
+    fn equals(&self, other: T) -> bool;
 }
 
-impl Operations for Matrix3x3 {
+impl Operations<Matrix3x3> for Matrix3x3 {
     fn minor(&self, row: usize, col: usize) -> RtcFl {
         self.submatrix(row, col).determinant()
     }
@@ -69,9 +70,20 @@ impl Operations for Matrix3x3 {
             return -m;
         }
     }
+
+    fn equals(&self, other: Matrix3x3) -> bool {
+        let mut result = true;
+        for n in 0..self.len() {
+            if !equal(self[n], other[n]) {
+                result = false;
+            }
+        }
+
+        result
+    }
 }
 
-impl Operations for Matrix4x4 {
+impl Operations<Matrix4x4> for Matrix4x4 {
     fn minor(&self, row: usize, col: usize) -> RtcFl {
         self.submatrix(row, col).determinant()
     }
@@ -83,5 +95,16 @@ impl Operations for Matrix4x4 {
         } else {
             return -m;
         }
+    }
+
+    fn equals(&self, other: Matrix4x4) -> bool {
+        let mut result = true;
+        for n in 0..self.len() {
+            if !equal(self[n], other[n]) {
+                result = false;
+            }
+        }
+
+        result
     }
 }
