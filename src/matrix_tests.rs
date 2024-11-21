@@ -317,8 +317,22 @@ fn calculating_inverse_of_matrix() {
     // to five decimals, I've added the excess decimals from the actual matrix.
     // It will be interesting to see what happens here if I change RtcFl to f64.
     let expected_inverse_matrix_b = Matrix4x4::new(
-        0.21804512, 0.45112783, 0.24060151, -0.04511278, -0.8082707, -1.456767, -0.44360903, 0.52067673, -0.07894737,
-        -0.22368422, -0.05263158, 0.19736843, -0.5225564, -0.81390977, -0.3007519, 0.30639097,
+        0.21804512,
+        0.45112783,
+        0.24060151,
+        -0.04511278,
+        -0.8082707,
+        -1.456767,
+        -0.44360903,
+        0.52067673,
+        -0.07894737,
+        -0.22368422,
+        -0.05263158,
+        0.19736843,
+        -0.5225564,
+        -0.81390977,
+        -0.3007519,
+        0.30639097,
     );
 
     //println!("{}", mb);
@@ -329,4 +343,70 @@ fn calculating_inverse_of_matrix() {
     assert_eq!(cofactor_a_3_2, 105.0);
     assert_eq!(b_2_3, 105.0 / 532.0);
     assert!(mb.eq(&expected_inverse_matrix_b));
+}
+
+#[test]
+fn calculating_inverse_of_another_matrix() {
+    let ma = Matrix4x4::new(
+        8.0, -5.0, 9.0, 2.0, 7.0, 5.0, 6.0, 1.0, -6.0, 0.0, 9.0, 6.0, -3.0, 0.0, -9.0, -4.0,
+    );
+
+    let mb = ma.try_inverse().unwrap();
+
+    let expected_inverse = Matrix4x4::new(
+        -0.15384616,
+        -0.15384616,
+        -0.2820513,
+        -0.53846157,
+        -0.07692308,
+        0.12307692,
+        0.025641026,
+        0.03076923,
+        0.35897437,
+        0.35897437,
+        0.43589744,
+        0.9230769,
+        -0.6923077,
+        -0.6923077,
+        -0.7692308,
+        -1.923077,
+    );
+
+    //println!("{}", mb);
+    //println!("{}", expected_inverse);
+    assert!(expected_inverse.eq(&mb));
+}
+
+#[test]
+fn calculating_inverse_of_a_third_matrix() {
+    let ma = Matrix4x4::new(
+        9.0, 3.0, 0.0, 9.0, -5.0, -2.0, -6.0, -3.0, -4.0, 9.0, 6.0, 4.0, -7.0, 6.0, 6.0, 2.0,
+    );
+
+    let mb = ma.try_inverse().unwrap();
+
+    // The expected inverse here does not match the test in the book page 41. This may be an error in the book, or something I missed. Remains to be seen.
+    let expected_inverse = Matrix4x4::new(
+        -0.040740743,
+        -0.07777778,
+        0.14444445,
+        -0.22222224,
+        -0.07777778,
+        0.033333335,
+        0.36666667,
+        -0.33333334,
+        -0.029012347,
+        -0.1462963,
+        -0.10925926,
+        0.12962964,
+        0.17777778,
+        0.06666667,
+        -0.26666668,
+        0.33333334,
+    );
+
+    println!("{}", mb);
+    println!("{}", expected_inverse);
+    assert!(expected_inverse.eq(&mb));
+    //assert_eq!(expected_inverse, mb);
 }
