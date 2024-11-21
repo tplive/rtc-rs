@@ -1,12 +1,12 @@
 #[cfg(test)]
-use nalgebra::RowVector4;
-
-use crate::util::equal;
-#[cfg(test)]
 use crate::{
-    matrix::{Cofactor, Matrix2x2, Matrix3x3, Matrix4x4, Minor, Submatrix},
+    matrix::*,
     tuples::Tuple,
+    util::equal,
 };
+
+#[cfg(test)]
+use nalgebra::RowVector4;
 
 #[test]
 fn constructing_and_inspecting_a_4x4_matrix() {
