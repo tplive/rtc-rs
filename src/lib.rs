@@ -10,5 +10,8 @@ pub mod canvas_tests;
 pub mod matrix;
 pub mod matrix_tests;
 
+pub mod transformation;
+pub mod transformation_tests;
+
 pub mod util;
 
