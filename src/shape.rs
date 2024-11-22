@@ -6,6 +6,9 @@ static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 type Intersection = [RtcFl; 2];
 
 
+static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
+
+
 pub struct Sphere {
     pub id: usize,
 }
