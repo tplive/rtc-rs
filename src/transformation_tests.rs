@@ -1,6 +1,5 @@
 use std::f32::consts::PI;
 
-use crate::transformation::{rx, sc, tr};
 #[cfg(test)]
 use crate::{
     transformation::Transformation,
@@ -9,15 +8,18 @@ use crate::{
 
 #[test]
 fn multiplying_by_translation_matrix() {
-    let transform = tr(5.0, -3.0, 2.0);
+    let transform = Transformation::new().translation(5.0, -3.0, 2.0).get();
+
     let p = point(-3.0, 4.0, 5.0);
 
+    //println!("{}", transform);
     assert_eq!(point(2.0, 1.0, 7.0), transform * p);
 }
-
 #[test]
 fn multiplying_by_inverse_of_translation_matrix() {
-    let transform = tr(5.0, -3.0, 2.0)
+    let transform = Transformation::new()
+        .translation(5.0, -3.0, 2.0)
+        .get()
         .try_inverse()
         .unwrap();
     let p = point(-3.0, 4.0, 5.0);
@@ -27,7 +29,9 @@ fn multiplying_by_inverse_of_translation_matrix() {
 
 #[test]
 fn translation_does_not_affect_vectors() {
-    let transform = tr(5.0, -3.0, 2.0)
+    let transform = Transformation::new()
+        .translation(5.0, -3.0, 2.0)
+        .get()
         .try_inverse()
         .unwrap();
     let v = vector(-3.0, 4.0, 5.0);
@@ -37,7 +41,7 @@ fn translation_does_not_affect_vectors() {
 
 #[test]
 fn scaling_matrix_applied_to_point() {
-    let transform = sc(2.0, 3.0, 4.0);
+    let transform = Transformation::new().scaling(2.0, 3.0, 4.0).get();
     let p = point(-4.0, 6.0, 8.0);
     //println!("{}", transform);
 
@@ -46,7 +50,7 @@ fn scaling_matrix_applied_to_point() {
 
 #[test]
 fn scaling_matrix_applied_to_vector() {
-    let transform = Transformation::scaling(2.0, 3.0, 4.0);
+    let transform = Transformation::new().scaling(2.0, 3.0, 4.0).get();
     let v = vector(-4.0, 6.0, 8.0);
     //println!("{}", transform);
 
@@ -55,7 +59,9 @@ fn scaling_matrix_applied_to_vector() {
 
 #[test]
 fn multiply_by_inverse_of_scaling_matrix() {
-    let transform = Transformation::scaling(2.0, 3.0, 4.0)
+    let transform = Transformation::new()
+        .scaling(2.0, 3.0, 4.0)
+        .get()
         .try_inverse()
         .unwrap();
     let v = vector(-4.0, 6.0, 8.0);
@@ -66,7 +72,7 @@ fn multiply_by_inverse_of_scaling_matrix() {
 
 #[test]
 fn reflection_is_scaling_by_negative_value() {
-    let transform = Transformation::scaling(-1.0, 1.0, 1.0);
+    let transform = Transformation::new().scaling(-1.0, 1.0, 1.0).get();
     let p = point(2.0, 3.0, 4.0);
     //println!("{}", transform);
 
@@ -76,8 +82,8 @@ fn reflection_is_scaling_by_negative_value() {
 #[test]
 fn rotating_point_around_x_axis() {
     let p = point(0.0, 1.0, 0.0);
-    let half_quarter = Transformation::rotation_x(PI / 4.0);
-    let full_quarter = Transformation::rotation_x(PI / 2.0);
+    let half_quarter = Transformation::new().rotation_x(PI / 4.0).get();
+    let full_quarter = Transformation::new().rotation_x(PI / 2.0).get();
 
     let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
 
@@ -88,7 +94,11 @@ fn rotating_point_around_x_axis() {
 #[test]
 fn inverse_of_x_rotation_goes_opposite_direction() {
     let p = point(0.0, 1.0, 0.0);
-    let half_quarter = Transformation::rotation_x(PI / 4.0).try_inverse().unwrap();
+    let half_quarter = Transformation::new()
+        .rotation_x(PI / 4.0)
+        .get()
+        .try_inverse()
+        .unwrap();
 
     let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
 
@@ -98,8 +108,8 @@ fn inverse_of_x_rotation_goes_opposite_direction() {
 #[test]
 fn rotating_point_around_y_axis() {
     let p = point(0.0, 0.0, 1.0);
-    let half_quarter = Transformation::rotation_y(PI / 4.0);
-    let full_quarter = Transformation::rotation_y(PI / 2.0);
+    let half_quarter = Transformation::new().rotation_y(PI / 4.0).get();
+    let full_quarter = Transformation::new().rotation_y(PI / 2.0).get();
 
     let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
 
@@ -110,8 +120,8 @@ fn rotating_point_around_y_axis() {
 #[test]
 fn rotating_point_around_z_axis() {
     let p = point(0.0, 1.0, 0.0);
-    let half_quarter = Transformation::rotation_z(PI / 4.0);
-    let full_quarter = Transformation::rotation_z(PI / 2.0);
+    let half_quarter = Transformation::new().rotation_z(PI / 4.0).get();
+    let full_quarter = Transformation::new().rotation_z(PI / 2.0).get();
 
     let sqrt2div2 = 2.0_f32.sqrt() / 2.0;
 
@@ -121,7 +131,7 @@ fn rotating_point_around_z_axis() {
 
 #[test]
 fn shearing_x_in_proportion_to_y() {
-    let transform = Transformation::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    let transform = Transformation::new().shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0).get();
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(5.0, 3.0, 4.0));
@@ -129,7 +139,7 @@ fn shearing_x_in_proportion_to_y() {
 
 #[test]
 fn shearing_x_in_proportion_to_z() {
-    let transform = Transformation::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+    let transform = Transformation::new().shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0).get();
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(6.0, 3.0, 4.0));
@@ -137,7 +147,7 @@ fn shearing_x_in_proportion_to_z() {
 
 #[test]
 fn shearing_y_in_proportion_to_x() {
-    let transform = Transformation::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+    let transform = Transformation::new().shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0).get();
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(2.0, 5.0, 4.0));
@@ -145,7 +155,7 @@ fn shearing_y_in_proportion_to_x() {
 
 #[test]
 fn shearing_y_in_proportion_to_z() {
-    let transform = Transformation::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+    let transform = Transformation::new().shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0).get();
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(2.0, 7.0, 4.0));
@@ -153,14 +163,14 @@ fn shearing_y_in_proportion_to_z() {
 
 #[test]
 fn shearing_z_in_proportion_to_x() {
-    let transform = Transformation::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    let transform = Transformation::new().shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0).get();
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(2.0, 3.0, 6.0));
 }
 #[test]
 fn shearing_z_in_proportion_to_y() {
-    let transform = Transformation::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    let transform = Transformation::new().shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0).get();
     let p = point(2.0, 3.0, 4.0);
 
     assert_eq!(transform * p, point(2.0, 3.0, 7.0));
@@ -169,9 +179,9 @@ fn shearing_z_in_proportion_to_y() {
 #[test]
 fn individual_transformations_are_applied_in_sequence() {
     let p = point(1.0, 0.0, 1.0);
-    let a = rx(PI / 2.0);
-    let b = sc(5.0, 5.0, 5.0);
-    let c = tr(10.0, 5.0, 7.0);
+    let a = Transformation::new().rotation_x(PI / 2.0).get();
+    let b = Transformation::new().scaling(5.0, 5.0, 5.0).get();
+    let c = Transformation::new().translation(10.0, 5.0, 7.0).get();
 
     // Apply rotation first
     let p2 = a * p;
@@ -188,11 +198,24 @@ fn individual_transformations_are_applied_in_sequence() {
 #[test]
 fn chained_transformation_must_be_applied_in_reverse_order() {
     let p = point(1.0, 0.0, 1.0);
-    let a = rx(PI / 2.0);
-    let b = sc(5.0, 5.0, 5.0);
-    let c = tr(10.0, 5.0, 7.0);
+    let a = Transformation::new().rotation_x(PI / 2.0).get();
+    let b = Transformation::new().scaling(5.0, 5.0, 5.0).get();
+    let c = Transformation::new().translation(10.0, 5.0, 7.0).get();
 
     let t = c * b * a;
-    
+
     assert_eq!(t * p, point(15.0, 0.0, 7.0));
 }
+
+#[test]
+fn chaining_transformations_in_sequence() {
+    let p = point(1.0, 0.0, 1.0);
+    let transform = Transformation::new()
+        .rotation_x(PI / 2.0)
+        .scaling(5.0, 5.0, 5.0)
+        .translation(10.0, 5.0, 7.0)
+        .get();
+
+    assert_eq!(transform * p, point(15.0, 0.0, 7.0));
+}
+
