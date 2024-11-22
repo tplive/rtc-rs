@@ -18,5 +18,9 @@ pub mod transformation;
 #[cfg(test)]
 pub mod transformation_tests;
 
+pub mod ray;
+#[cfg(test)]
+pub mod ray_tests;
+
 pub mod util;
 
