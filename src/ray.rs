@@ -1,4 +1,8 @@
-use crate::tuples::Tuple;
+use crate::{
+    shape::Sphere,
+    tuples::{point, Tuple},
+    util::RtcFl,
+};
 
 pub struct Ray {
     pub origin: Tuple,
@@ -6,7 +10,6 @@ pub struct Ray {
 }
 
 impl Ray {
-
     pub fn new(o: Tuple, d: Tuple) -> Self {
         if !o.is_point() || !d.is_vector() {
             panic!("Origin must be a point. Direction must be a vector.");
@@ -16,6 +19,9 @@ impl Ray {
             origin: o,
             direction: d,
         }
+    }
 
+    pub fn position(&self, t: RtcFl) -> Tuple {
+        self.origin + self.direction * t
     }
 }
