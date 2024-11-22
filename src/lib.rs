@@ -22,5 +22,9 @@ pub mod ray;
 #[cfg(test)]
 pub mod ray_tests;
 
+pub mod shape;
+#[cfg(test)]
+pub mod shape_tests;
+
 pub mod util;
 
