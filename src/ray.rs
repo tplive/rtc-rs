@@ -1,12 +1,8 @@
 use crate::{
     shape::Sphere,
-    tuples::{point, Tuple},
+    tuples::Tuple,
     util::RtcFl,
 };
-use crate::{shape::Sphere, tuples::Tuple, util::RtcFl};
-
-type Intersection = (RtcFl, Sphere);
-type Intersections = Vec<Intersection>;
 
 pub struct Ray {
     pub origin: Tuple,
@@ -28,16 +24,6 @@ impl Ray {
     pub fn position(&self, t: RtcFl) -> Tuple {
         self.origin + self.direction * t
     }
+
+    pub fn intersect(&self, shape: Sphere) {}
 }
-    }
-
-    pub fn position(&self, t: RtcFl) -> Tuple {
-        self.origin + self.direction * t
-    }
-
-    pub fn intersect(&self, shape: Sphere)  {
-
-    }
-}
-
-

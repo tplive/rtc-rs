@@ -1,13 +1,9 @@
+use crate::{ray::Ray, tuples::point, util::RtcFl};
 use std::sync::atomic::{AtomicUsize, Ordering};
-use crate::{tuples::point, util::RtcFl};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
 type Intersection = [RtcFl; 2];
-
-
-static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
-
 
 pub struct Sphere {
     pub id: usize,
@@ -29,11 +25,11 @@ impl Sphere {
         let discriminant = b.powi(2) - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            return None
+            return None;
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return Some([t1, t2])
+            return Some([t1, t2]);
         }
     }
 }

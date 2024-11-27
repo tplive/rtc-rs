@@ -1,10 +1,8 @@
-use std::collections::btree_set::Intersection;
-
 #[cfg(test)]
 use crate::{
     ray::Ray,
-    tuples::{point, vector},
     shape::Sphere,
+    tuples::{point, vector},
 };
 
 #[test]
@@ -35,10 +33,6 @@ fn ray_intersects_sphere_to_two_points() {
 
     let xs = r.intersect(s);
 
-    let x = match xs {
-        Some(intersection) -> intersection,
-        None -> []
-    }
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0], 4.0);
     assert_eq!(xs[1], 6.0);
