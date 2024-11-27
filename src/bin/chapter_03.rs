@@ -6,18 +6,16 @@ use rtc::{
     canvas::Canvas,
     color::Color,
     transformation::Transformation,
-    tuples::{point, vector, Tuple},
+    tuples::point,
 };
 
 // Putting it together Chapter 3
 fn main() {
-    let full_rotation = 2.0 * PI;
     let width = 300.0;
     let height = 300.0;
     let radius = 6.0 / 8.0;
 
     let twelve = point(0.0, 0.0, 1.0 * radius);
-    let center = point(0.0, 0.0, 0.0);
     let mut can = Canvas::new(width as usize, height as usize);
 
     can.write_pixel((width/2.0) as usize, (height/2.0) as usize, Color::white());
