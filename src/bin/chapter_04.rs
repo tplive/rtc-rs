@@ -9,7 +9,7 @@ use rtc::{
     tuples::point,
 };
 
-// Putting it together Chapter 3
+// Putting it together Chapter 4
 fn main() {
     let width = 300.0;
     let height = 300.0;
@@ -30,7 +30,7 @@ fn main() {
         can.write_rect(x as usize, y as usize, 4, 4, Color::new(0.543, 0.872, 0.32));
     }
 
-    let mut file = File::create("chapter_03.ppm").expect("Unable to create file.");
+    let mut file = File::create("chapter_04.ppm").expect("Unable to create file.");
 
     file.write_all(&can.to_ppm().as_bytes())
         .expect("Unable to write file.");
