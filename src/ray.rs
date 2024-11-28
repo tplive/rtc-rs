@@ -1,5 +1,4 @@
 use crate::{
-    shape::Sphere,
     tuples::Tuple,
     util::RtcFl,
 };
@@ -24,6 +23,4 @@ impl Ray {
     pub fn position(&self, t: RtcFl) -> Tuple {
         self.origin + self.direction * t
     }
-
-    pub fn intersect(&self, shape: Sphere) {}
 }
