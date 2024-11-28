@@ -17,6 +17,23 @@ impl <'a> Intersection<'a> {
     }
 }
 
+pub struct Intersections {
+    i: Vec<Intersection>,
+}
+
+impl Intersections {
+    pub fn new(i: Vec<Intersection>) -> Intersections {
+        Self { i }
+    }
+
+    pub fn hit(&self) -> Intersection {
+        let mut sorted = self.i.sort_by(|a, b| {a.t - b.t});
+        sorted.map(|n| { if n.t >= 0.0 {return n}});
+
+        return sorted[0];
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct Sphere {
     pub id: usize,
