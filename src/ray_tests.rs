@@ -1,3 +1,5 @@
+use std::vec;
+
 #[cfg(test)]
 use crate::{
     ray::Ray,
@@ -103,4 +105,16 @@ fn aggregating_intersections() {
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t, 1.0);
     assert_eq!(xs[1].t, 2.0);
+}
+
+#[test]
+fn intersect_sets_the_object_on_the_intersection() {
+    let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+    let s = Sphere::new();
+
+    let xs = s.intersect(r);
+    
+    assert_eq!(xs.len(), 2);
+    assert_eq!(xs[0].shape, &s);
+    assert_eq!(xs[1].shape, &s);
 }
