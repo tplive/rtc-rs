@@ -3,7 +3,17 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
-type Intersection = [RtcFl; 2];
+pub struct Intersection {
+    pub t: RtcFl,
+}
+
+impl Intersection {
+    pub fn new(t: RtcFl) -> Self {
+        Self {
+            t,
+        }
+    }
+}
 
 pub struct Sphere {
     pub id: usize,
@@ -16,7 +26,7 @@ impl Sphere {
         }
     }
 
-    pub fn intersect(&self, ray: Ray) -> Option<Intersection> {
+    pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
         let sphere_to_ray = ray.origin - point(0.0, 0.0, 0.0);
         let a = ray.direction.dot(ray.direction);
         let b: f32 = 2.0 * ray.direction.dot(sphere_to_ray);
@@ -25,11 +35,11 @@ impl Sphere {
         let discriminant = b.powi(2) - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            return None;
+            return vec!();
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return Some([t1, t2]);
+            return vec![Intersection::new(t1), Intersection::new(t2)];
         }
     }
 }
