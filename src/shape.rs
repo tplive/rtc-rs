@@ -3,18 +3,21 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
-pub struct Intersection {
+pub struct Intersection<'a> {
     pub t: RtcFl,
+    pub shape: &'a Sphere,
 }
 
-impl Intersection {
-    pub fn new(t: RtcFl) -> Self {
+impl <'a> Intersection<'a> {
+    pub fn new(t: RtcFl, shape: &'a Sphere) -> Self {
         Self {
             t,
+            shape,
         }
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Sphere {
     pub id: usize,
 }
@@ -39,7 +42,7 @@ impl Sphere {
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return vec![Intersection::new(t1), Intersection::new(t2)];
+            return vec![Intersection::new(t1, &self), Intersection::new(t2, &self)];
         }
     }
 }
