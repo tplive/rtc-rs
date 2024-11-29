@@ -3,17 +3,30 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
-pub struct Intersection<'a> {
-    pub t: RtcFl,
-    pub shape: &'a Sphere,
+#[derive(PartialEq, Debug)]
+pub enum Shape {
+    Sphere(Sphere),
 }
 
-impl <'a> Intersection<'a> {
-    pub fn new(t: RtcFl, shape: &'a Sphere) -> Self {
-        Self {
-            t,
-            shape,
+pub trait Intersectable {
+    fn intersect(&self, ray: Ray) -> Vec<Intersection>;
+}
+// Inspired by MrJakob: https://youtu.be/lTrtsfYFTeE?si=niGyzutvTC_h92NY&t=965
+impl Intersectable for Shape {
+    fn intersect(&self, ray: Ray) -> Vec<Intersection> {
+        match *self {
+            Shape::Sphere(ref sphere) => sphere.intersect(ray),
         }
+    }
+}
+pub struct Intersection {
+    pub t: RtcFl,
+    pub shape: Shape,
+}
+
+impl Intersection {
+    pub fn new(t: RtcFl, shape: Shape) -> Self {
+        Self { t, shape }
     }
 }
 
@@ -22,19 +35,24 @@ pub struct Intersections {
 }
 
 impl Intersections {
-    pub fn new(i: Vec<Intersection>) -> Intersections {
+    pub fn new(i: Vec<Intersection>) -> Self {
         Self { i }
     }
-
+    /*
     pub fn hit(&self) -> Intersection {
-        let mut sorted = self.i.sort_by(|a, b| {a.t - b.t});
-        sorted.map(|n| { if n.t >= 0.0 {return n}});
+        let mut sorted = self.i.sort_by(|a, b| a.t - b.t);
+        let positives = sorted.map(|n| {
+            if n.t >= 0.0 {
+                return n;
+            }
+        });
 
-        return sorted[0];
+        return positives[0];
     }
+    */
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Sphere {
     pub id: usize,
 }
@@ -45,8 +63,10 @@ impl Sphere {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
         }
     }
+}
 
-    pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
+impl Intersectable for Sphere {
+    fn intersect(&self, ray: Ray) -> Vec<Intersection> {
         let sphere_to_ray = ray.origin - point(0.0, 0.0, 0.0);
         let a = ray.direction.dot(ray.direction);
         let b: f32 = 2.0 * ray.direction.dot(sphere_to_ray);
@@ -55,11 +75,14 @@ impl Sphere {
         let discriminant = b.powi(2) - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            return vec!();
+            return vec![];
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return vec![Intersection::new(t1, &self), Intersection::new(t2, &self)];
+            return vec![
+                Intersection::new(t1, Shape::Sphere(*self)),
+                Intersection::new(t2, Shape::Sphere(*self)),
+            ];
         }
     }
 }
