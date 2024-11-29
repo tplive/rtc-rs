@@ -3,7 +3,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Clone, Copy, Debug)]
 pub enum Shape {
     Sphere(Sphere),
 }
@@ -19,6 +19,7 @@ impl Intersectable for Shape {
         }
     }
 }
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Intersection {
     pub t: RtcFl,
     pub shape: Shape,
@@ -31,25 +32,24 @@ impl Intersection {
 }
 
 pub struct Intersections {
-    i: Vec<Intersection>,
+    data: Vec<Intersection>,
 }
 
 impl Intersections {
-    pub fn new(i: Vec<Intersection>) -> Self {
-        Self { i }
+    pub fn new(mut data: Vec<Intersection>) -> Self {
+        data.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).expect("Unable to sort intersections!"));
+        Self { data: data }
     }
-    /*
-    pub fn hit(&self) -> Intersection {
-        let mut sorted = self.i.sort_by(|a, b| a.t - b.t);
-        let positives = sorted.map(|n| {
-            if n.t >= 0.0 {
-                return n;
-            }
-        });
 
-        return positives[0];
+    pub fn hit(&self) -> Option<Intersection> {
+        for n in self.data.iter() {
+            if n.t >= 0.0 {
+                return Some(*n);
+            }
+        }
+
+        None
     }
-    */
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
