@@ -3,7 +3,7 @@ use std::vec;
 #[cfg(test)]
 use crate::{
     ray::Ray,
-    shape::{Intersectable, Intersection, Shape, Sphere},
+    shape::{Intersectable, Intersection, Intersections, Shape, Sphere},
     tuples::{point, vector},
 };
 
@@ -118,16 +118,15 @@ fn intersect_sets_the_object_on_the_intersection() {
     assert_eq!(xs[0].shape, Shape::Sphere(s));
     assert_eq!(xs[1].shape, Shape::Sphere(s));
 }
-/* 
+
 #[test]
 fn the_hit_when_all_intersections_have_positive_t_value() {
     let s = Sphere::new();
     let i1 = Intersection::new(1.0, Shape::Sphere(s));
     let i2 = Intersection::new(2.0, Shape::Sphere(s));
-    let xs = vec!(&i2, &i1);
+    let xs = Intersections::new(vec![i2, i1]);
 
     let i = xs.hit();
 
-    assert_eq!(i, i1);
+    assert_eq!(i, Some(i1));
 }
- */
