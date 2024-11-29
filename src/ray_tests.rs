@@ -130,3 +130,41 @@ fn the_hit_when_all_intersections_have_positive_t_value() {
 
     assert_eq!(i, Some(i1));
 }
+
+#[test]
+fn the_hit_when_some_intersections_have_negative_t_value() {
+    let s = Sphere::new();
+    let i1 = Intersection::new(-1.0, Shape::Sphere(s));
+    let i2 = Intersection::new(1.0, Shape::Sphere(s));
+    let xs = Intersections::new(vec![i2, i1]);
+
+    let i = xs.hit();
+
+    assert_eq!(i, Some(i2));
+}
+
+#[test]
+fn the_hit_when_all_intersections_have_negative_t_value() {
+    let s = Sphere::new();
+    let i1 = Intersection::new(-2.0, Shape::Sphere(s));
+    let i2 = Intersection::new(-1.0, Shape::Sphere(s));
+    let xs = Intersections::new(vec![i2, i1]);
+
+    let i = xs.hit();
+
+    assert_eq!(i, None);
+}
+
+#[test]
+fn the_hit_is_always_the_lowest_nonnegative_intersection() {
+    let s = Sphere::new();
+    let i1 = Intersection::new(5.0, Shape::Sphere(s));
+    let i2 = Intersection::new(7.0, Shape::Sphere(s));
+    let i3 = Intersection::new(-3.0, Shape::Sphere(s));
+    let i4 = Intersection::new(2.0, Shape::Sphere(s));
+    let xs = Intersections::new(vec![i1, i2, i3, i4]);
+
+    let i = xs.hit();
+
+    assert_eq!(i, Some(i4));
+}
