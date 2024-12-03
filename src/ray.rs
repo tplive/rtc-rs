@@ -1,6 +1,5 @@
 use crate::{
-    tuples::Tuple,
-    util::RtcFl,
+    matrix::Matrix4x4, tuples::Tuple, util::RtcFl
 };
 
 pub struct Ray {
@@ -23,4 +22,13 @@ impl Ray {
     pub fn position(&self, t: RtcFl) -> Tuple {
         self.origin + self.direction * t
     }
+
+    pub fn transform(&self, m: Matrix4x4) -> Self {
+        Ray {
+            origin: m * self.origin,
+            direction: m * self.direction,
+        }
+    }
 }
+
+
