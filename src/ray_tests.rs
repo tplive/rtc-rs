@@ -1,5 +1,6 @@
 use std::vec;
 
+use crate::transformation::Transformation;
 #[cfg(test)]
 use crate::{
     ray::Ray,
@@ -167,4 +168,24 @@ fn the_hit_is_always_the_lowest_nonnegative_intersection() {
     let i = xs.hit();
 
     assert_eq!(i, Some(i4));
+}
+
+#[test]
+fn translating_a_ray() {
+    let r1 = Ray::new(point(1.0, 2.0, 3.0), vector(0.0, 1.0, 0.0));
+    let m = Transformation::new().translation(3.0, 4.0, 5.0);
+    let r2 = r1.transform(m.get());
+
+    assert_eq!(r2.origin, point(4.0, 6.0, 8.0));
+    assert_eq!(r2.direction, vector(0.0, 1.0, 0.0));
+}
+
+#[test]
+fn scaling_a_ray() {
+    let r1 = Ray::new(point(1.0, 2.0, 3.0), vector(0.0, 1.0, 0.0));
+    let m = Transformation::new().scaling(2.0, 3.0, 4.0);
+    let r2 = r1.transform(m.get());
+
+    assert_eq!(r2.origin, point(2.0, 6.0, 12.0));
+    assert_eq!(r2.direction, vector(0.0, 3.0, 0.0));
 }
