@@ -1,4 +1,4 @@
-use crate::{matrix::Matrix4x4, ray::Ray, transformation::Transformation, tuples::point, util::RtcFl};
+use crate::{matrix::Matrix4x4, ray::Ray, tuples::point, util::RtcFl};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
@@ -41,7 +41,7 @@ impl Intersections {
             a.t.partial_cmp(&b.t)
                 .expect("Unable to sort intersections!")
         });
-        Self { data: data }
+        Self { data }
     }
 
     pub fn hit(&self) -> Option<Intersection> {
