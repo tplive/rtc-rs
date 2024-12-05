@@ -1,9 +1,11 @@
+use std::f32::consts::PI;
+
 use crate::matrix::Matrix4;
 use crate::ray::Ray;
 #[cfg(test)]
 use crate::shape::Intersectable;
 use crate::shape::Sphere;
-use crate::transformation::Transformation;
+use crate::transformation::{rotation_z, scaling, Transformation};
 use crate::tuples::{point, vector};
 
 #[test]
@@ -64,3 +66,65 @@ fn intersect_translated_sphere_with_ray() {
     assert_eq!(xs.len(), 0);
 }
 
+#[test]
+fn normal_on_a_sphere_at_a_point_on_the_x_axis() {
+    let s = Sphere::new();
+    let n = s.normal_at(point(1.0, 0.0, 0.0));
+
+    assert_eq!(vector(1.0, 0.0, 0.0), n);
+}
+
+#[test]
+fn normal_on_a_sphere_at_a_point_on_the_y_axis() {
+    let s = Sphere::new();
+    let n = s.normal_at(point(0.0, 1.0, 0.0));
+
+    assert_eq!(vector(0.0, 1.0, 0.0), n);
+}
+
+#[test]
+fn normal_on_a_sphere_at_a_point_on_the_z_axis() {
+    let s = Sphere::new();
+    let n = s.normal_at(point(0.0, 0.0, 1.0));
+
+    assert_eq!(vector(0.0, 0.0, 1.0), n);
+}
+
+#[test]
+fn normal_on_a_sphere_at_a_non_axial_point() {
+    let s = Sphere::new();
+    let sqrt3over3 = 3.0_f32.sqrt() / 3.0;
+    let n = s.normal_at(point(sqrt3over3, sqrt3over3, sqrt3over3));
+
+    assert_eq!(vector(sqrt3over3, sqrt3over3, sqrt3over3), n);
+}
+
+#[test]
+fn the_normal_is_a_normalized_vector() {
+    let s = Sphere::new();
+    let sqrt3over3 = 3.0_f32.sqrt() / 3.0;
+    let n = s.normal_at(point(sqrt3over3, sqrt3over3, sqrt3over3));
+
+    assert_eq!(n.normalize(), n);
+}
+
+#[test]
+fn computing_normal_on_translated_sphere() {
+    let mut s = Sphere::new();
+    s.transform = Transformation::new().translation(0.0, 1.0, 0.0).get();
+
+    let n = s.normal_at(point(0.0, 1.70711, -0.70711));
+
+    assert_eq!(vector(0.0, 0.70711, -0.70711), n);
+}
+
+#[test]
+fn computing_normal_on_transformed_sphere() {
+    let mut s = Sphere::new();
+    s.transform = scaling(1.0, 0.5, 1.0) * rotation_z(PI / 5.0);
+    let sqrt2over2 = 2.0_f32.sqrt() / 2.0;
+
+    let n = s.normal_at(point(0.0, sqrt2over2, -sqrt2over2));
+
+    assert_eq!(vector(0.0, 0.97014, -0.24254), n);
+}
