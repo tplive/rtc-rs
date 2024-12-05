@@ -1,4 +1,9 @@
-use crate::{matrix::Matrix4, ray::Ray, tuples::point, util::RtcFl};
+use crate::{
+    matrix::Matrix4,
+    ray::Ray,
+    tuples::{point, Tuple},
+    util::RtcFl,
+};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
@@ -67,6 +72,27 @@ impl Sphere {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
             transform: Matrix4::identity(),
         }
+    }
+
+    pub fn normal_at(&self, p: Tuple) -> Tuple {
+        let object_point = match self.transform.try_inverse() {
+            Some(matrix) => matrix * p,
+            None => {
+                println!("{}", self.transform);
+                panic!("Cannot invert matrix.");
+            }
+        };
+
+        let object_normal = object_point - point(0.0, 0.0, 0.0);
+        let world_normal = match self.transform.try_inverse() {
+            Some(matrix) => matrix.transpose() * object_normal,
+            None => {
+                println!("{}", self.transform);
+                panic!("Cannot invert matrix.");
+            }
+        };
+
+        Tuple::new(world_normal.x, world_normal.y, world_normal.z, 0.0).normalize()
     }
 }
 
