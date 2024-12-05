@@ -9,9 +9,7 @@ pub struct Transformation {
 impl Transformation {
 
     pub fn new() -> Self {
-        Self {
-            t: Matrix4x4::identity(),
-        }
+        Self::default()
     }
 
     pub fn get(&self) -> Matrix4x4 {
@@ -90,29 +88,9 @@ impl Transformation {
         self
     }
 }
-/* 
-// Shortcut functions
-pub fn tr(x: RtcFl, y: RtcFl, z: RtcFl) -> Matrix4x4 {
-    Transformation::translation(x, y, z)
-}
 
-pub fn sc(x: RtcFl, y: RtcFl, z: RtcFl) -> Matrix4x4 {
-    Transformation::scaling(x, y, z)
+impl Default for Transformation {
+    fn default() -> Self {
+        Self { t: Matrix4x4::identity() }
+    }
 }
-
-pub fn rx(r: RtcFl) -> Matrix4x4 {
-    Transformation::rotation_x(r)
-}
-
-pub fn ry(r: RtcFl) -> Matrix4x4 {
-    Transformation::rotation_y(r)
-}
-
-pub fn rz(r: RtcFl) -> Matrix4x4 {
-    Transformation::rotation_z(r)
-}
-
-pub fn sh(xy: RtcFl, xz: RtcFl, yx: RtcFl, yz: RtcFl, zx: RtcFl, zy: RtcFl) -> Matrix4x4 {
-    Transformation::shearing(xy, xz, yx, yz, zx, zy)
-}
-    */
