@@ -7,6 +7,7 @@ use rtc::{
     color::Color,
     ray::Ray,
     shape::{Intersectable, Intersections, Sphere},
+    transformation::Transformation,
     tuples::point,
     util::RtcFl,
 };
@@ -23,7 +24,11 @@ fn main() {
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
     let color = Color::new(1.0, 0.5, 0.5);
-    let shape = Sphere::new();
+    let mut shape = Sphere::new();
+    shape.transform = Transformation::new()
+        .scaling(0.6, 1.2, 0.8)
+        .shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7)
+        .get();
 
     for y in 0..canvas_pixels - 1 {
         let world_y = half - pixel_size * y as RtcFl;
