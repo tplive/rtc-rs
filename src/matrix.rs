@@ -1,4 +1,4 @@
-use std::{ops, usize};
+use std::ops;
 
 use nalgebra::SMatrix;
 
@@ -65,9 +65,9 @@ impl Operations<Matrix3x3> for Matrix3x3 {
     fn cofactor(&self, row: usize, col: usize) -> RtcFl {
         let m = self.minor(row, col);
         if row + col % 2 == 0 {
-            return m;
+            m
         } else {
-            return -m;
+            -m
         }
     }
 
@@ -91,9 +91,9 @@ impl Operations<Matrix4x4> for Matrix4x4 {
     fn cofactor(&self, row: usize, col: usize) -> RtcFl {
         let m = self.minor(row, col);
         if row + col % 2 == 0 {
-            return m;
+            m
         } else {
-            return -m;
+            -m
         }
     }
 
