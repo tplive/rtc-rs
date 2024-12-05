@@ -1,4 +1,4 @@
-use crate::{ray::Ray, tuples::point, util::RtcFl};
+use crate::{matrix::Matrix4x4, ray::Ray, transformation::Transformation, tuples::point, util::RtcFl};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
@@ -37,7 +37,10 @@ pub struct Intersections {
 
 impl Intersections {
     pub fn new(mut data: Vec<Intersection>) -> Self {
-        data.sort_unstable_by(|a, b| a.t.partial_cmp(&b.t).expect("Unable to sort intersections!"));
+        data.sort_unstable_by(|a, b| {
+            a.t.partial_cmp(&b.t)
+                .expect("Unable to sort intersections!")
+        });
         Self { data: data }
     }
 
@@ -55,21 +58,25 @@ impl Intersections {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Sphere {
     pub id: usize,
+    pub transform: Matrix4x4,
 }
 
 impl Sphere {
     pub fn new() -> Self {
         Self {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
+            transform: Matrix4x4::identity(),
         }
     }
 }
 
 impl Intersectable for Sphere {
     fn intersect(&self, ray: Ray) -> Vec<Intersection> {
-        let sphere_to_ray = ray.origin - point(0.0, 0.0, 0.0);
-        let a = ray.direction.dot(ray.direction);
-        let b: f32 = 2.0 * ray.direction.dot(sphere_to_ray);
+        let transformed_ray = ray.transform(self.transform.try_inverse().unwrap());
+
+        let sphere_to_ray = transformed_ray.origin - point(0.0, 0.0, 0.0);
+        let a = transformed_ray.direction.dot(transformed_ray.direction);
+        let b = 2.0 * transformed_ray.direction.dot(sphere_to_ray);
         let c = sphere_to_ray.dot(sphere_to_ray) - 1.0;
 
         let discriminant = b.powi(2) - 4.0 * a * c;
