@@ -94,3 +94,21 @@ impl Default for Transformation {
         Self { t: Matrix4::identity() }
     }
 }
+
+pub fn translation(x: RtcFl, y: RtcFl, z: RtcFl) -> Matrix4 {
+    Transformation::new().translation(x, y, z).get()
+}
+pub fn scaling(x: RtcFl, y: RtcFl, z: RtcFl) -> Matrix4 {
+    Transformation::new().scaling(x, y, z).get()
+}
+pub fn rotation_x(r: RtcFl) -> Matrix4 {
+    Transformation::new().rotation_x(r).get()
+}pub fn rotation_y(r: RtcFl) -> Matrix4 {
+    Transformation::new().rotation_y(r).get()
+}
+pub fn rotation_z(r: RtcFl) -> Matrix4 {
+    Transformation::new().rotation_z(r).get()
+}
+pub fn shearing(xy: RtcFl, xz: RtcFl, yx: RtcFl, yz: RtcFl, zx: RtcFl, zy: RtcFl) -> Matrix4 {
+    Transformation::new().shearing(xy, xz, yx, yz, zx, zy).get()
+}
