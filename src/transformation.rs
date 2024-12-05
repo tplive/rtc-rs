@@ -7,7 +7,6 @@ pub struct Transformation {
 }
 
 impl Transformation {
-
     pub fn new() -> Self {
         Self::default()
     }
@@ -15,13 +14,13 @@ impl Transformation {
     pub fn get(&self) -> Matrix4 {
         self.t
     }
-    
+
     pub fn translation(mut self, x: RtcFl, y: RtcFl, z: RtcFl) -> Self {
         let mut m = Matrix4::identity();
         m[(0, 3)] = x;
         m[(1, 3)] = y;
         m[(2, 3)] = z;
-        
+
         self.t = m * self.t;
 
         self
@@ -34,7 +33,7 @@ impl Transformation {
         m[(2, 2)] = z;
 
         self.t = m * self.t;
-        
+
         self
     }
 
@@ -44,9 +43,9 @@ impl Transformation {
         m[(1, 2)] = -r.sin();
         m[(2, 1)] = r.sin();
         m[(2, 2)] = r.cos();
-        
+
         self.t = m * self.t;
-        
+
         self
     }
 
@@ -58,7 +57,7 @@ impl Transformation {
         m[(2, 2)] = r.cos();
 
         self.t = m * self.t;
-        
+
         self
     }
 
@@ -70,11 +69,19 @@ impl Transformation {
         m[(1, 1)] = r.cos();
 
         self.t = m * self.t;
-        
+
         self
     }
 
-    pub fn shearing(mut self, xy: RtcFl, xz: RtcFl, yx: RtcFl, yz: RtcFl, zx: RtcFl, zy: RtcFl) -> Self {
+    pub fn shearing(
+        mut self,
+        xy: RtcFl,
+        xz: RtcFl,
+        yx: RtcFl,
+        yz: RtcFl,
+        zx: RtcFl,
+        zy: RtcFl,
+    ) -> Self {
         let mut m = Matrix4::identity();
         m[(0, 1)] = xy;
         m[(0, 2)] = xz;
@@ -84,31 +91,39 @@ impl Transformation {
         m[(2, 1)] = zy;
 
         self.t = m * self.t;
-        
+
         self
     }
 }
 
 impl Default for Transformation {
     fn default() -> Self {
-        Self { t: Matrix4::identity() }
+        Self {
+            t: Matrix4::identity(),
+        }
     }
 }
 
 pub fn translation(x: RtcFl, y: RtcFl, z: RtcFl) -> Matrix4 {
     Transformation::new().translation(x, y, z).get()
 }
+
 pub fn scaling(x: RtcFl, y: RtcFl, z: RtcFl) -> Matrix4 {
     Transformation::new().scaling(x, y, z).get()
 }
+
 pub fn rotation_x(r: RtcFl) -> Matrix4 {
     Transformation::new().rotation_x(r).get()
-}pub fn rotation_y(r: RtcFl) -> Matrix4 {
+}
+
+pub fn rotation_y(r: RtcFl) -> Matrix4 {
     Transformation::new().rotation_y(r).get()
 }
+
 pub fn rotation_z(r: RtcFl) -> Matrix4 {
     Transformation::new().rotation_z(r).get()
 }
+
 pub fn shearing(xy: RtcFl, xz: RtcFl, yx: RtcFl, yz: RtcFl, zx: RtcFl, zy: RtcFl) -> Matrix4 {
     Transformation::new().shearing(xy, xz, yx, yz, zx, zy).get()
 }
