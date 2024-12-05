@@ -197,3 +197,21 @@ fn cross_product_of_two_vectors() {
     assert_eq!(v2.cross(v1), expected2);
 }
 
+#[test]
+fn reflect_vector_approaching_at_45_degrees() {
+    let v = vector(1.0, -1.0, 0.0);
+    let n = vector(0.0, 1.0, 0.0);
+    let r = v.reflect(n);
+
+    assert_eq!(r, vector(1.0, 1.0, 0.0));
+}
+#[test]
+fn reflect_vector_off_slanted_surface() {
+    let v = vector(0.0, -1.0, 0.0);
+    let sqrt2over2 = 2.0_f32.sqrt() / 2.0;
+
+    let n = vector(sqrt2over2, sqrt2over2, 0.0);
+    let r = v.reflect(n);
+
+    assert_eq!(r, vector(1.0, 0.0, 0.0));
+}
