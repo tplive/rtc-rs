@@ -1,4 +1,4 @@
-use crate::{matrix::Matrix4x4, ray::Ray, tuples::point, util::RtcFl};
+use crate::{matrix::Matrix4, ray::Ray, tuples::point, util::RtcFl};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
@@ -58,14 +58,14 @@ impl Intersections {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Sphere {
     pub id: usize,
-    pub transform: Matrix4x4,
+    pub transform: Matrix4,
 }
 
 impl Sphere {
     pub fn new() -> Self {
         Self {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
-            transform: Matrix4x4::identity(),
+            transform: Matrix4::identity(),
         }
     }
 }

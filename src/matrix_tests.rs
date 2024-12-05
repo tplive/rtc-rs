@@ -10,7 +10,7 @@ use nalgebra::RowVector4;
 
 #[test]
 fn constructing_and_inspecting_a_4x4_matrix() {
-    let m = Matrix4x4::new(
+    let m = Matrix4::new(
         1.0, 2.0, 3.0, 4.0, 5.5, 6.5, 7.5, 8.5, 9.0, 10.0, 11.0, 12.0, 13.5, 14.5, 15.5, 16.5,
     );
 
@@ -24,7 +24,7 @@ fn constructing_and_inspecting_a_4x4_matrix() {
 
 #[test]
 fn can_make_2x2_matrix() {
-    let m = Matrix2x2::new(-3.0, 5.0, 1.0, -2.0);
+    let m = Matrix2::new(-3.0, 5.0, 1.0, -2.0);
 
     assert_eq!(m[(0, 0)], -3.0);
     assert_eq!(m[(0, 1)], 5.0);
@@ -34,7 +34,7 @@ fn can_make_2x2_matrix() {
 
 #[test]
 fn can_make_3x32_matrix() {
-    let m = Matrix3x3::new(-3.0, 5.0, 0.0, 1.0, -2.0, -1.0, 0.0, 1.0, 1.0);
+    let m = Matrix3::new(-3.0, 5.0, 0.0, 1.0, -2.0, -1.0, 0.0, 1.0, 1.0);
 
     assert_eq!(m[(0, 0)], -3.0);
     assert_eq!(m[(0, 1)], 5.0);
@@ -43,14 +43,14 @@ fn can_make_3x32_matrix() {
 
 #[test]
 fn matrix_equality() {
-    let mut ma = Matrix4x4::identity();
+    let mut ma = Matrix4::identity();
 
     ma.set_row(0, &RowVector4::new(1.0, 2.0, 3.0, 4.0));
     ma.set_row(1, &RowVector4::new(5.0, 6.0, 7.0, 8.0));
     ma.set_row(2, &RowVector4::new(9.0, 8.0, 7.0, 6.0));
     ma.set_row(3, &RowVector4::new(5.0, 4.0, 3.0, 2.0));
 
-    let mb = Matrix4x4::new(
+    let mb = Matrix4::new(
         1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0,
     );
 
@@ -59,14 +59,14 @@ fn matrix_equality() {
 
 #[test]
 fn matrix_inequality() {
-    let mut ma = Matrix4x4::identity();
+    let mut ma = Matrix4::identity();
 
     ma.set_row(0, &RowVector4::new(1.0, 2.0, 3.0, 4.0));
     ma.set_row(1, &RowVector4::new(5.0, 6.0, 7.0, 8.0));
     ma.set_row(2, &RowVector4::new(9.0, 8.0, 7.0, 6.0));
     ma.set_row(3, &RowVector4::new(5.0, 4.0, 3.0, 2.0));
 
-    let mb = Matrix4x4::new(
+    let mb = Matrix4::new(
         2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0,
     );
 
@@ -75,19 +75,19 @@ fn matrix_inequality() {
 
 #[test]
 fn multiply_matrices() {
-    let mut ma = Matrix4x4::identity();
+    let mut ma = Matrix4::identity();
 
     ma.set_row(0, &RowVector4::new(1.0, 2.0, 3.0, 4.0));
     ma.set_row(1, &RowVector4::new(5.0, 6.0, 7.0, 8.0));
     ma.set_row(2, &RowVector4::new(9.0, 8.0, 7.0, 6.0));
     ma.set_row(3, &RowVector4::new(5.0, 4.0, 3.0, 2.0));
 
-    let mb = Matrix4x4::new(
+    let mb = Matrix4::new(
         -2.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, -1.0, 4.0, 3.0, 6.0, 5.0, 1.0, 2.0, 7.0, 8.0,
     );
 
     let m_actual = ma * mb;
-    let m_expected = Matrix4x4::new(
+    let m_expected = Matrix4::new(
         20.0, 22.0, 50.0, 48.0, 44.0, 54.0, 114.0, 108.0, 40.0, 58.0, 110.0, 102.0, 16.0, 26.0,
         46.0, 42.0,
     );
@@ -97,7 +97,7 @@ fn multiply_matrices() {
 
 #[test]
 fn matrix_multiplied_by_tuple() {
-    let a = Matrix4x4::new(
+    let a = Matrix4::new(
         1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
     );
 
@@ -111,10 +111,10 @@ fn matrix_multiplied_by_tuple() {
 
 #[test]
 fn multiply_matrix_by_identity_matrix() {
-    let m = Matrix4x4::new(
+    let m = Matrix4::new(
         0.0, 1.0, 2.0, 4.0, 1.0, 2.0, 4.0, 8.0, 2.0, 4.0, 8.0, 16.0, 4.0, 8.0, 16.0, 32.0,
     );
-    let idm = Matrix4x4::identity();
+    let idm = Matrix4::identity();
 
     let actual = m * idm;
     let expected = m;
@@ -126,7 +126,7 @@ fn multiply_matrix_by_identity_matrix() {
 fn multiply_identity_matrix_by_tuple() {
     let t = Tuple::new(1.0, 2.0, 3.0, 4.0);
 
-    let idm = Matrix4x4::identity();
+    let idm = Matrix4::identity();
 
     let actual = idm * t;
     let expected = t;
@@ -136,11 +136,11 @@ fn multiply_identity_matrix_by_tuple() {
 
 #[test]
 fn transposing_a_matrix() {
-    let m = Matrix4x4::new(
+    let m = Matrix4::new(
         0.0, 9.0, 3.0, 0.0, 9.0, 8.0, 0.0, 8.0, 1.0, 8.0, 5.0, 3.0, 0.0, 0.0, 5.0, 8.0,
     );
 
-    let expected = Matrix4x4::new(
+    let expected = Matrix4::new(
         0.0, 9.0, 1.0, 0.0, 9.0, 8.0, 8.0, 0.0, 3.0, 0.0, 5.0, 5.0, 0.0, 8.0, 3.0, 8.0,
     );
 
@@ -151,9 +151,9 @@ fn transposing_a_matrix() {
 
 #[test]
 fn transposing_identity_matrix() {
-    let m = Matrix4x4::identity();
+    let m = Matrix4::identity();
 
-    let expected = Matrix4x4::identity();
+    let expected = Matrix4::identity();
 
     let actual = m.transpose();
 
@@ -163,7 +163,7 @@ fn transposing_identity_matrix() {
 
 #[test]
 fn calculate_determinant_of_2x2_matrix() {
-    let m = Matrix2x2::new(1.0, 5.0, -3.0, 2.0);
+    let m = Matrix2::new(1.0, 5.0, -3.0, 2.0);
     let actual = m.determinant();
     let expected = 17.0;
     assert_eq!(expected, actual);
@@ -171,9 +171,9 @@ fn calculate_determinant_of_2x2_matrix() {
 
 #[test]
 fn submatrix_of_3x3_is_2x2() {
-    let m3x3 = Matrix3x3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
+    let m3x3 = Matrix3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
     let actual = m3x3.view((1, 0), (2, 2));
-    let expected = Matrix2x2::new(-3.0, 2.0, 0.0, 6.0);
+    let expected = Matrix2::new(-3.0, 2.0, 0.0, 6.0);
 
     // Debug helper info:
     //println!("Initial:{}", m3x3);
@@ -185,9 +185,9 @@ fn submatrix_of_3x3_is_2x2() {
 
 #[test]
 fn trait_submatrix_of_3x3_is_2x2() {
-    let m3x3 = Matrix3x3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
+    let m3x3 = Matrix3::new(1.0, 5.0, 0.0, -3.0, 2.0, 7.0, 0.0, 6.0, -3.0);
     let actual = m3x3.submatrix(0, 2);
-    let expected = Matrix2x2::new(-3.0, 2.0, 0.0, 6.0);
+    let expected = Matrix2::new(-3.0, 2.0, 0.0, 6.0);
 
     // Debug helper info:
     //println!("Initial:{}", m3x3);
@@ -199,12 +199,12 @@ fn trait_submatrix_of_3x3_is_2x2() {
 
 #[test]
 fn trait_submatrix_of_4x4_is_3x3() {
-    let m4x4 = Matrix4x4::new(
+    let m4x4 = Matrix4::new(
         -6.0, 1.0, 1.0, 6.0, -8.0, 5.0, 8.0, 6.0, -1.0, 0.0, 8.0, 2.0, -7.0, 1.0, -1.0, 1.0,
     );
 
     let actual = m4x4.submatrix(2, 1);
-    let expected = Matrix3x3::new(-6.0, 1.0, 6.0, -8.0, 8.0, 6.0, -7.0, -1.0, 1.0);
+    let expected = Matrix3::new(-6.0, 1.0, 6.0, -8.0, 8.0, 6.0, -7.0, -1.0, 1.0);
 
     // Debug helper info:
     println!("Initial:{}", m4x4);
@@ -216,7 +216,7 @@ fn trait_submatrix_of_4x4_is_3x3() {
 
 #[test]
 fn calculate_minor_of_3x3_matrix() {
-    let m3x3 = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
+    let m3x3 = Matrix3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
     let subm = m3x3.submatrix(1, 0);
 
     let expected = 25.0;
@@ -228,7 +228,7 @@ fn calculate_minor_of_3x3_matrix() {
 
 #[test]
 fn calculate_cofactor_of_3x3_matrix() {
-    let m3x3 = Matrix3x3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
+    let m3x3 = Matrix3::new(3.0, 5.0, 0.0, 2.0, -1.0, -7.0, 6.0, -1.0, 5.0);
 
     let expected_minor_at_0_0 = -12.0;
     let expected_cofactor_at_0_0 = -12.0;
@@ -248,7 +248,7 @@ fn calculate_cofactor_of_3x3_matrix() {
 
 #[test]
 fn calculate_determinant_of_3x3_matrix() {
-    let m3x3 = Matrix3x3::new(1.0, 2.0, 6.0, -5.0, 8.0, -4.0, 2.0, 6.0, 4.0);
+    let m3x3 = Matrix3::new(1.0, 2.0, 6.0, -5.0, 8.0, -4.0, 2.0, 6.0, 4.0);
 
     assert_eq!(m3x3.cofactor(0, 0), 56.0);
     assert_eq!(m3x3.cofactor(0, 1), 12.0);
@@ -261,7 +261,7 @@ fn calculate_determinant_of_3x3_matrix() {
 
 #[test]
 fn calculate_determinant_of_4x4_matrix() {
-    let m4x4 = Matrix4x4::new(
+    let m4x4 = Matrix4::new(
         -2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0,
     );
 
@@ -285,7 +285,7 @@ fn calculate_determinant_of_4x4_matrix() {
 
 #[test]
 fn testing_an_invertible_matrix_for_invertibility() {
-    let m4x4 = Matrix4x4::new(
+    let m4x4 = Matrix4::new(
         6.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 6.0, 4.0, -9.0, 3.0, -7.0, 9.0, 1.0, 7.0, -6.0,
     );
 
@@ -294,7 +294,7 @@ fn testing_an_invertible_matrix_for_invertibility() {
 
 #[test]
 fn testing_a_non_invertible_matrix_for_invertibility() {
-    let m4x4 = Matrix4x4::new(
+    let m4x4 = Matrix4::new(
         -4.0, 2.0, -2.0, -3.0, 9.0, 6.0, 2.0, 6.0, 0.0, -5.0, 1.0, -5.0, 0.0, 0.0, 0.0, 0.0,
     );
 
@@ -303,7 +303,7 @@ fn testing_a_non_invertible_matrix_for_invertibility() {
 
 #[test]
 fn calculating_inverse_of_matrix() {
-    let ma = Matrix4x4::new(
+    let ma = Matrix4::new(
         -5.0, 2.0, 6.0, -8.0, 1.0, -5.0, 1.0, 8.0, 7.0, 7.0, -6.0, -7.0, 1.0, -3.0, 7.0, 4.0,
     );
 
@@ -316,7 +316,7 @@ fn calculating_inverse_of_matrix() {
     // The book operates with less precision. Instead of rounding the actual matrix
     // to five decimals, I've added the excess decimals from the actual matrix.
     // It will be interesting to see what happens here if I change RtcFl to f64.
-    let expected_inverse_matrix_b = Matrix4x4::new(
+    let expected_inverse_matrix_b = Matrix4::new(
         0.21804512,
         0.45112783,
         0.24060151,
@@ -347,13 +347,13 @@ fn calculating_inverse_of_matrix() {
 
 #[test]
 fn calculating_inverse_of_another_matrix() {
-    let ma = Matrix4x4::new(
+    let ma = Matrix4::new(
         8.0, -5.0, 9.0, 2.0, 7.0, 5.0, 6.0, 1.0, -6.0, 0.0, 9.0, 6.0, -3.0, 0.0, -9.0, -4.0,
     );
 
     let mb = ma.try_inverse().unwrap();
 
-    let expected_inverse = Matrix4x4::new(
+    let expected_inverse = Matrix4::new(
         -0.15384616,
         -0.15384616,
         -0.2820513,
@@ -379,14 +379,14 @@ fn calculating_inverse_of_another_matrix() {
 
 #[test]
 fn calculating_inverse_of_a_third_matrix() {
-    let ma = Matrix4x4::new(
+    let ma = Matrix4::new(
         9.0, 3.0, 0.0, 9.0, -5.0, -2.0, -6.0, -3.0, -4.0, 9.0, 6.0, 4.0, -7.0, 6.0, 6.0, 2.0,
     );
 
     let mb = ma.try_inverse().unwrap();
 
     // The expected inverse here does not match the test in the book page 41. This may be an error in the book, or something I missed. Remains to be seen.
-    let expected_inverse = Matrix4x4::new(
+    let expected_inverse = Matrix4::new(
         -0.040740743,
         -0.07777778,
         0.14444445,
@@ -413,11 +413,11 @@ fn calculating_inverse_of_a_third_matrix() {
 
 #[test]
 fn multiply_product_by_inverse() {
-    let ma = Matrix4x4::new(
+    let ma = Matrix4::new(
         3.0, -9.0, 7.0, 3.0, 3.0, -8.0, 2.0, -9.0, -4.0, 4.0, 4.0, 1.0, -6.0, 5.0, -1.0, 1.0,
     );
 
-    let mb = Matrix4x4::new(
+    let mb = Matrix4::new(
         8.0, 2.0, 2.0, 2.0, 3.0, -1.0, 7.0, 0.0, 7.0, 0.0, 5.0, 4.0, 6.0, -2.0, 0.0, 5.0,
     );
 

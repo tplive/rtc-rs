@@ -1,4 +1,4 @@
-use crate::matrix::Matrix4x4;
+use crate::matrix::Matrix4;
 use crate::ray::Ray;
 #[cfg(test)]
 use crate::shape::Intersectable;
@@ -25,7 +25,7 @@ fn creating_a_sphere() {
 #[test]
 fn spheres_default_transform_is_identity_matrix() {
     let s = Sphere::new();
-    let m = Matrix4x4::identity();
+    let m = Matrix4::identity();
 
     assert_eq!(s.transform, m);
 }

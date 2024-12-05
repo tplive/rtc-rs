@@ -8,11 +8,11 @@ use crate::{tuples::Tuple, util::{equal, RtcFl}};
 /// Been there, done that.
 ///
 ///
-pub type Matrix2x2 = SMatrix<RtcFl, 2, 2>;
-pub type Matrix3x3 = SMatrix<RtcFl, 3, 3>;
-pub type Matrix4x4 = SMatrix<RtcFl, 4, 4>;
+pub type Matrix2 = SMatrix<RtcFl, 2, 2>;
+pub type Matrix3 = SMatrix<RtcFl, 3, 3>;
+pub type Matrix4 = SMatrix<RtcFl, 4, 4>;
 
-impl ops::Mul<Tuple> for Matrix4x4 {
+impl ops::Mul<Tuple> for Matrix4 {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Self::Output {
@@ -33,19 +33,19 @@ pub trait Submatrix<T> {
     fn submatrix(&self, row: usize, col: usize) -> T;
 }
 
-impl Submatrix<Matrix2x2> for Matrix3x3 {
-    fn submatrix(&self, row: usize, col: usize) -> Matrix2x2 {
+impl Submatrix<Matrix2> for Matrix3 {
+    fn submatrix(&self, row: usize, col: usize) -> Matrix2 {
         let temp = &self.remove_row(row).remove_column(col);
-        let m2x2: Matrix2x2 = temp.clone_owned();
+        let m2x2: Matrix2 = temp.clone_owned();
 
         m2x2
     }
 }
 
-impl Submatrix<Matrix3x3> for Matrix4x4 {
-    fn submatrix(&self, row: usize, col: usize) -> Matrix3x3 {
+impl Submatrix<Matrix3> for Matrix4 {
+    fn submatrix(&self, row: usize, col: usize) -> Matrix3 {
         let temp = &self.remove_row(row).remove_column(col);
-        let m3x3: Matrix3x3 = temp.clone_owned();
+        let m3x3: Matrix3 = temp.clone_owned();
 
         m3x3
     }
@@ -57,7 +57,7 @@ pub trait Operations<T> {
     fn equals(&self, other: T) -> bool;
 }
 
-impl Operations<Matrix3x3> for Matrix3x3 {
+impl Operations<Matrix3> for Matrix3 {
     fn minor(&self, row: usize, col: usize) -> RtcFl {
         self.submatrix(row, col).determinant()
     }
@@ -71,7 +71,7 @@ impl Operations<Matrix3x3> for Matrix3x3 {
         }
     }
 
-    fn equals(&self, other: Matrix3x3) -> bool {
+    fn equals(&self, other: Matrix3) -> bool {
         let mut result = true;
         for n in 0..self.len() {
             if !equal(self[n], other[n]) {
@@ -83,7 +83,7 @@ impl Operations<Matrix3x3> for Matrix3x3 {
     }
 }
 
-impl Operations<Matrix4x4> for Matrix4x4 {
+impl Operations<Matrix4> for Matrix4 {
     fn minor(&self, row: usize, col: usize) -> RtcFl {
         self.submatrix(row, col).determinant()
     }
@@ -97,7 +97,7 @@ impl Operations<Matrix4x4> for Matrix4x4 {
         }
     }
 
-    fn equals(&self, other: Matrix4x4) -> bool {
+    fn equals(&self, other: Matrix4) -> bool {
         let mut result = true;
         for n in 0..self.len() {
             if !equal(self[n], other[n]) {
