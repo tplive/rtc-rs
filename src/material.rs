@@ -1,4 +1,6 @@
 use crate::{color::Color, util::RtcFl};
+
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Material {
     pub color: Color,
     pub ambient: RtcFl,
