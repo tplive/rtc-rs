@@ -13,9 +13,9 @@ fn creating_a_sphere() {
     // Since id's are given by the global static function in utils.rs, and tests apparently run
     // async, there is no guarantee that the id's will be 1, 2, 3. Instead, we ensure that they are
     // unique and sequential.
-    let s1 = Sphere::new(); // .id = n
-    let s2 = Sphere::new(); // .id = n + 1
-    let s3 = Sphere::new(); // .id = n + 2
+    let s1 = Sphere::default(); // .id = n
+    let s2 = Sphere::default(); // .id = n + 1
+    let s3 = Sphere::default(); // .id = n + 2
 
     let n = s1.id;
 
@@ -26,7 +26,7 @@ fn creating_a_sphere() {
 
 #[test]
 fn spheres_default_transform_is_identity_matrix() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let m = Matrix4::identity();
 
     assert_eq!(s.transform, m);
@@ -34,7 +34,7 @@ fn spheres_default_transform_is_identity_matrix() {
 
 #[test]
 fn changing_spheres_transform() {
-    let mut s = Sphere::new();
+    let mut s = Sphere::default();
     let t = Transformation::new().translation(2.0, 3.0, 4.0);
 
     s.transform = t.get();
@@ -45,7 +45,7 @@ fn changing_spheres_transform() {
 #[test]
 fn intersect_scaled_sphere_with_ray() {
     let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
-    let mut s = Sphere::new();
+    let mut s = Sphere::default();
     s.transform = Transformation::new().scaling(2.0, 2.0, 2.0).get();
 
     let xs = s.intersect(r);
@@ -58,7 +58,7 @@ fn intersect_scaled_sphere_with_ray() {
 #[test]
 fn intersect_translated_sphere_with_ray() {
     let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
-    let mut s = Sphere::new();
+    let mut s = Sphere::default();
     s.transform = Transformation::new().translation(5.0, 0.0, 0.0).get();
 
     let xs = s.intersect(r);
@@ -68,7 +68,7 @@ fn intersect_translated_sphere_with_ray() {
 
 #[test]
 fn normal_on_a_sphere_at_a_point_on_the_x_axis() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let n = s.normal_at(point(1.0, 0.0, 0.0));
 
     assert_eq!(vector(1.0, 0.0, 0.0), n);
@@ -76,7 +76,7 @@ fn normal_on_a_sphere_at_a_point_on_the_x_axis() {
 
 #[test]
 fn normal_on_a_sphere_at_a_point_on_the_y_axis() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let n = s.normal_at(point(0.0, 1.0, 0.0));
 
     assert_eq!(vector(0.0, 1.0, 0.0), n);
@@ -84,7 +84,7 @@ fn normal_on_a_sphere_at_a_point_on_the_y_axis() {
 
 #[test]
 fn normal_on_a_sphere_at_a_point_on_the_z_axis() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let n = s.normal_at(point(0.0, 0.0, 1.0));
 
     assert_eq!(vector(0.0, 0.0, 1.0), n);
@@ -92,7 +92,7 @@ fn normal_on_a_sphere_at_a_point_on_the_z_axis() {
 
 #[test]
 fn normal_on_a_sphere_at_a_non_axial_point() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let sqrt3over3 = 3.0_f32.sqrt() / 3.0;
     let n = s.normal_at(point(sqrt3over3, sqrt3over3, sqrt3over3));
 
@@ -101,7 +101,7 @@ fn normal_on_a_sphere_at_a_non_axial_point() {
 
 #[test]
 fn the_normal_is_a_normalized_vector() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let sqrt3over3 = 3.0_f32.sqrt() / 3.0;
     let n = s.normal_at(point(sqrt3over3, sqrt3over3, sqrt3over3));
 
@@ -110,7 +110,7 @@ fn the_normal_is_a_normalized_vector() {
 
 #[test]
 fn computing_normal_on_translated_sphere() {
-    let mut s = Sphere::new();
+    let mut s = Sphere::default();
     s.transform = Transformation::new().translation(0.0, 1.0, 0.0).get();
 
     let n = s.normal_at(point(0.0, 1.70711, -0.70711));
@@ -120,7 +120,7 @@ fn computing_normal_on_translated_sphere() {
 
 #[test]
 fn computing_normal_on_transformed_sphere() {
-    let mut s = Sphere::new();
+    let mut s = Sphere::default();
     s.transform = scaling(1.0, 0.5, 1.0) * rotation_z(PI / 5.0);
     let sqrt2over2 = 2.0_f32.sqrt() / 2.0;
 

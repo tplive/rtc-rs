@@ -32,7 +32,7 @@ fn computing_a_point_from_a_distance() {
 #[test]
 fn ray_intersects_sphere_to_two_points() {
     let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
-    let s = Sphere::new();
+    let s = Sphere::default();
 
     let xs = s.intersect(r);
 
@@ -44,7 +44,7 @@ fn ray_intersects_sphere_to_two_points() {
 #[test]
 fn ray_intersects_sphere_at_tangent() {
     let r = Ray::new(point(0.0, 1.0, -5.0), vector(0.0, 0.0, 1.0));
-    let s = Sphere::new();
+    let s = Sphere::default();
 
     let xs = s.intersect(r);
 
@@ -56,7 +56,7 @@ fn ray_intersects_sphere_at_tangent() {
 #[test]
 fn ray_misses_sphere() {
     let r = Ray::new(point(0.0, 2.0, -5.0), vector(0.0, 0.0, 1.0));
-    let s = Sphere::new();
+    let s = Sphere::default();
 
     let xs = s.intersect(r);
 
@@ -66,7 +66,7 @@ fn ray_misses_sphere() {
 #[test]
 fn ray_originates_inside_sphere() {
     let r = Ray::new(point(0.0, 0.0, -0.0), vector(0.0, 0.0, 1.0));
-    let s = Sphere::new();
+    let s = Sphere::default();
 
     let xs = s.intersect(r);
 
@@ -78,7 +78,7 @@ fn ray_originates_inside_sphere() {
 #[test]
 fn sphere_is_behind_ray() {
     let r = Ray::new(point(0.0, 0.0, 5.0), vector(0.0, 0.0, 1.0));
-    let s = Sphere::new();
+    let s = Sphere::default();
 
     let xs = s.intersect(r);
 
@@ -89,7 +89,7 @@ fn sphere_is_behind_ray() {
 
 #[test]
 fn intersection_encapsulates_t_value_and_object() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let i = Intersection::new(3.5, Shape::Sphere(s));
 
     assert_eq!(i.t, 3.5);
@@ -98,7 +98,7 @@ fn intersection_encapsulates_t_value_and_object() {
 
 #[test]
 fn aggregating_intersections() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let i1 = Intersection::new(1.0, Shape::Sphere(s));
     let i2 = Intersection::new(2.0, Shape::Sphere(s));
     let xs = vec![&i1, &i2];
@@ -111,7 +111,7 @@ fn aggregating_intersections() {
 #[test]
 fn intersect_sets_the_object_on_the_intersection() {
     let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
-    let s = Sphere::new();
+    let s = Sphere::default();
 
     let xs = s.intersect(r);
 
@@ -122,7 +122,7 @@ fn intersect_sets_the_object_on_the_intersection() {
 
 #[test]
 fn the_hit_when_all_intersections_have_positive_t_value() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let i1 = Intersection::new(1.0, Shape::Sphere(s));
     let i2 = Intersection::new(2.0, Shape::Sphere(s));
     let xs = Intersections::new(vec![i2, i1]);
@@ -134,7 +134,7 @@ fn the_hit_when_all_intersections_have_positive_t_value() {
 
 #[test]
 fn the_hit_when_some_intersections_have_negative_t_value() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let i1 = Intersection::new(-1.0, Shape::Sphere(s));
     let i2 = Intersection::new(1.0, Shape::Sphere(s));
     let xs = Intersections::new(vec![i2, i1]);
@@ -146,7 +146,7 @@ fn the_hit_when_some_intersections_have_negative_t_value() {
 
 #[test]
 fn the_hit_when_all_intersections_have_negative_t_value() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let i1 = Intersection::new(-2.0, Shape::Sphere(s));
     let i2 = Intersection::new(-1.0, Shape::Sphere(s));
     let xs = Intersections::new(vec![i2, i1]);
@@ -158,7 +158,7 @@ fn the_hit_when_all_intersections_have_negative_t_value() {
 
 #[test]
 fn the_hit_is_always_the_lowest_nonnegative_intersection() {
-    let s = Sphere::new();
+    let s = Sphere::default();
     let i1 = Intersection::new(5.0, Shape::Sphere(s));
     let i2 = Intersection::new(7.0, Shape::Sphere(s));
     let i3 = Intersection::new(-3.0, Shape::Sphere(s));

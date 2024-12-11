@@ -1,4 +1,5 @@
 use crate::{
+    material::Material,
     matrix::Matrix4,
     ray::Ray,
     tuples::{point, Tuple},
@@ -64,13 +65,25 @@ impl Intersections {
 pub struct Sphere {
     pub id: usize,
     pub transform: Matrix4,
+    pub material: Material,
 }
 
-impl Sphere {
-    pub fn new() -> Self {
+impl Default for Sphere {
+    fn default() -> Self {
         Self {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
             transform: Matrix4::identity(),
+            material: Material::default(),
+        }
+    }
+}
+
+impl Sphere {
+    pub fn new(transform: Matrix4, material: Material) -> Self {
+        Self {
+            id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
+            transform,
+            material,
         }
     }
 
@@ -98,7 +111,11 @@ impl Sphere {
 
 impl Intersectable for Sphere {
     fn intersect(&self, ray: Ray) -> Vec<Intersection> {
-        let transformed_ray = ray.transform(self.transform.try_inverse().unwrap());
+        let transformed_ray = ray.transform(
+            self.transform
+                .try_inverse()
+                .expect("Cannot invert this transform."),
+        );
 
         let sphere_to_ray = transformed_ray.origin - point(0.0, 0.0, 0.0);
         let a = transformed_ray.direction.dot(transformed_ray.direction);

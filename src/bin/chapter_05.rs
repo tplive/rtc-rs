@@ -24,7 +24,7 @@ fn main() {
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
     let color = Color::new(1.0, 0.5, 0.5);
-    let mut shape = Sphere::new();
+    let mut shape = Sphere::default();
     shape.transform = Transformation::new()
         .scaling(0.6, 1.2, 0.8)
         .shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7)
