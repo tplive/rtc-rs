@@ -26,5 +26,13 @@ pub mod shape;
 #[cfg(test)]
 pub mod shape_tests;
 
+pub mod light;
+#[cfg(test)]
+pub mod light_tests;
+
+pub mod material;
+#[cfg(test)]
+pub mod material_tests;
+
 pub mod util;
 
