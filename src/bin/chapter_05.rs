@@ -12,7 +12,7 @@ use rtc::{
     util::RtcFl,
 };
 
-// Putting it together Chapter 4
+// Putting it together Chapter 5
 fn main() {
     let now = Instant::now();
     let ray_origin = point(0.0, 0.0, -5.0);
