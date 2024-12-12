@@ -1,12 +1,14 @@
 use std::f32::consts::PI;
 
-use crate::matrix::Matrix4;
-use crate::ray::Ray;
 #[cfg(test)]
-use crate::shape::Intersectable;
-use crate::shape::Sphere;
-use crate::transformation::{rotation_z, scaling, Transformation};
-use crate::tuples::{point, vector};
+use crate::{
+    material::Material,
+    matrix::Matrix4,
+    ray::Ray,
+    shape::{Intersectable, Sphere},
+    transformation::{rotation_z, scaling, Transformation},
+    tuples::{point, vector},
+};
 
 #[test]
 fn creating_a_sphere() {
@@ -127,4 +129,22 @@ fn computing_normal_on_transformed_sphere() {
     let n = s.normal_at(point(0.0, sqrt2over2, -sqrt2over2));
 
     assert_eq!(vector(0.0, 0.97014, -0.24254), n);
+}
+
+#[test]
+fn a_sphere_has_default_material() {
+    let s = Sphere::default();
+    let m = s.material;
+
+    assert_eq!(m, Material::default());
+}
+
+#[test]
+fn sphere_may_be_assigned_a_material() {
+    let mut s = Sphere::default();
+    let mut m = Material::default();
+    m.shininess = 900.0;
+    s.material = m;
+
+    assert_eq!(s.material.shininess, 900.0);
 }
