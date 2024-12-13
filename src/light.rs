@@ -32,7 +32,7 @@ pub fn lighting(
         diffuse = Color::black();
         specular = Color::black();
     } else {
-        diffuse = effective_color * (material.diffuse * light_dot_normal);
+        diffuse = effective_color * material.diffuse * light_dot_normal;
 
         let reflect_vector = -light_vector.reflect(*normal_vector);
         let reflect_dot_eye = reflect_vector.dot(*eye_vector);
