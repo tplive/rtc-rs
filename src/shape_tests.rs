@@ -46,11 +46,11 @@ fn changing_spheres_transform() {
 
 #[test]
 fn intersect_scaled_sphere_with_ray() {
-    let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
     let mut s = Sphere::default();
     s.transform = Transformation::new().scaling(2.0, 2.0, 2.0).get();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t, 3.0);
@@ -59,11 +59,11 @@ fn intersect_scaled_sphere_with_ray() {
 
 #[test]
 fn intersect_translated_sphere_with_ray() {
-    let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
     let mut s = Sphere::default();
     s.transform = Transformation::new().translation(5.0, 0.0, 0.0).get();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 0);
 }
