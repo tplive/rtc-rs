@@ -13,7 +13,7 @@ fn creating_and_querying_a_ray() {
     let origin = point(1.0, 2.0, 3.0);
     let direction = vector(4.0, 5.0, 6.0);
 
-    let ray = Ray::new(origin, direction);
+    let ray = Ray::new(&origin, &direction);
 
     assert_eq!(ray.origin, origin);
     assert_eq!(ray.direction, direction);
@@ -21,7 +21,7 @@ fn creating_and_querying_a_ray() {
 
 #[test]
 fn computing_a_point_from_a_distance() {
-    let r = Ray::new(point(2.0, 3.0, 4.0), vector(1.0, 0.0, 0.0));
+    let r = Ray::new(&point(2.0, 3.0, 4.0), &vector(1.0, 0.0, 0.0));
 
     assert_eq!(r.position(0.0), point(2.0, 3.0, 4.0));
     assert_eq!(r.position(1.0), point(3.0, 3.0, 4.0));
@@ -31,10 +31,10 @@ fn computing_a_point_from_a_distance() {
 
 #[test]
 fn ray_intersects_sphere_to_two_points() {
-    let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
     let s = Sphere::default();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t, 4.0);
@@ -43,10 +43,10 @@ fn ray_intersects_sphere_to_two_points() {
 
 #[test]
 fn ray_intersects_sphere_at_tangent() {
-    let r = Ray::new(point(0.0, 1.0, -5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 1.0, -5.0), &vector(0.0, 0.0, 1.0));
     let s = Sphere::default();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t, 5.0);
@@ -55,20 +55,20 @@ fn ray_intersects_sphere_at_tangent() {
 
 #[test]
 fn ray_misses_sphere() {
-    let r = Ray::new(point(0.0, 2.0, -5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 2.0, -5.0), &vector(0.0, 0.0, 1.0));
     let s = Sphere::default();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 0);
 }
 
 #[test]
 fn ray_originates_inside_sphere() {
-    let r = Ray::new(point(0.0, 0.0, -0.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 0.0, -0.0), &vector(0.0, 0.0, 1.0));
     let s = Sphere::default();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t, -1.0);
@@ -77,10 +77,10 @@ fn ray_originates_inside_sphere() {
 
 #[test]
 fn sphere_is_behind_ray() {
-    let r = Ray::new(point(0.0, 0.0, 5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 0.0, 5.0), &vector(0.0, 0.0, 1.0));
     let s = Sphere::default();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t, -6.0);
@@ -110,10 +110,10 @@ fn aggregating_intersections() {
 
 #[test]
 fn intersect_sets_the_object_on_the_intersection() {
-    let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+    let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
     let s = Sphere::default();
 
-    let xs = s.intersect(r);
+    let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].shape, Shape::Sphere(s));
@@ -172,7 +172,7 @@ fn the_hit_is_always_the_lowest_nonnegative_intersection() {
 
 #[test]
 fn translating_a_ray() {
-    let r1 = Ray::new(point(1.0, 2.0, 3.0), vector(0.0, 1.0, 0.0));
+    let r1 = Ray::new(&point(1.0, 2.0, 3.0), &vector(0.0, 1.0, 0.0));
     let m = Transformation::new().translation(3.0, 4.0, 5.0);
     let r2 = r1.transform(m.get());
 
@@ -182,7 +182,7 @@ fn translating_a_ray() {
 
 #[test]
 fn scaling_a_ray() {
-    let r1 = Ray::new(point(1.0, 2.0, 3.0), vector(0.0, 1.0, 0.0));
+    let r1 = Ray::new(&point(1.0, 2.0, 3.0), &vector(0.0, 1.0, 0.0));
     let m = Transformation::new().scaling(2.0, 3.0, 4.0);
     let r2 = r1.transform(m.get());
 
