@@ -35,8 +35,8 @@ fn main() {
         for x in 0..canvas_pixels - 1 {
             let world_x = -half + pixel_size * x as RtcFl;
             let position = point(world_x, world_y, wall_z);
-            let r = Ray::new(ray_origin, (position - ray_origin).normalize());
-            let xs = Intersections::new(shape.intersect(r));
+            let r = Ray::new(&ray_origin, &(position - ray_origin).normalize());
+            let xs = Intersections::new(shape.intersect(&r));
 
             if xs.hit() != None {
                 canvas.write_pixel(x, y, color);
