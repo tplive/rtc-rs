@@ -9,14 +9,14 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(o: &Tuple, d: &Tuple) -> Self {
-        if !o.is_point() || !d.is_vector() {
+    pub fn new(origin: &Tuple, direction: &Tuple) -> Self {
+        if !origin.is_point() || !direction.is_vector() {
             panic!("Origin must be a point. Direction must be a vector.");
         }
 
         Self {
-            origin: *o,
-            direction: *d,
+            origin: *origin,
+            direction: *direction,
         }
     }
 
