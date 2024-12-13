@@ -24,8 +24,9 @@ fn lighting_with_eye_between_light_and_surface() {
     let eyev = vector(0.0, 0.0, -1.0);
     let normalv = vector(0.0, 0.0, -1.0);
     let light = Light::point(point(0.0, 0.0, -10.0), Color::white());
-    let result = lighting(m, light, position, eyev, normalv);
+    let result = lighting(&m, &light, &position, &eyev, &normalv);
 
+    //println!("{:?}", &result);
     assert!(Color::new(1.9, 1.9, 1.9).eq(&result));
 }
 
@@ -38,7 +39,7 @@ fn lighting_with_eye_between_light_and_surface_eye_offset_45_degrees() {
     let eyev = point(0.0, sqrt2over2, sqrt2over2);
     let normalv = vector(0.0, 0.0, -1.0);
     let light = Light::point(point(0.0, 0.0, -10.0), Color::white());
-    let result = lighting(m, light, position, eyev, normalv);
+    let result = lighting(&m, &light, &position, &eyev, &normalv);
 
     //println!("{:?}", &result);
     assert!(Color::new(1.0, 1.0, 1.0).eq(&result));
@@ -53,7 +54,7 @@ fn lighting_with_eye_oposite_surface_light_offset_45_degrees() {
     let eyev = point(0.0, sqrt2over2, sqrt2over2);
     let normalv = vector(0.0, 0.0, -1.0);
     let light = Light::point(point(0.0, 10.0, -10.0), Color::white());
-    let result = lighting(m, light, position, eyev, normalv);
+    let result = lighting(&m, &light, &position, &eyev, &normalv);
     
     //println!("{:?}", &result);
     assert!(Color::new(0.7364, 0.7364, 0.7364).eq(&result));
@@ -68,7 +69,7 @@ fn lighting_with_eye_in_path_of_reflection_vector() {
     let eyev = point(0.0, -sqrt2over2, -sqrt2over2);
     let normalv = vector(0.0, 0.0, -1.0);
     let light = Light::point(point(0.0, 10.0, -10.0), Color::white());
-    let result = lighting(m, light, position, eyev, normalv);
+    let result = lighting(&m, &light, &position, &eyev, &normalv);
     
     //println!("{:?}", &result);
     assert!(Color::new(1.6364, 1.6364, 1.6364).eq(&result));
@@ -83,7 +84,7 @@ fn lighting_with_light_behind_surface() {
     let eyev = point(0.0, 0.0, -1.0);
     let normalv = vector(0.0, 0.0, -1.0);
     let light = Light::point(point(0.0, 0.0, 10.0), Color::white());
-    let result = lighting(m, light, position, eyev, normalv);
+    let result = lighting(&m, &light, &position, &eyev, &normalv);
     
     //println!("{:?}", &result);
     assert!(Color::new(0.1, 0.1, 0.1).eq(&result));
