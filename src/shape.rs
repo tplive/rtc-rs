@@ -25,6 +25,19 @@ impl Intersectable for Shape {
         }
     }
 }
+
+pub trait NormalAt {
+    fn normal_at(&self, p: Tuple) -> Tuple;
+}
+
+impl NormalAt for Shape {
+    fn normal_at(&self, p: Tuple) -> Tuple {
+        match *self {
+            Shape::Sphere(ref sphere) => sphere.normal_at(p),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Intersection {
     pub t: RtcFl,
