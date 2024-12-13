@@ -15,11 +15,11 @@ pub enum Shape {
 }
 
 pub trait Intersectable {
-    fn intersect(&self, ray: Ray) -> Vec<Intersection>;
+    fn intersect(&self, ray: &Ray) -> Vec<Intersection>;
 }
 // Inspired by MrJakob: https://youtu.be/lTrtsfYFTeE?si=niGyzutvTC_h92NY&t=965
 impl Intersectable for Shape {
-    fn intersect(&self, ray: Ray) -> Vec<Intersection> {
+    fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
         match *self {
             Shape::Sphere(ref sphere) => sphere.intersect(ray),
         }
@@ -123,7 +123,7 @@ impl Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect(&self, ray: Ray) -> Vec<Intersection> {
+    fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
         let transformed_ray = ray.transform(
             self.transform
                 .try_inverse()
