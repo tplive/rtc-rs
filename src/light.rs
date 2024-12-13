@@ -14,16 +14,16 @@ impl Light {
 }
 
 pub fn lighting(
-    material: Material,
-    light: Light,
-    point: Tuple,
-    eye_vector: Tuple,
-    normal_vector: Tuple,
+    material: &Material,
+    light: &Light,
+    point: &Tuple,
+    eye_vector: &Tuple,
+    normal_vector: &Tuple,
 ) -> Color {
     let effective_color = material.color * light.intensity;
-    let light_vector = (light.position - point).normalize();
+    let light_vector = (light.position - *point).normalize();
     let ambient = effective_color * material.ambient;
-    let light_dot_normal = light_vector.dot(normal_vector);
+    let light_dot_normal = light_vector.dot(*normal_vector);
 
     let diffuse: Color;
     let specular: Color;
@@ -32,10 +32,10 @@ pub fn lighting(
         diffuse = Color::black();
         specular = Color::black();
     } else {
-        diffuse = effective_color * material.diffuse * light_dot_normal;
+        diffuse = effective_color * (material.diffuse * light_dot_normal);
 
-        let reflect_vector = -light_vector.reflect(normal_vector);
-        let reflect_dot_eye = reflect_vector.dot(eye_vector);
+        let reflect_vector = -light_vector.reflect(*normal_vector);
+        let reflect_dot_eye = reflect_vector.dot(*eye_vector);
 
         if reflect_dot_eye <= 0.0 {
             specular = Color::black();
