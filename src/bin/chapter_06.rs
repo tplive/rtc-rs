@@ -1,6 +1,6 @@
 extern crate rtc_rs as rtc;
 
-use std::{fs::File, io::Write, time::{Duration, Instant}};
+use std::{fs::File, io::{BufWriter, Write}, time::{Duration, Instant}};
 
 use rtc::{
     canvas::Canvas,
@@ -67,9 +67,19 @@ fn main() {
     let elapsed = now.elapsed();
     println!("Elapsed time for rendering: {:.2?}", elapsed);
 
-    // Write to file
-    let mut file = File::create("chapter_06.ppm").expect("Unable to create file.");
+    // Write to PPM file
+    let mut ppm_file = File::create("chapter_06.ppm").expect("Unable to create file.");
 
-    file.write_all(&canvas.to_ppm().as_bytes())
-        .expect("Unable to write file.");
+    ppm_file.write_all(&canvas.to_ppm().as_bytes())
+    .expect("Unable to write file.");
+    
+    // Write to PNG file
+    let png_file = File::create("chapter_06.png").expect("Uanable to create file.");
+    let ref mut w = BufWriter::new(png_file);
+    let mut encoder = png::Encoder::new(w, canvas.width as u32, canvas.height as u32);
+    encoder.set_color(png::ColorType::Rgba);
+    encoder.set_depth(png::BitDepth::Eight);
+
+    let mut writer = encoder.write_header().unwrap();
+    writer.write_image_data(&canvas.to_png()).unwrap();
 }

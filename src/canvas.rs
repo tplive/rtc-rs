@@ -86,6 +86,17 @@ impl Canvas {
         ppm
     }
 
+    pub fn to_png(&self) -> Vec<u8> {
+        self.data.iter().flat_map(|col| {
+            vec![
+                Self::scale(col.red),
+                Self::scale(col.green),
+                Self::scale(col.blue),
+                255, // Alpha channel
+            ]
+        }).collect()
+    }
+
     fn scale(v: RtcFl) -> u8 {
         let scaled = (v * 255.0).round();
         scaled.clamp(0.0, 255.0) as u8
