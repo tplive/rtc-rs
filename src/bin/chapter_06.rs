@@ -28,25 +28,18 @@ fn main() {
     let mut shape = Sphere::default();
     shape.material.color = Color::new(1.0, 0.2, 1.0);
 
-    let light = Light::point(point(-10.0, 10.0, 10.0), Color::white());
-
-    /*
-    shape.transform = Transformation::new()
-        .scaling(0.6, 1.2, 0.8)
-        .shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7)
-        .get();
-    */
+    let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
 
     let bar = ProgressBar::new((canvas_pixels * canvas_pixels) as u64);
-    bar.enable_steady_tick(Duration::from_millis(500));
+    bar.enable_steady_tick(Duration::from_millis(250));
     
     for y in 0..canvas_pixels - 1 {
         let world_y = half - pixel_size * y as RtcFl;
         for x in 0..canvas_pixels - 1 {
             bar.inc(1);
             let world_x = -half + pixel_size * x as RtcFl;
-            let position = point(world_x, world_y, wall_z);
-            let r = Ray::new(&ray_origin, &(position - ray_origin).normalize());
+            let position = (point(world_x, world_y, wall_z) - ray_origin).normalize();
+            let r = Ray::new(&ray_origin, &position);
             let xs = Intersections::new(shape.intersect(&r));
 
             match xs.hit() {
