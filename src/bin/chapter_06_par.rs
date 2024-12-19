@@ -13,17 +13,21 @@ use rtc::{
 };
 
 use indicatif::ProgressBar;
+use sysinfo::{System, get_current_pid};
 
 // Putting it together Chapter 6
 fn main() {
     // Start timing the run:
     let now = Instant::now();
+    println!("Rendering...");
     
     // Set up the scene
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z: RtcFl = 10.0;
     let wall_size: RtcFl = 7.0;
     let canvas_pixels = 2048;
+    println!("Image size: {}x{}", canvas_pixels, canvas_pixels);
+
     let pixel_size: RtcFl = wall_size / canvas_pixels as RtcFl;
     let half: RtcFl = wall_size / 2.0;
 
@@ -46,7 +50,8 @@ fn main() {
     // Initialize parallelism
     let (tx, rx) = mpsc::channel();
     let num_threads = available_parallelism().map(|n| n.get()).unwrap_or(1);
-    
+    println!("Number of threads: {}", num_threads);
+
     // Divide the work into chunks
     let mut pairs = Vec::new();
     for y in 0..canvas_pixels -1 {
@@ -110,9 +115,15 @@ fn main() {
     // Finish the progress bar
     bar.finish();
 
-    // Calculate and print elapsed time and number of threads
+    // Report memory usage
+    let mut system = System::new_all();
+    system.refresh_all();
+    let process = system.process(get_current_pid().unwrap()).unwrap();
+    println!("Memory usage: {:.2} MB", process.memory() as f64 / 1024.0);
+
+    // Calculate and print elapsed time
     let elapsed = now.elapsed();
-    println!("Number of threads: {}", num_threads);
+    
     println!("Elapsed time for rendering: {:.2?}", elapsed);
 
     // Write to PPM file
@@ -122,7 +133,9 @@ fn main() {
     // .expect("Unable to write file.");
     
     // Write to PNG file
-    let png_file = File::create("chapter_06.png").expect("Uanable to create file.");
+    let path = "chapter_06.png";
+    println!("Writing to file '{}'...", &path);
+    let png_file = File::create(&path).expect("Uanable to create file.");
     let ref mut w = BufWriter::new(png_file);
     let mut encoder = png::Encoder::new(w, canvas.width as u32, canvas.height as u32);
     encoder.set_color(png::ColorType::Rgba);
