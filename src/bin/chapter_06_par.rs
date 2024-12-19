@@ -1,6 +1,6 @@
 extern crate rtc_rs as rtc;
 
-use std::{fs::File, io::BufWriter, sync::mpsc, thread, time::{Duration, Instant}};
+use std::{fs::File, io::BufWriter, sync::mpsc, thread::{self, available_parallelism}, time::{Duration, Instant}};
 
 use rtc::{
     canvas::Canvas,
@@ -34,7 +34,7 @@ fn main() {
     bar.enable_steady_tick(Duration::from_millis(250));
     
     let (tx, rx) = mpsc::channel();
-    let num_threads = 32;
+    let num_threads = available_parallelism().map(|n| n.get()).unwrap_or(1);
     let mut pairs = Vec::new();
     for y in 0..canvas_pixels -1 {
         for x in 0..canvas_pixels - 1 {
