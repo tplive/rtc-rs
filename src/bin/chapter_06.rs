@@ -74,7 +74,7 @@ fn main() {
     .expect("Unable to write file.");
     
     // Write to PNG file
-    let png_file = File::create("chapter_06.png").expect("Uanable to create file.");
+    let png_file = File::create("rendered/chapter_06.png").expect("Unable to create file.");
     let ref mut w = BufWriter::new(png_file);
     let mut encoder = png::Encoder::new(w, canvas.width as u32, canvas.height as u32);
     encoder.set_color(png::ColorType::Rgba);

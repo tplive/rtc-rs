@@ -135,7 +135,7 @@ fn main() {
     // Write to PNG file
     let path = "rendered/chapter_06_par.png";
     println!("Writing to file '{}'...", &path);
-    let png_file = File::create(&path).expect("Uanable to create file.");
+    let png_file = File::create(&path).expect("Unable to create file.");
     let ref mut w = BufWriter::new(png_file);
     let mut encoder = png::Encoder::new(w, canvas.width as u32, canvas.height as u32);
     encoder.set_color(png::ColorType::Rgba);

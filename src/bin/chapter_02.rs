@@ -65,7 +65,7 @@ fn main() {
         println!("Position on canvas:\t{:?}\t\t{:?}", x, y);
     }
  
-    let mut file = File::create("chapter_02.ppm").expect("Unable to create file.");
+    let mut file = File::create("rendered/chapter_02.ppm").expect("Unable to create file.");
 
     file.write_all(&can.to_ppm().as_bytes())
         .expect("Unable to write file.");

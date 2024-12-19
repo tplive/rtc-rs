@@ -48,7 +48,7 @@ fn main() {
     println!("Elapsed time for rendering: {:.2?}", elapsed);
 
     // Write to file
-    let mut file = File::create("chapter_05.ppm").expect("Unable to create file.");
+    let mut file = File::create("rendered/chapter_05.ppm").expect("Unable to create file.");
 
     file.write_all(&canvas.to_ppm().as_bytes())
         .expect("Unable to write file.");
