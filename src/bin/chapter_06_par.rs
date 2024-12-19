@@ -133,7 +133,7 @@ fn main() {
     // .expect("Unable to write file.");
     
     // Write to PNG file
-    let path = "chapter_06.png";
+    let path = "rendered/chapter_06_par.png";
     println!("Writing to file '{}'...", &path);
     let png_file = File::create(&path).expect("Uanable to create file.");
     let ref mut w = BufWriter::new(png_file);
