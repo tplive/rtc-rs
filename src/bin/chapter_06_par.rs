@@ -54,8 +54,8 @@ fn main() {
 
     // Divide the work into chunks
     let mut pairs = Vec::new();
-    for y in 0..canvas_pixels -1 {
-        for x in 0..canvas_pixels - 1 {
+    for y in 0..canvas_pixels  {
+        for x in 0..canvas_pixels {
             pairs.push((x, y));
         }
     }
