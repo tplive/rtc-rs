@@ -101,22 +101,17 @@ impl Sphere {
     }
 
     pub fn normal_at(&self, p: Tuple) -> Tuple {
-        let object_point = match self.transform.try_inverse() {
-            Some(matrix) => matrix * p,
+        let inverse_transform = match self.transform.try_inverse() {
+            Some(matrix) => matrix,
             None => {
                 println!("{}", self.transform);
                 panic!("Cannot invert matrix.");
             }
         };
 
+        let object_point = inverse_transform * p;
         let object_normal = object_point - point(0.0, 0.0, 0.0);
-        let world_normal = match self.transform.try_inverse() {
-            Some(matrix) => matrix.transpose() * object_normal,
-            None => {
-                println!("{}", self.transform);
-                panic!("Cannot invert matrix.");
-            }
-        };
+        let world_normal = inverse_transform.transpose() * object_normal;
 
         Tuple::new(world_normal.x, world_normal.y, world_normal.z, 0.0).normalize()
     }
