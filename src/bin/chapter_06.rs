@@ -20,7 +20,7 @@ fn main() {
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z: RtcFl = 10.0;
     let wall_size: RtcFl = 7.0;
-    let canvas_pixels = 400;
+    let canvas_pixels = 2048;
     let pixel_size: RtcFl = wall_size / canvas_pixels as RtcFl;
     let half: RtcFl = wall_size / 2.0;
 
