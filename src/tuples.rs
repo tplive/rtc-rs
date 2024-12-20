@@ -46,11 +46,7 @@ impl Tuple {
     }
 
     pub fn reflect(self, normal: Tuple) -> Self {
-        if self.is_vector() && normal.is_vector() {
-            self - normal * 2.0 * self.dot(normal)
-        } else {
-            panic!("Cannot reflect points!")
-        }
+        self - normal * 2.0 * self.dot(normal)
     }
 }
 
