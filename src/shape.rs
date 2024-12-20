@@ -110,11 +110,20 @@ impl Sphere {
             }
         };
 
-        let object_point = inverse_transform * p;
-        let object_normal = object_point - point(0.0, 0.0, 0.0);
-        let world_normal = inverse_transform.transpose() * object_normal;
+        //println!("Inverse transform: {:?}", inverse_transform);
 
-        Tuple::new(world_normal.x, world_normal.y, world_normal.z, 0.0).normalize()
+        let object_point = inverse_transform * p;
+        //println!("Object point: {:?}", object_point);
+        let object_normal = (object_point - point(0.0, 0.0, 0.0)).normalize();
+        //println!("Object normal: {:?}", object_normal);
+
+        let mut world_normal = inverse_transform.transpose() * object_normal;
+        //println!("World normal before normalization: {:?}", world_normal);
+
+        // Hack to reset the w component, avoiding some more complex matrix math
+        world_normal.w = 0.0;
+
+        world_normal.normalize()
     }
 }
 
