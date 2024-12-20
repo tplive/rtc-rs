@@ -26,9 +26,9 @@ fn main() {
     let color = Color::new(1.0, 0.5, 0.5);
     let mut shape = Sphere::default();
     shape.transform = Transformation::new()
-        .scaling(0.6, 1.2, 0.8)
-        .shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7)
-        .get();
+    .scaling(0.6, 1.2, 0.8)
+    .shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7)
+    .get();
 
     for y in 0..canvas_pixels - 1 {
         let world_y = half - pixel_size * y as RtcFl;
@@ -38,7 +38,7 @@ fn main() {
             let r = Ray::new(&ray_origin, &(position - ray_origin).normalize());
             let xs = Intersections::new(shape.intersect(&r));
 
-            if xs.hit() != None {
+            if xs.hit().is_some() {
                 canvas.write_pixel(x, y, color);
             }
         }
@@ -50,6 +50,6 @@ fn main() {
     // Write to file
     let mut file = File::create("rendered/chapter_05.ppm").expect("Unable to create file.");
 
-    file.write_all(&canvas.to_ppm().as_bytes())
+    file.write_all(canvas.to_ppm().as_bytes())
         .expect("Unable to write file.");
 }

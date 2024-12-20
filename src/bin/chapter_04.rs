@@ -32,6 +32,6 @@ fn main() {
 
     let mut file = File::create("rendered/chapter_04.ppm").expect("Unable to create file.");
 
-    file.write_all(&can.to_ppm().as_bytes())
+    file.write_all(can.to_ppm().as_bytes())
         .expect("Unable to write file.");
 }

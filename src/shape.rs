@@ -26,6 +26,7 @@ impl Intersectable for Shape {
     }
 }
 
+// TODO Can this be a part of Intersectable?
 pub trait NormalAt {
     fn normal_at(&self, p: Tuple) -> Tuple;
 }
@@ -133,14 +134,16 @@ impl Intersectable for Sphere {
         let discriminant = b.powi(2) - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            return vec![];
+            
+            vec![]
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return vec![
+            
+            vec![
                 Intersection::new(t1, Shape::Sphere(*self)),
                 Intersection::new(t2, Shape::Sphere(*self)),
-            ];
+            ]
         }
     }
 }

@@ -31,7 +31,7 @@ fn main() {
         let pos = proj.position + proj.velocity;
         let vel = proj.velocity + env.gravity + env.wind;
 
-        return Projectile::new(pos, vel);
+        Projectile::new(pos, vel)
     }
 
     let mut p = Projectile::new(point(0.0, 1.0, 0.0), vector(1.0, 1.0, 0.0).normalize());
@@ -41,6 +41,6 @@ fn main() {
 
         p = tick(&e, p);
         
-        print!("Position: {:?}\n", p.position);
+        println!("Position: {:?}", p.position);
     }
 }

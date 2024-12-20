@@ -35,7 +35,7 @@ fn tick(env: &Environment, proj: Projectile) -> Projectile {
     let vel = proj.velocity + env.gravity + env.wind;
     let pos = proj.position + proj.velocity;
 
-    return Projectile::new(pos, vel);
+    Projectile::new(pos, vel)
 }
 
 fn main() {
@@ -67,7 +67,7 @@ fn main() {
  
     let mut file = File::create("rendered/chapter_02.ppm").expect("Unable to create file.");
 
-    file.write_all(&can.to_ppm().as_bytes())
+    file.write_all(can.to_ppm().as_bytes())
         .expect("Unable to write file.");
 
 }

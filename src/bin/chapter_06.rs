@@ -50,7 +50,7 @@ fn main() {
                         &light,
                         &r.position(the_hit.t),
                         &-r.direction,
-                        &the_hit_normal,
+                        the_hit_normal,
                     );
                     canvas.write_pixel(x, y, color);
                 }
@@ -70,12 +70,12 @@ fn main() {
     // Write to PPM file
     let mut ppm_file = File::create("chapter_06.ppm").expect("Unable to create file.");
 
-    ppm_file.write_all(&canvas.to_ppm().as_bytes())
+    ppm_file.write_all(canvas.to_ppm().as_bytes())
     .expect("Unable to write file.");
     
     // Write to PNG file
     let png_file = File::create("rendered/chapter_06.png").expect("Unable to create file.");
-    let ref mut w = BufWriter::new(png_file);
+    let w = &mut BufWriter::new(png_file);
     let mut encoder = png::Encoder::new(w, canvas.width as u32, canvas.height as u32);
     encoder.set_color(png::ColorType::Rgba);
     encoder.set_depth(png::BitDepth::Eight);
