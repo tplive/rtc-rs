@@ -1,6 +1,12 @@
 extern crate rtc_rs as rtc;
 
-use std::{fs::File, io::BufWriter, sync::mpsc, thread::{self, available_parallelism}, time::{Duration, Instant}};
+use std::{
+    fs::File,
+    io::BufWriter,
+    sync::mpsc,
+    thread::{self, available_parallelism},
+    time::{Duration, Instant},
+};
 
 use rtc::{
     canvas::Canvas,
@@ -13,14 +19,14 @@ use rtc::{
 };
 
 use indicatif::ProgressBar;
-use sysinfo::{System, get_current_pid};
+use sysinfo::{get_current_pid, System};
 
 // Putting it together Chapter 6
 fn main() {
     // Start timing the run:
     let now = Instant::now();
     println!("Rendering...");
-    
+
     // Set up the scene
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z: RtcFl = 10.0;
@@ -46,7 +52,7 @@ fn main() {
     // Add a progress bar
     let bar = ProgressBar::new((canvas_pixels * canvas_pixels) as u64);
     bar.enable_steady_tick(Duration::from_millis(250));
-    
+
     // Initialize parallelism
     let (tx, rx) = mpsc::channel();
     let num_threads = available_parallelism().map(|n| n.get()).unwrap_or(1);
@@ -54,7 +60,7 @@ fn main() {
 
     // Divide the work into chunks
     let mut pairs = Vec::new();
-    for y in 0..canvas_pixels  {
+    for y in 0..canvas_pixels {
         for x in 0..canvas_pixels {
             pairs.push((x, y));
         }
@@ -70,14 +76,13 @@ fn main() {
 
         thread::spawn(move || {
             for (x, y) in chunk {
-                
                 // Calculate the world coordinates for the pixel
                 let world_y = half - pixel_size * y as RtcFl;
                 let world_x = -half + pixel_size * x as RtcFl;
                 let position = (point(world_x, world_y, wall_z) - ray_origin).normalize();
                 let r = Ray::new(&ray_origin, &position);
                 let xs = Intersections::new(shape.intersect(&r));
-    
+
                 // Determine the color of the pixel
                 let color = match xs.hit() {
                     Some(the_hit) => {
@@ -90,8 +95,9 @@ fn main() {
                             the_hit_normal,
                         )
                     }
-    
-                    None => Color::black(),
+
+                    // Otherwise, return a black pixel
+                    None => Color::black()
                 };
 
                 // Send pixel coordinates and color to the main thread
@@ -120,7 +126,7 @@ fn main() {
 
     // Calculate and print elapsed time
     let elapsed = now.elapsed();
-    
+
     println!("Elapsed time for rendering: {:.2?}", elapsed);
 
     // Write to PPM file
@@ -128,7 +134,7 @@ fn main() {
 
     // ppm_file.write_all(&canvas.to_ppm().as_bytes())
     // .expect("Unable to write file.");
-    
+
     // Write to PNG file
     let path = "rendered/chapter_06_par.png";
     println!("Writing to file '{}'...", &path);
