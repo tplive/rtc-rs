@@ -35,4 +35,8 @@ pub mod material;
 #[cfg(test)]
 pub mod material_tests;
 
+pub mod world;
+#[cfg(test)]
+pub mod world_tests;
+
 pub mod util;
