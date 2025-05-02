@@ -31,14 +31,19 @@ pub fn lighting(
     let specular: Color;
 
     if light_dot_normal < 0.0 {
+        // Light is on the other side of the surface
         diffuse = Color::black();
         specular = Color::black();
     } else {
+        // Light is on the same side of the surface
+        // Diffuse lighting is based on the angle between the light vector and the normal vector
         diffuse = effective_color * material.diffuse * light_dot_normal;
 
+        // Specular lighting is based on the angle between the reflection vector and the eye vector
         let reflect_vector = -light_vector.reflect(*normal_vector);
         let reflect_dot_eye = reflect_vector.dot(*eye_vector);
 
+        // The reflect_dot_eye value is positive if the light reflects toward the eye
         if reflect_dot_eye <= 0.0 {
             specular = Color::black();
         } else {
