@@ -1,5 +1,6 @@
+ #[cfg(test)]
+
 use crate::material::Material;
-#[cfg(test)]
 use crate::{
     color::Color,
     light::{Light, lighting},
@@ -36,7 +37,7 @@ fn lighting_with_eye_between_light_and_surface_eye_offset_45_degrees() {
     let sqrt2over2 = 2.0_f32.sqrt() / 2.0;
     let position = point(0.0, 0.0, 0.0);
 
-    let eyev = point(0.0, sqrt2over2, sqrt2over2);
+    let eyev = point(0.0, sqrt2over2, -sqrt2over2);
     let normalv = vector(0.0, 0.0, -1.0);
     let light = Light::point(point(0.0, 0.0, -10.0), Color::white());
     let result = lighting(&m, &light, &position, &eyev, &normalv);
