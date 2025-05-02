@@ -48,13 +48,15 @@ fn main() {
 
             match xs.hit() {
                 Some(the_hit) => {
-                    let the_hit_normal = &the_hit.shape.normal_at(position);
+                    let hit_point = r.position(the_hit.t);
+                    let normal_vector = &the_hit.shape.normal_at(hit_point);
+                    let eye_vector = -r.direction;
                     let color = lighting(
                         &shape.material,
                         &light,
-                        &r.position(the_hit.t),
-                        &-r.direction,
-                        the_hit_normal,
+                        &hit_point,
+                        &eye_vector,
+                        normal_vector,
                     );
                     canvas.write_pixel(x, y, color);
                 }
