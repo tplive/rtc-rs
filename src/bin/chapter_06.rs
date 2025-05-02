@@ -1,6 +1,10 @@
 extern crate rtc_rs as rtc;
 
-use std::{fs::File, io::{BufWriter, Write}, time::{Duration, Instant}};
+use std::{
+    fs::File,
+    io::{BufWriter, Write},
+    time::{Duration, Instant},
+};
 
 use rtc::{
     canvas::Canvas,
@@ -32,7 +36,7 @@ fn main() {
 
     let bar = ProgressBar::new((canvas_pixels * canvas_pixels) as u64);
     bar.enable_steady_tick(Duration::from_millis(250));
-    
+
     for y in 0..canvas_pixels - 1 {
         let world_y = half - pixel_size * y as RtcFl;
         for x in 0..canvas_pixels - 1 {
@@ -70,9 +74,10 @@ fn main() {
     // Write to PPM file
     let mut ppm_file = File::create("chapter_06.ppm").expect("Unable to create file.");
 
-    ppm_file.write_all(canvas.to_ppm().as_bytes())
-    .expect("Unable to write file.");
-    
+    ppm_file
+        .write_all(canvas.to_ppm().as_bytes())
+        .expect("Unable to write file.");
+
     // Write to PNG file
     let png_file = File::create("rendered/chapter_06.png").expect("Unable to create file.");
     let w = &mut BufWriter::new(png_file);
