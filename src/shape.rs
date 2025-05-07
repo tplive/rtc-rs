@@ -3,60 +3,44 @@ use crate::{
     matrix::Matrix4,
     ray::Ray,
     tuples::{point, Tuple},
-    util::RtcFl,
+    util::{equal, RtcFl},
 };
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum Shape {
-    Sphere(Sphere),
+pub trait Shape: std::fmt::Debug {
+    fn intersect<'s>(&'s self, ray: &Ray) -> Vec<Intersection<'s>>;
+    fn normal_at(&self, world_point: Tuple) -> Tuple;
+    fn material(&self) -> &Material;
+    fn transform(&self) -> &Matrix4;
+    fn id(&self) -> usize;
 }
 
-pub trait Intersectable {
-    fn intersect(&self, ray: &Ray) -> Vec<Intersection>;
-}
-// Inspired by MrJakob: https://youtu.be/lTrtsfYFTeE?si=niGyzutvTC_h92NY&t=965
-impl Intersectable for Shape {
-    fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
-        match *self {
-            Shape::Sphere(ref sphere) => sphere.intersect(ray),
-        }
-    }
-}
-
-// TODO Can this be a part of Intersectable?
-pub trait NormalAt {
-    fn normal_at(&self, p: Tuple) -> Tuple;
-}
-
-impl NormalAt for Shape {
-    fn normal_at(&self, p: Tuple) -> Tuple {
-        match *self {
-            Shape::Sphere(ref sphere) => sphere.normal_at(p),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Intersection {
+#[derive(Debug, Copy, Clone)]
+pub struct Intersection<'a> {
     pub t: RtcFl,
-    pub shape: Shape,
+    pub shape: &'a dyn Shape,
 }
 
-impl Intersection {
-    pub fn new(t: RtcFl, shape: Shape) -> Self {
+impl<'a> Intersection<'a> {
+    pub fn new(t: RtcFl, shape: &'a dyn Shape) -> Self {
         Self { t, shape }
     }
 }
 
-pub struct Intersections {
-    data: Vec<Intersection>,
+impl<'a> PartialEq for Intersection<'a> {
+    fn eq(&self, other: &Self) -> bool {
+        equal(self.t, other.t) && self.shape.id() == other.shape.id()
+    }
 }
 
-impl Intersections {
-    pub fn new(mut data: Vec<Intersection>) -> Self {
+pub struct Intersections<'a> {
+    pub(crate) data: Vec<Intersection<'a>>,
+}
+
+impl<'a> Intersections<'a> {
+    pub fn new(mut data: Vec<Intersection<'a>>) -> Self {
         data.sort_unstable_by(|a, b| {
             a.t.partial_cmp(&b.t)
                 .expect("Unable to sort intersections!")
@@ -64,7 +48,7 @@ impl Intersections {
         Self { data }
     }
 
-    pub fn hit(&self) -> Option<Intersection> {
+    pub fn hit(&self) -> Option<Intersection<'a>> {
         for n in self.data.iter() {
             if n.t >= 0.0 {
                 return Some(*n);
@@ -75,7 +59,7 @@ impl Intersections {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone)]
 pub struct Sphere {
     pub id: usize,
     pub transform: Matrix4,
@@ -92,6 +76,12 @@ impl Default for Sphere {
     }
 }
 
+impl PartialEq for Sphere {
+    fn eq(&self, other: &Self) -> bool {
+        self.material == other.material && self.transform == other.transform
+    }
+}
+
 impl Sphere {
     pub fn new(transform: Matrix4, material: Material) -> Self {
         Self {
@@ -100,35 +90,10 @@ impl Sphere {
             material,
         }
     }
-
-    pub fn normal_at(&self, p: Tuple) -> Tuple {
-        let inverse_transform = match self.transform.try_inverse() {
-            Some(matrix) => matrix,
-            None => {
-                println!("{}", self.transform);
-                panic!("Cannot invert matrix.");
-            }
-        };
-
-        //println!("Inverse transform: {:?}", inverse_transform);
-
-        let object_point = inverse_transform * p;
-        //println!("Object point: {:?}", object_point);
-        let object_normal = (object_point - point(0.0, 0.0, 0.0)).normalize();
-        //println!("Object normal: {:?}", object_normal);
-
-        let mut world_normal = inverse_transform.transpose() * object_normal;
-        //println!("World normal before normalization: {:?}", world_normal);
-
-        // Hack to reset the w component, avoiding some more complex matrix math
-        world_normal.w = 0.0;
-
-        world_normal.normalize()
-    }
 }
 
-impl Intersectable for Sphere {
-    fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
+impl Shape for Sphere {
+    fn intersect<'s>(&'s self, ray: &Ray) -> Vec<Intersection<'s>> {
         let transformed_ray = ray.transform(
             self.transform
                 .try_inverse()
@@ -143,16 +108,52 @@ impl Intersectable for Sphere {
         let discriminant = b.powi(2) - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            
             vec![]
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            
+
             vec![
-                Intersection::new(t1, Shape::Sphere(*self)),
-                Intersection::new(t2, Shape::Sphere(*self)),
+                Intersection::new(t1, self),
+                Intersection::new(t2, self),
             ]
         }
+    }
+
+    fn normal_at(&self, world_point: Tuple) -> Tuple {
+        let inverse_transform = match self.transform.try_inverse() {
+            Some(matrix) => matrix,
+            None => {
+                println!("{}", self.transform);
+                panic!("Cannot invert matrix.");
+            }
+        };
+
+        //println!("Inverse transform: {:?}", inverse_transform);
+
+        let object_point = inverse_transform * world_point;
+        //println!("Object point: {:?}", object_point);
+        let object_normal = (object_point - point(0.0, 0.0, 0.0)).normalize();
+        //println!("Object normal: {:?}", object_normal);
+
+        let mut world_normal = inverse_transform.transpose() * object_normal;
+        //println!("World normal before normalization: {:?}", world_normal);
+
+        // Hack to reset the w component, avoiding some more complex matrix math
+        world_normal.w = 0.0;
+
+        world_normal.normalize()
+    }
+
+    fn material(&self) -> &Material {
+        &self.material
+    }
+
+    fn transform(&self) -> &Matrix4 {
+        &self.transform
+    }
+
+    fn id(&self) -> usize {
+        self.id
     }
 }

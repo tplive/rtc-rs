@@ -5,7 +5,7 @@ use crate::{
     material::Material,
     matrix::Matrix4,
     ray::Ray,
-    shape::{Intersectable, Sphere},
+    shape::{Shape, Sphere},
     transformation::{rotation_z, scaling, Transformation},
     tuples::{point, vector},
     util::RtcFl,
