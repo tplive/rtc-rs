@@ -6,7 +6,7 @@ use rtc::{
     canvas::Canvas,
     color::Color,
     ray::Ray,
-    shape::{Intersectable, Intersections, Sphere},
+    shape::{Intersections, Sphere, Shape},
     transformation::Transformation,
     tuples::point,
     util::RtcFl,

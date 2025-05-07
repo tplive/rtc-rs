@@ -11,7 +11,7 @@ use rtc::{
     color::Color,
     light::{lighting, Light},
     ray::Ray,
-    shape::{Intersectable, Intersections, NormalAt, Sphere},
+    shape::{Intersections, Shape, Sphere},
     tuples::point,
     util::RtcFl,
 };
