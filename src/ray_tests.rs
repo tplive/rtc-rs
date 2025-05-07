@@ -4,7 +4,7 @@ use crate::transformation::Transformation;
 #[cfg(test)]
 use crate::{
     ray::Ray,
-    shape::{Intersectable, Intersection, Intersections, Shape, Sphere},
+    shape::{Intersection, Intersections, Shape, Sphere},
     tuples::{point, vector},
 };
 
@@ -90,22 +90,26 @@ fn sphere_is_behind_ray() {
 #[test]
 fn intersection_encapsulates_t_value_and_object() {
     let s = Sphere::default();
-    let i = Intersection::new(3.5, Shape::Sphere(s));
+    let i = Intersection::new(3.5, &s);
 
     assert_eq!(i.t, 3.5);
-    assert_eq!(i.shape, Shape::Sphere(s));
+    assert_eq!(i.shape.id(), s.id());
 }
 
 #[test]
 fn aggregating_intersections() {
     let s = Sphere::default();
-    let i1 = Intersection::new(1.0, Shape::Sphere(s));
-    let i2 = Intersection::new(2.0, Shape::Sphere(s));
-    let xs = vec![&i1, &i2];
+    let i1 = Intersection::new(1.0, &s);
+    let i2 = Intersection::new(2.0, &s);
+    let xs_data_for_creation = vec![i1, i2];
+    let xs = Intersections::new(xs_data_for_creation);
 
-    assert_eq!(xs.len(), 2);
-    assert_eq!(xs[0].t, 1.0);
-    assert_eq!(xs[1].t, 2.0);
+    assert_eq!(xs.data.len(), 2);
+    assert_eq!(xs.data[0].t, 1.0);
+    assert_eq!(xs.data[0].shape.id(), s.id());
+    assert_eq!(xs.data[1].t, 2.0);
+    assert_eq!(xs.data[1].t, 2.0);
+    assert_eq!(xs.data[1].shape.id(), s.id());
 }
 
 #[test]
@@ -116,15 +120,15 @@ fn intersect_sets_the_object_on_the_intersection() {
     let xs = s.intersect(&r);
 
     assert_eq!(xs.len(), 2);
-    assert_eq!(xs[0].shape, Shape::Sphere(s));
-    assert_eq!(xs[1].shape, Shape::Sphere(s));
+    assert_eq!(xs[0].shape.id(), s.id());
+    assert_eq!(xs[1].shape.id(), s.id());
 }
 
 #[test]
 fn the_hit_when_all_intersections_have_positive_t_value() {
     let s = Sphere::default();
-    let i1 = Intersection::new(1.0, Shape::Sphere(s));
-    let i2 = Intersection::new(2.0, Shape::Sphere(s));
+    let i1 = Intersection::new(1.0, &s);
+    let i2 = Intersection::new(2.0, &s);
     let xs = Intersections::new(vec![i2, i1]);
 
     let i = xs.hit();
@@ -135,8 +139,8 @@ fn the_hit_when_all_intersections_have_positive_t_value() {
 #[test]
 fn the_hit_when_some_intersections_have_negative_t_value() {
     let s = Sphere::default();
-    let i1 = Intersection::new(-1.0, Shape::Sphere(s));
-    let i2 = Intersection::new(1.0, Shape::Sphere(s));
+    let i1 = Intersection::new(-1.0, &s);
+    let i2 = Intersection::new(1.0, &s);
     let xs = Intersections::new(vec![i2, i1]);
 
     let i = xs.hit();
@@ -147,8 +151,8 @@ fn the_hit_when_some_intersections_have_negative_t_value() {
 #[test]
 fn the_hit_when_all_intersections_have_negative_t_value() {
     let s = Sphere::default();
-    let i1 = Intersection::new(-2.0, Shape::Sphere(s));
-    let i2 = Intersection::new(-1.0, Shape::Sphere(s));
+    let i1 = Intersection::new(-2.0, &s);
+    let i2 = Intersection::new(-1.0, &s);
     let xs = Intersections::new(vec![i2, i1]);
 
     let i = xs.hit();
@@ -159,10 +163,10 @@ fn the_hit_when_all_intersections_have_negative_t_value() {
 #[test]
 fn the_hit_is_always_the_lowest_nonnegative_intersection() {
     let s = Sphere::default();
-    let i1 = Intersection::new(5.0, Shape::Sphere(s));
-    let i2 = Intersection::new(7.0, Shape::Sphere(s));
-    let i3 = Intersection::new(-3.0, Shape::Sphere(s));
-    let i4 = Intersection::new(2.0, Shape::Sphere(s));
+    let i1 = Intersection::new(5.0, &s);
+    let i2 = Intersection::new(7.0, &s);
+    let i3 = Intersection::new(-3.0, &s);
+    let i4 = Intersection::new(2.0, &s);
     let xs = Intersections::new(vec![i1, i2, i3, i4]);
 
     let i = xs.hit();
