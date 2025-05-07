@@ -2,7 +2,7 @@
 use crate::color::Color;
 use crate::light::Light;
 use crate::shape::Sphere;
-use crate::transformation::{Transformation, scaling};
+use crate::transformation::scaling;
 use crate::tuples::point;
 use crate::world::World;
 
@@ -14,25 +14,44 @@ fn creating_a_world() {
     assert!(w.light.is_empty());
 }
 
+fn create_default_world_for_test() -> World {
+
+    let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
+
+    let mut s1_created = Sphere::default();
+    s1_created.material.color = Color::new(0.8, 1.0, 0.6);
+    s1_created.material.diffuse = 0.7;
+    s1_created.material.specular = 0.2;
+
+    let mut s2_created = Sphere::default();
+    s2_created.transform = scaling(0.5, 0.5, 0.5);
+
+    let world = World {
+        objects: vec![Box::new(s1_created), Box::new(s2_created)],
+        light: vec![light],
+    };
+
+    world
+}
+
 #[test]
 fn the_default_world() {
-    let w = World::default();
-    let wli = w.light[0].intensity;
-    let wlp = w.light[0].position;
-    
-    let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
-    let s1 = Sphere::default();
+    let w = create_default_world_for_test();
+
+    let mut s1 = Sphere::default();
     s1.material.color = Color::new(0.8, 1.0, 0.6);
     s1.material.diffuse = 0.7;
     s1.material.specular = 0.2;
 
-    let s2 = Sphere::default();
+    let mut s2 = Sphere::default();
     s2.transform = scaling(0.5, 0.5, 0.5);
 
-    assert!(w.objects.contains(s1) && w.objects.contains(s2));
-
+    assert!(w.light.len() == 1);
     assert!(w.light[0].intensity == Color::new(1.0, 1.0, 1.0));
     assert!(w.light[0].position == point(-10.0, 10.0, -10.0));
 
-    
+    assert_eq!(w.objects.len(), 2);
+    assert!(w.objects.iter().any(|shape| shape.material() == &s1.material && shape.transform() == &s1.transform ));
+    assert!(w.objects.iter().any(|shape| shape.material() == &s2.material && shape.transform() == &s2.transform ));
+
 }

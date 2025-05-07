@@ -2,7 +2,7 @@ use crate::shape::Shape;
 use crate::light::Light;
 
 pub struct World {
-    pub objects: Vec<Shape>,
+    pub objects: Vec<Box<dyn Shape>>,
     pub light: Vec<Light>,
 }
 
