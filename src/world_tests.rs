@@ -1,9 +1,10 @@
 #[cfg(test)]
 use crate::color::Color;
 use crate::light::Light;
+use crate::ray::Ray;
 use crate::shape::Sphere;
 use crate::transformation::scaling;
-use crate::tuples::point;
+use crate::tuples::{point, vector};
 use crate::world::World;
 
 #[test]
@@ -54,4 +55,18 @@ fn the_default_world() {
     assert!(w.objects.iter().any(|shape| shape.material() == &s1.material && shape.transform() == &s1.transform ));
     assert!(w.objects.iter().any(|shape| shape.material() == &s2.material && shape.transform() == &s2.transform ));
 
+}
+
+#[test]
+fn intersect_world_with_ray() {
+    let w = create_default_world_for_test();
+    let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
+
+    let xs = w.intersect(r);
+
+    assert!(xs.data.len() == 4);
+    assert!(xs.data[0].t == 4.0);
+    assert!(xs.data[1].t == 4.5);
+    assert!(xs.data[2].t == 5.5);
+    assert!(xs.data[3].t == 6.0);
 }
