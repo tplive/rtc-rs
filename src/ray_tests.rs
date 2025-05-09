@@ -3,8 +3,9 @@ use std::vec;
 use crate::transformation::Transformation;
 #[cfg(test)]
 use crate::{
+    intersections::{Intersection, Intersections},
     ray::Ray,
-    shape::{Intersection, Intersections, Shape, Sphere},
+    shape::{Shape, Sphere},
     tuples::{point, vector},
 };
 

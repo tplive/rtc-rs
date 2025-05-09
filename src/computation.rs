@@ -1,6 +1,7 @@
 use crate::{
     ray::Ray,
-    shape::{Intersection, Shape},
+    shape::Shape,
+    intersections::Intersection,
     tuples::Tuple,
     util::RtcFl,
 };
@@ -45,10 +46,8 @@ mod tests {
 
     use crate::{
         ray::Ray,
-        shape::{Intersection, Sphere},        
-    };
-    #[cfg(test)]
-    use crate::{
+        shape::Sphere,
+        intersections::Intersection,        
         computation::Computation,
         tuples::{point, vector},
     };

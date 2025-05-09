@@ -39,4 +39,6 @@ pub mod world;
 
 pub mod computation;
 
+pub mod intersections;
+
 pub mod util;

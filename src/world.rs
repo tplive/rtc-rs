@@ -2,7 +2,8 @@ use crate::color::Color;
 use crate::computation::Computation;
 use crate::light::{lighting, Light};
 use crate::ray::Ray;
-use crate::shape::{Intersection, Intersections, Shape};
+use crate::intersections::{Intersections, Intersection};
+use crate::shape::Shape;
 
 pub struct World {
     pub objects: Vec<Box<dyn Shape>>,
@@ -42,15 +43,27 @@ impl World {
             &comps.normalv,
         )
     }
+
+    pub fn color_at(&self, ray: &Ray) -> Color {
+        let intersections = self.intersect(ray);
+        match intersections.hit() {
+            Some(hit) => {
+                let comps = Computation::new(hit, ray);
+                self.shade_hit(comps)
+            }
+            None => Color::black(),
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::color::Color;
     use crate::computation::Computation;
+    use crate::intersections::Intersection;
     use crate::light::Light;
     use crate::ray::Ray;
-    use crate::shape::{Intersection, Sphere};
+    use crate::shape::Sphere;
     use crate::transformation::scaling;
     use crate::tuples::{point, vector};
     use crate::world::World;
@@ -123,7 +136,7 @@ mod tests {
         assert!(xs.data[3].t == 6.0);
     }
 
-        #[test]
+    #[test]
     fn shading_an_intersection() {
         let world = create_default_world_for_test();
         let ray = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
@@ -154,4 +167,35 @@ mod tests {
 
         assert_eq!(c, Color::new(0.90498, 0.90498, 0.90498));
     }
+
+    #[test]
+    fn color_when_ray_misses() {
+        let w = create_default_world_for_test();
+        let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 1.0, 0.0));
+        let c = w.color_at(&r);
+
+        assert_eq!(c, Color::new(0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn color_when_ray_hits() {
+        let w = create_default_world_for_test();
+        let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
+        let c = w.color_at(&r);
+
+        assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
+    }
+
+    //#[test]
+    // fn color_with_intersection_behind_ray() {
+    //     let mut w = create_default_world_for_test();
+
+    //     let inner = w.objects[0].material();
+    //     inner.ambient = 1.0;
+
+    //     let r = Ray::new(&point(0.0, 0.0, 0.75), &vector(0.0, 0.0, -1.0));
+    //     let c = w.color_at(&r);
+
+    //     assert_eq!(c, inner.color);
+    // }
 }

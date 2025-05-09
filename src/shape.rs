@@ -1,9 +1,9 @@
 use crate::{
+    intersections::Intersection,
     material::Material,
     matrix::Matrix4,
     ray::Ray,
     tuples::{point, Tuple},
-    util::{equal, RtcFl},
 };
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -16,48 +16,6 @@ pub trait Shape: std::fmt::Debug {
     fn transform(&self) -> &Matrix4;
     fn id(&self) -> usize;
     fn clone_boxed(&self) -> Box<dyn Shape>;
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct Intersection<'a> {
-    pub t: RtcFl,
-    pub shape: &'a dyn Shape,
-}
-
-impl<'a> Intersection<'a> {
-    pub fn new(t: RtcFl, shape: &'a dyn Shape) -> Self {
-        Self { t, shape }
-    }
-}
-
-impl<'a> PartialEq for Intersection<'a> {
-    fn eq(&self, other: &Self) -> bool {
-        equal(self.t, other.t) && self.shape.id() == other.shape.id()
-    }
-}
-
-pub struct Intersections<'a> {
-    pub(crate) data: Vec<Intersection<'a>>,
-}
-
-impl<'a> Intersections<'a> {
-    pub fn new(mut data: Vec<Intersection<'a>>) -> Self {
-        data.sort_unstable_by(|a, b| {
-            a.t.partial_cmp(&b.t)
-                .expect("Unable to sort intersections!")
-        });
-        Self { data }
-    }
-
-    pub fn hit(&self) -> Option<Intersection<'a>> {
-        for n in self.data.iter() {
-            if n.t >= 0.0 {
-                return Some(*n);
-            }
-        }
-
-        None
-    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -114,10 +72,7 @@ impl Shape for Sphere {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
 
-            vec![
-                Intersection::new(t1, self),
-                Intersection::new(t2, self),
-            ]
+            vec![Intersection::new(t1, self), Intersection::new(t2, self)]
         }
     }
 
@@ -157,7 +112,7 @@ impl Shape for Sphere {
     fn id(&self) -> usize {
         self.id
     }
-    
+
     fn clone_boxed(&self) -> Box<dyn Shape> {
         Box::new(*self)
     }
