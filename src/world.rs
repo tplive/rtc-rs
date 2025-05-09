@@ -57,10 +57,8 @@ impl World {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use crate::color::Color;
-    use crate::computation::Computation;
-    use crate::intersections::Intersection;
     use crate::light::Light;
     use crate::ray::Ray;
     use crate::shape::Sphere;
@@ -136,55 +134,7 @@ mod tests {
         assert!(xs.data[3].t == 6.0);
     }
 
-    #[test]
-    fn shading_an_intersection() {
-        let world = create_default_world_for_test();
-        let ray = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
 
-        // The first object in the world
-        let shape = world.objects[0].as_ref();
-        let i = Intersection::new(4.0, shape);
-        let comps = Computation::new(i, &ray);
-
-        let c = world.shade_hit(comps);
-
-        assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
-    }
-
-    #[test]
-    fn shading_an_intersection_from_the_inside() {
-        let mut world = create_default_world_for_test();
-        world.light[0] = Light::point(point(0.0, 0.25, 0.0), Color::white());
-
-        let ray = Ray::new(&point(0.0, 0.25, 0.0), &vector(0.0, 0.0, 1.0));
-
-        // The second object in the world
-        let shape = world.objects[1].as_ref();
-        let i = Intersection::new(0.5, shape);
-        let comps = Computation::new(i, &ray);
-
-        let c = world.shade_hit(comps);
-
-        assert_eq!(c, Color::new(0.90498, 0.90498, 0.90498));
-    }
-
-    #[test]
-    fn color_when_ray_misses() {
-        let w = create_default_world_for_test();
-        let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 1.0, 0.0));
-        let c = w.color_at(&r);
-
-        assert_eq!(c, Color::new(0.0, 0.0, 0.0));
-    }
-
-    #[test]
-    fn color_when_ray_hits() {
-        let w = create_default_world_for_test();
-        let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
-        let c = w.color_at(&r);
-
-        assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
-    }
 
     //#[test]
     // fn color_with_intersection_behind_ray() {
