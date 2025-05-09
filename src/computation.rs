@@ -23,10 +23,12 @@ impl Computation {
         let shape_obj: Box<dyn Shape> = intersection.shape.clone_boxed();
         let point = ray.position(t);
         let eyev = -ray.direction;
-        let normalv = intersection.shape.normal_at(point);
+        let mut normalv = intersection.shape.normal_at(point);
         let inside = normalv.dot(eyev) < 0.0;
-        
-        
+        if inside {
+            normalv = -normalv;
+        }
+
         Self {
             t,
             shape: shape_obj,
@@ -63,6 +65,31 @@ mod tests {
         assert_eq!(comps.shape.as_ref().id(), i.shape.id());
         assert_eq!(comps.point, point(0.0, 0.0, -1.0));
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
+    }
+
+    #[test]
+    fn the_hit_when_intersection_occurs_outside() {
+        let ray = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
+        let shape = Sphere::default();
+        let i = Intersection::new(4.0, &shape);
+
+        let comps = Computation::new(i, &ray);
+
+        assert_eq!(comps.inside, false);
+    }
+
+    #[test]
+    fn the_hit_when_intersection_occurs_inside() {
+        let ray = Ray::new(&point(0.0, 0.0, 0.0), &vector(0.0, 0.0, 1.0));
+        let shape = Sphere::default();
+        let i = Intersection::new(1.0, &shape);
+
+        let comps = Computation::new(i, &ray);
+
+        assert_eq!(comps.point, point(0.0, 0.0, 1.0));
+        assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.inside, true);
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
 }
