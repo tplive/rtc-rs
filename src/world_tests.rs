@@ -15,7 +15,7 @@ fn creating_a_world() {
     assert!(w.light.is_empty());
 }
 
-fn create_default_world_for_test() -> World {
+pub fn create_default_world_for_test() -> World {
 
     let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
 
