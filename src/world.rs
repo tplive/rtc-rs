@@ -1,6 +1,6 @@
-use crate::ray::Ray;
-use crate::shape::{Intersections, Shape};
 use crate::light::Light;
+use crate::ray::Ray;
+use crate::shape::{Intersection, Intersections, Shape};
 
 pub struct World {
     pub objects: Vec<Box<dyn Shape>>,
@@ -17,16 +17,17 @@ impl Default for World {
 }
 
 impl World {
-    pub fn intersect(&self, ray: Ray) -> Intersections {
+    pub fn intersect<'w>(&'w self, ray: &Ray) -> Intersections<'w> {
+        let xs: Vec<Intersection<'w>> = self
+            .objects
+            .iter()
+            .flat_map(|shape_in_box| shape_in_box.intersect(ray))
+            .collect();
 
-        let mut all_intersections = vec![];
+        Intersections::new(xs)
+    }
 
-        // Iterate over all objects in self, and check intersections
-        for shape in &self.objects {
-            let shape_intersections = shape.intersect(&ray);
-            all_intersections.extend(shape_intersections);
-        }
-
-        Intersections::new(all_intersections)
+    pub fn add_object(&mut self, shape: impl Shape + 'static) {
+        self.objects.push(Box::new(shape));
     }
 }

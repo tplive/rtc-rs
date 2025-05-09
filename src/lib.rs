@@ -39,4 +39,6 @@ pub mod world;
 #[cfg(test)]
 pub mod world_tests;
 
+pub mod computation;
+
 pub mod util;

@@ -15,6 +15,7 @@ pub trait Shape: std::fmt::Debug {
     fn material(&self) -> &Material;
     fn transform(&self) -> &Matrix4;
     fn id(&self) -> usize;
+    fn clone_boxed(&self) -> Box<dyn Shape>;
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -155,5 +156,9 @@ impl Shape for Sphere {
 
     fn id(&self) -> usize {
         self.id
+    }
+    
+    fn clone_boxed(&self) -> Box<dyn Shape> {
+        Box::new(*self)
     }
 }

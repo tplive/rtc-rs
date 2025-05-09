@@ -27,10 +27,10 @@ fn create_default_world_for_test() -> World {
     let mut s2_created = Sphere::default();
     s2_created.transform = scaling(0.5, 0.5, 0.5);
 
-    let world = World {
-        objects: vec![Box::new(s1_created), Box::new(s2_created)],
-        light: vec![light],
-    };
+    let mut world = World::default(); 
+    world.add_object(s1_created);
+    world.add_object(s2_created);
+    world.light.push(light);
 
     world
 }
@@ -62,7 +62,7 @@ fn intersect_world_with_ray() {
     let w = create_default_world_for_test();
     let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
 
-    let xs = w.intersect(r);
+    let xs = w.intersect(&r);
 
     assert!(xs.data.len() == 4);
     assert!(xs.data[0].t == 4.0);
