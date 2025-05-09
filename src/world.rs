@@ -1,4 +1,6 @@
-use crate::light::Light;
+use crate::color::Color;
+use crate::computation::Computation;
+use crate::light::{lighting, Light};
 use crate::ray::Ray;
 use crate::shape::{Intersection, Intersections, Shape};
 
@@ -29,5 +31,15 @@ impl World {
 
     pub fn add_object(&mut self, shape: impl Shape + 'static) {
         self.objects.push(Box::new(shape));
+    }
+
+    pub fn shade_hit(&self, comps: Computation) -> Color {
+        lighting(
+            &comps.shape.material(),
+            &self.light[0],
+            &comps.point,
+            &comps.eyev,
+            &comps.normalv,
+        )
     }
 }
