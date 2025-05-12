@@ -1,9 +1,11 @@
 use crate::color::Color;
 use crate::computation::Computation;
+use crate::intersections::{Intersection, Intersections};
 use crate::light::{lighting, Light};
 use crate::ray::Ray;
-use crate::intersections::{Intersections, Intersection};
-use crate::shape::Shape;
+use crate::shape::{Shape, Sphere};
+use crate::transformation::scaling;
+use crate::tuples::point;
 
 pub struct World {
     pub objects: Vec<Box<dyn Shape>>,
@@ -56,15 +58,33 @@ impl World {
     }
 }
 
+pub fn create_default_world_for_test() -> World {
+    let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
+
+    let mut s1_created = Sphere::default();
+    s1_created.material.color = Color::new(0.8, 1.0, 0.6);
+    s1_created.material.diffuse = 0.7;
+    s1_created.material.specular = 0.2;
+
+    let mut s2_created = Sphere::default();
+    s2_created.transform = scaling(0.5, 0.5, 0.5);
+
+    let mut world = World::default();
+    world.add_object(s1_created);
+    world.add_object(s2_created);
+    world.light.push(light);
+
+    world
+}
+
 #[cfg(test)]
-pub mod tests {
+mod tests {
     use crate::color::Color;
-    use crate::light::Light;
     use crate::ray::Ray;
     use crate::shape::Sphere;
     use crate::transformation::scaling;
     use crate::tuples::{point, vector};
-    use crate::world::World;
+    use crate::world::{create_default_world_for_test, World};
 
     #[test]
     fn creating_a_world() {
@@ -72,25 +92,6 @@ pub mod tests {
 
         assert!(w.objects.is_empty());
         assert!(w.light.is_empty());
-    }
-
-    pub fn create_default_world_for_test() -> World {
-        let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
-
-        let mut s1_created = Sphere::default();
-        s1_created.material.color = Color::new(0.8, 1.0, 0.6);
-        s1_created.material.diffuse = 0.7;
-        s1_created.material.specular = 0.2;
-
-        let mut s2_created = Sphere::default();
-        s2_created.transform = scaling(0.5, 0.5, 0.5);
-
-        let mut world = World::default();
-        world.add_object(s1_created);
-        world.add_object(s2_created);
-        world.light.push(light);
-
-        world
     }
 
     #[test]
@@ -133,19 +134,4 @@ pub mod tests {
         assert!(xs.data[2].t == 5.5);
         assert!(xs.data[3].t == 6.0);
     }
-
-
-
-    //#[test]
-    // fn color_with_intersection_behind_ray() {
-    //     let mut w = create_default_world_for_test();
-
-    //     let inner = w.objects[0].material();
-    //     inner.ambient = 1.0;
-
-    //     let r = Ray::new(&point(0.0, 0.0, 0.75), &vector(0.0, 0.0, -1.0));
-    //     let c = w.color_at(&r);
-
-    //     assert_eq!(c, inner.color);
-    // }
 }

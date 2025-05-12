@@ -1,5 +1,7 @@
-use crate::{shape::Shape, util::{equal, RtcFl}};
-
+use crate::{
+    shape::Shape,
+    util::{equal, RtcFl},
+};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Intersection<'a> {
@@ -50,10 +52,12 @@ mod tests {
     use crate::intersections::Intersection;
     use crate::light::Light;
     use crate::ray::Ray;
+    use crate::shape::Sphere;
+    use crate::transformation::scaling;
     use crate::tuples::{point, vector};
-    use crate::world::tests::create_default_world_for_test;
+    use crate::world::{create_default_world_for_test, World};
 
-        #[test]
+    #[test]
     fn shading_an_intersection() {
         let world = create_default_world_for_test();
         let ray = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
@@ -101,5 +105,30 @@ mod tests {
         let c = w.color_at(&r);
 
         assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
+    }
+
+    #[test]
+    fn color_with_intersection_behind_ray() {
+        let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
+
+        let mut s1 = Sphere::default();
+        s1.material.color = Color::new(0.8, 1.0, 0.6);
+        s1.material.diffuse = 0.7;
+        s1.material.specular = 0.2;
+        s1.material.ambient = 1.0;
+
+        let mut s2 = Sphere::default();
+        s2.transform = scaling(0.5, 0.5, 0.5);
+        s2.material.ambient = 1.0;
+
+        let mut w = World::default();
+        w.add_object(s1);
+        w.add_object(s2);
+        w.light.push(light);
+
+        let r = Ray::new(&point(0.0, 0.0, 0.75), &vector(0.0, 0.0, -1.0));
+        let c = w.color_at(&r);
+
+        assert_eq!(c, w.objects[1].material().color);
     }
 }
