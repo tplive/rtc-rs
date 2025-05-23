@@ -1,6 +1,6 @@
 use std::ops;
 
-use nalgebra::SMatrix;
+use nalgebra::{SMatrix, Vector4};
 
 use crate::{tuples::Tuple, util::{equal, RtcFl}};
 
@@ -16,16 +16,10 @@ impl ops::Mul<Tuple> for Matrix4 {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Self::Output {
-        let mut res: Vec<RtcFl> = vec![rhs.x, rhs.y, rhs.z, rhs.w];
-
-        for r in 0..3 {
-            res[r] = self[(r, 0)] * rhs.x
-                + self[(r, 1)] * rhs.y
-                + self[(r, 2)] * rhs.z
-                + self[(r, 3)] * rhs.w;
-        }
-
-        Tuple::new(res[0], res[1], res[2], res[3])
+        let v = Vector4::new(rhs.x, rhs.y, rhs.z, rhs.w);
+        let result = self * v;
+        
+        Tuple::new(result[0], result[1], result[2], result[3])
     }
 }
 
