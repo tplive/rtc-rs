@@ -2,7 +2,7 @@ use std::ops;
 
 use nalgebra::{SMatrix, Vector4};
 
-use crate::{tuples::Tuple, util::{equal, RtcFl}};
+use crate::{transformation::Transformation, tuples::Tuple, util::{equal, RtcFl}};
 
 /// We are of course using the nalgebra library instead of writing our own.
 /// Been there, done that.
@@ -120,8 +120,7 @@ pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix4 {
         0.0, 0.0, 0.0, 1.0,
     );
 
-    Transformation::new()
+    orientation * Transformation::new()
         .translation(-from.x, -from.y, -from.z)
         .get()
-        * orientation
 }
