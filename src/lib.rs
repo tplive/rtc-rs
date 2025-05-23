@@ -41,4 +41,6 @@ pub mod computation;
 
 pub mod intersections;
 
+pub mod camera;
+
 pub mod util;
