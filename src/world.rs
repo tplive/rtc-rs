@@ -80,9 +80,10 @@ pub fn create_default_world_for_test() -> World {
 #[cfg(test)]
 mod tests {
     use crate::color::Color;
+    use crate::matrix::{view_transform, Matrix4, Operations};
     use crate::ray::Ray;
     use crate::shape::Sphere;
-    use crate::transformation::scaling;
+    use crate::transformation::{scaling, Transformation};
     use crate::tuples::{point, vector};
     use crate::world::{create_default_world_for_test, World};
 
@@ -133,5 +134,60 @@ mod tests {
         assert!(xs.data[1].t == 4.5);
         assert!(xs.data[2].t == 5.5);
         assert!(xs.data[3].t == 6.0);
+    }
+
+    #[test]
+    fn transformation_matrix_for_default_orientation() {
+        let from = point(0.0, 0.0, 0.0);
+        let to = point(0.0, 0.0, -1.0);
+        let up = vector(0.0, 1.0, 0.0);
+
+        let t = view_transform(from, to, up);
+
+        assert_eq!(t, Matrix4::identity());
+    }
+
+    #[test]
+    fn view_transformation_matrix_looking_in_positive_z_direction() {
+        let from = point(0.0, 0.0, 0.0);
+        let to = point(0.0, 0.0, 1.0);
+        let up = vector(0.0, 1.0, 0.0);
+
+        let t = view_transform(from, to, up);
+
+        assert_eq!(t, Transformation::new().scaling(-1.0, 1.0, -1.0).get());
+    }
+
+    #[test]
+    fn view_transformation_moves_the_world() {
+        let from = point(0.0, 0.0, 8.0);
+        let to = point(0.0, 0.0, 0.0);
+        let up = vector(0.0, 1.0, 0.0);
+
+        let t = view_transform(from, to, up);
+
+        assert_eq!(t, Transformation::new().translation(0.0, 0.0, -8.0).get());
+    }
+
+    #[test]
+    fn arbitrary_view_transformation() {
+        let from = point(1.0, 3.0, 2.0);
+        let to = point(4.0, -2.0, 8.0);
+        let up = vector(1.0, 1.0, 0.0);
+
+        let t = view_transform(from, to, up);
+
+        // Forward: Tuple { x: 0.35856858, y: -0.59761435, z: 0.71713716, w: 0.0 }
+
+        #[rustfmt::skip]
+        let m = Matrix4::new(
+            -0.50709, 0.50709, 0.67612, -2.36643,
+            0.76772, 0.60609, 0.12122, -2.82843,
+            -0.35857, 0.59761, -0.71714, 0.00000,
+            0.00000, 0.00000, 0.00000, 1.00000
+        );
+        
+        assert!(m.equals(t));
+
     }
 }
