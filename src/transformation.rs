@@ -1,7 +1,7 @@
 use crate::matrix::Matrix4;
 use crate::util::RtcFl;
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Transformation {
     t: Matrix4,
 }
