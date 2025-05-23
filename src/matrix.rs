@@ -102,3 +102,26 @@ impl Operations<Matrix4> for Matrix4 {
         result
     }
 }
+
+pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix4 {
+    let forward = (to - from).normalize();
+    
+    println!("Forward: {:?}", forward);
+    
+    let upn = up.normalize();
+    let left = forward.cross(upn);
+    let true_up = left.cross(forward);
+
+    #[rustfmt::skip]
+    let orientation = Matrix4::new(
+        left.x, left.y, left.z, 0.0,
+        true_up.x, true_up.y, true_up.z, 0.0,
+        -forward.x, -forward.y, -forward.z, 0.0,
+        0.0, 0.0, 0.0, 1.0,
+    );
+
+    Transformation::new()
+        .translation(-from.x, -from.y, -from.z)
+        .get()
+        * orientation
+}
