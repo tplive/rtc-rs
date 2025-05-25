@@ -58,6 +58,18 @@ impl World {
     }
 }
 
+pub fn color_at(world: &World, ray: Ray) -> Color {
+        let intersections = world.intersect(&ray);
+
+        match intersections.hit() {
+            Some(hit) => {
+                let comps = Computation::new(hit, &ray);
+                world.shade_hit(comps)
+            }
+            None => Color::black(),
+        }
+}
+
 pub fn create_default_world_for_test() -> World {
     let light = Light::point(point(-10.0, 10.0, -10.0), Color::white());
 
