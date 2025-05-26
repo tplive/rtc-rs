@@ -106,8 +106,6 @@ impl Operations<Matrix4> for Matrix4 {
 pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix4 {
     let forward = (to - from).normalize();
     
-    println!("Forward: {:?}", forward);
-    
     let upn = up.normalize();
     let left = forward.cross(upn);
     let true_up = left.cross(forward);
