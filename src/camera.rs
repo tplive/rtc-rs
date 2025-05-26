@@ -5,6 +5,7 @@ use crate::{
     util::RtcFl,
 };
 
+#[derive(Clone)]
 pub struct Camera {
     pub hsize: usize,
     pub vsize: usize,
