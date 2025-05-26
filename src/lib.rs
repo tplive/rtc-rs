@@ -43,4 +43,6 @@ pub mod intersections;
 
 pub mod camera;
 
+pub mod render;
+
 pub mod util;

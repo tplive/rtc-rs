@@ -1,4 +1,9 @@
-use crate::{canvas::Canvas, matrix::Matrix4, ray::Ray, tuples::point, util::RtcFl, world::{color_at, World}};
+use crate::{
+    matrix::Matrix4,
+    ray::Ray,
+    tuples::point,
+    util::RtcFl,
+};
 
 pub struct Camera {
     pub hsize: usize,
@@ -57,24 +62,14 @@ pub fn ray_for_pixel(camera: &Camera, px: usize, py: usize) -> Ray {
     Ray::new(&origin, &direction)
 }
 
-pub fn render(camera: &Camera, world: World) -> Canvas {
-
-    let mut canvas = Canvas::new(camera.hsize, camera.vsize);
-
-    for y in 0..camera.vsize -1 {
-        for x in 0..camera.hsize -1 {
-            let ray = ray_for_pixel(camera, x, y);
-            let color = color_at(&world, ray);
-            canvas.write_pixel(x, y, color);
-        }
-    }
-
-    canvas
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::{camera::{ray_for_pixel, Camera}, matrix::Matrix4, tuples::{point, vector}, util::PI};
+    use crate::{
+        camera::{ray_for_pixel, Camera},
+        matrix::Matrix4,
+        tuples::{point, vector},
+        util::PI,
+    };
 
     #[test]
     fn constructing_camera() {
