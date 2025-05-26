@@ -12,7 +12,7 @@ use rtc::{
     color::Color,
     light::Light,
     matrix::view_transform,
-    render::render,
+    render::render_parallel,
     shape::Sphere,
     transformation::{rotation_y, rotation_z, scaling, translation},
     tuples::{point, vector},
@@ -92,12 +92,14 @@ fn main() {
     let bar = ProgressBar::new((canvas_pixels * canvas_pixels) as u64);
     bar.enable_steady_tick(Duration::from_millis(250));
 
-    let canvas = render(&camera, world, &bar);
-
+    // If you insist, you can also run this non-parallel:
+    // let canvas = render(&camera, world, &bar);
+    let canvas = render_parallel(&camera, &world, &bar);
     bar.finish();
 
     let elapsed = now.elapsed();
     println!("Elapsed time for rendering: {:.2?}", elapsed);
+    
 
     // Report memory usage
     let mut system = System::new_all();
@@ -105,10 +107,7 @@ fn main() {
     let process = system.process(get_current_pid().unwrap()).unwrap();
     println!("Memory usage: {:.2} MB", process.memory() as f64 / 1024.0);
 
-    // Calculate and print elapsed time
-    let elapsed = now.elapsed();
-
-    println!("Elapsed time for rendering: {:.2?}", elapsed);
+    let now = Instant::now();
 
     // Write to PNG file
     let path = "rendered/chapter_07.png";
@@ -121,4 +120,8 @@ fn main() {
 
     let mut writer = encoder.write_header().unwrap();
     writer.write_image_data(&canvas.to_png()).unwrap();
+    
+    let elapsed = now.elapsed();
+    println!("Elapsed time for saving file: {:.2?}", elapsed);
+    
 }
