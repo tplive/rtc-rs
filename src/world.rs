@@ -36,6 +36,12 @@ impl World {
         self.objects.push(Box::new(shape));
     }
 
+    pub fn add_objects(&mut self, shapes: Vec<impl Shape + 'static>) {
+        for s in shapes {
+            self.add_object(s);
+        }
+    }
+
     pub fn shade_hit(&self, comps: Computation) -> Color {
         lighting(
             &comps.shape.material(),
