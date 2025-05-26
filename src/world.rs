@@ -12,6 +12,16 @@ pub struct World {
     pub light: Vec<Light>,
 }
 
+impl Clone for World {
+    fn clone(&self) -> Self {
+        Self {
+            objects: self.objects.iter()
+            .map(|obj| obj.clone_boxed())
+            .collect(), light: self.light.clone(),
+        }
+    }
+}
+
 impl Default for World {
     fn default() -> Self {
         Self {
