@@ -1,6 +1,7 @@
 use std::ops;
 
 use crate::util::{equal, RtcFl};
+use rand::Rng;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Color {
@@ -11,19 +12,24 @@ pub struct Color {
 
 impl Color {
     pub fn new(red: RtcFl, green: RtcFl, blue: RtcFl) -> Self {
-        Self {
-            red,
-            green,
-            blue,
-        }
+        Self { red, green, blue }
     }
 
     pub fn black() -> Self {
         Self::new(0.0, 0.0, 0.0)
     }
-    
+
     pub fn white() -> Self {
         Self::new(1.0, 1.0, 1.0)
+    }
+
+    pub fn random() -> Self {
+        let mut rng = rand::rng();
+        Self::new(
+            rng.random::<RtcFl>(),
+            rng.random::<RtcFl>(),
+            rng.random::<RtcFl>(),
+        )
     }
 }
 
