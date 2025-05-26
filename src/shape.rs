@@ -9,7 +9,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 static NEXT_ID: AtomicUsize = AtomicUsize::new(1);
 
-pub trait Shape: std::fmt::Debug {
+pub trait Shape: Send + Sync + std::fmt::Debug {
     fn intersect<'s>(&'s self, ray: &Ray) -> Vec<Intersection<'s>>;
     fn normal_at(&self, world_point: Tuple) -> Tuple;
     fn material(&self) -> &Material;
