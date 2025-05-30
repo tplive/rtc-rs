@@ -53,7 +53,7 @@ mod tests {
     use crate::light::Light;
     use crate::material::Material;
     use crate::ray::Ray;
-    use crate::shape::Sphere;
+    use crate::sphere::Sphere;
     use crate::transformation::{scaling, translation};
     use crate::tuples::{point, vector};
     use crate::util::EPSILON;

@@ -3,7 +3,8 @@ use crate::computation::Computation;
 use crate::intersections::{Intersection, Intersections};
 use crate::light::{lighting, Light};
 use crate::ray::Ray;
-use crate::shape::{Shape, Sphere};
+use crate::shape::Shape;
+use crate::sphere::Sphere;
 use crate::transformation::scaling;
 use crate::tuples::{point, Tuple};
 
@@ -130,7 +131,7 @@ mod tests {
     use crate::material::Material;
     use crate::matrix::{view_transform, Matrix4, Operations};
     use crate::ray::Ray;
-    use crate::shape::Sphere;
+    use crate::sphere::Sphere;
     use crate::transformation::{scaling, translation, Transformation};
     use crate::tuples::{point, vector};
     use crate::world::{create_default_world_for_test, World};

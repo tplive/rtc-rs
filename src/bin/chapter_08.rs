@@ -13,7 +13,7 @@ use rtc::{
     light::Light,
     matrix::view_transform,
     render::{render, render_parallel},
-    shape::Sphere,
+    sphere::Sphere,
     transformation::{rotation_y, rotation_z, scaling, translation},
     tuples::{point, vector},
     util::PI,

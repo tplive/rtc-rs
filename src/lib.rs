@@ -25,6 +25,8 @@ pub mod ray_tests;
 
 pub mod shape;
 
+pub mod sphere;
+
 pub mod light;
 
 pub mod material;

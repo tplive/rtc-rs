@@ -5,7 +5,8 @@ use crate::transformation::Transformation;
 use crate::{
     intersections::{Intersection, Intersections},
     ray::Ray,
-    shape::{Shape, Sphere},
+    shape::Shape,
+    sphere::Sphere,
     tuples::{point, vector},
 };
 

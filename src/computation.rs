@@ -51,7 +51,7 @@ mod tests {
         computation::Computation,
         intersections::Intersection,
         ray::Ray,
-        shape::Sphere,
+        sphere::Sphere,
         tuples::{point, vector},
     };
 
