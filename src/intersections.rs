@@ -79,7 +79,7 @@ mod tests {
         let mut world = create_default_world_for_test();
         world.light[0] = Light::point(point(0.0, 0.25, 0.0), Color::white());
 
-        let ray = Ray::new(&point(0.0, 0.25, 0.0), &vector(0.0, 0.0, 1.0));
+        let ray = Ray::new(&point(0.0, 0.0, 0.0), &vector(0.0, 0.0, 1.0));
 
         // The second object in the world
         let shape = world.objects[1].as_ref();
