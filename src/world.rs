@@ -15,9 +15,8 @@ pub struct World {
 impl Clone for World {
     fn clone(&self) -> Self {
         Self {
-            objects: self.objects.iter()
-            .map(|obj| obj.clone_boxed())
-            .collect(), light: self.light.clone(),
+            objects: self.objects.iter().map(|obj| obj.clone_boxed()).collect(),
+            light: self.light.clone(),
         }
     }
 }
@@ -75,15 +74,15 @@ impl World {
 }
 
 pub fn color_at(world: &World, ray: Ray) -> Color {
-        let intersections = world.intersect(&ray);
+    let intersections = world.intersect(&ray);
 
-        match intersections.hit() {
-            Some(hit) => {
-                let comps = Computation::new(hit, &ray);
-                world.shade_hit(comps)
-            }
-            None => Color::black(),
+    match intersections.hit() {
+        Some(hit) => {
+            let comps = Computation::new(hit, &ray);
+            world.shade_hit(comps)
         }
+        None => Color::black(),
+    }
 }
 
 pub fn create_default_world_for_test() -> World {
