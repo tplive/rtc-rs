@@ -14,8 +14,6 @@ pub mod canvas_tests;
 pub mod matrix;
 
 pub mod transformation;
-#[cfg(test)]
-pub mod transformation_tests;
 
 pub mod ray;
 #[cfg(test)]
