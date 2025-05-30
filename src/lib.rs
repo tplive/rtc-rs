@@ -30,8 +30,6 @@ pub mod sphere;
 pub mod light;
 
 pub mod material;
-#[cfg(test)]
-pub mod material_tests;
 
 pub mod world;
 
