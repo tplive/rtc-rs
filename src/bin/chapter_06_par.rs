@@ -97,6 +97,7 @@ fn main() {
                             &hit_point,
                             &eye_vector,
                             normal_vector,
+                            false,
                         )
                     }
 
