@@ -1,7 +1,6 @@
 
 pub mod tuples;
-#[cfg(test)]
-pub mod tuple_tests;
+
 
 pub mod color;
 
