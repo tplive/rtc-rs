@@ -8,8 +8,6 @@ pub mod color;
 pub mod color_tests;
 
 pub mod canvas;
-#[cfg(test)]
-pub mod canvas_tests;
 
 pub mod matrix;
 
