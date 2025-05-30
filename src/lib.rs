@@ -16,8 +16,6 @@ pub mod matrix;
 pub mod transformation;
 
 pub mod ray;
-#[cfg(test)]
-pub mod ray_tests;
 
 pub mod shape;
 
