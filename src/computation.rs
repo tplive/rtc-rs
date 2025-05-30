@@ -1,9 +1,9 @@
 use crate::{
+    intersections::Intersection,
     ray::Ray,
     shape::Shape,
-    intersections::Intersection,
     tuples::Tuple,
-    util::RtcFl,
+    util::{RtcFl, SHADOW_EPSILON},
 };
 
 pub struct Computation {
@@ -13,6 +13,7 @@ pub struct Computation {
     pub eyev: Tuple,
     pub normalv: Tuple,
     pub inside: bool,
+    pub over_point: Tuple,
 }
 
 impl Computation {
@@ -29,6 +30,7 @@ impl Computation {
         if inside {
             normalv = -normalv;
         }
+        let over_point = point + normalv * SHADOW_EPSILON;
 
         Self {
             t,
@@ -37,6 +39,7 @@ impl Computation {
             eyev,
             normalv,
             inside,
+            over_point,
         }
     }
 }
@@ -45,10 +48,10 @@ impl Computation {
 mod tests {
 
     use crate::{
+        computation::Computation,
+        intersections::Intersection,
         ray::Ray,
         shape::Sphere,
-        intersections::Intersection,        
-        computation::Computation,
         tuples::{point, vector},
     };
 

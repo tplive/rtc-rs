@@ -51,10 +51,12 @@ mod tests {
     use crate::computation::Computation;
     use crate::intersections::Intersection;
     use crate::light::Light;
+    use crate::material::Material;
     use crate::ray::Ray;
     use crate::shape::Sphere;
-    use crate::transformation::scaling;
+    use crate::transformation::{scaling, translation};
     use crate::tuples::{point, vector};
+    use crate::util::EPSILON;
     use crate::world::{create_default_world_for_test, World};
 
     #[test]
@@ -130,5 +132,16 @@ mod tests {
         let c = w.color_at(&r);
 
         assert_eq!(c, w.objects[1].material().color);
+    }
+
+    #[test]
+    fn the_hit_should_offset_the_point() {
+        let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new(translation(0.0, 0.0, 1.0), Material::default());
+        let i = Intersection::new(5.0, &shape);
+        let comps = Computation::new(i, &r);
+
+        assert!(comps.over_point.z < -EPSILON / 2.0);
+        assert!(comps.point.z > comps.over_point.z);
     }
 }
