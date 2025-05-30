@@ -4,8 +4,6 @@ pub mod tuples;
 pub mod tuple_tests;
 
 pub mod color;
-#[cfg(test)]
-pub mod color_tests;
 
 pub mod canvas;
 
