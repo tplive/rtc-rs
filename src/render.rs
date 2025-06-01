@@ -26,10 +26,16 @@ pub fn render(camera: &Camera, world: World, bar: &ProgressBar) -> Canvas {
     canvas
 }
 
-pub fn render_parallel(camera: &Camera, world: &World, bar: &ProgressBar) -> Canvas {
+pub fn render_parallel(camera: &Camera, world: &World, bar: &ProgressBar, single: bool) -> Canvas {
     // Initialize parallelism
     let (tx, rx) = mpsc::channel();
-    let num_threads = available_parallelism().map(|n| n.get()).unwrap_or(1);
+
+    let num_threads: usize = if single {
+        1
+    } else {
+        available_parallelism().map(|n| n.get()).unwrap_or(1)
+    };
+    
     println!("Number of threads: {}", num_threads);
 
     // Divide the work into chunks

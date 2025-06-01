@@ -94,7 +94,7 @@ fn main() {
 
     // If you insist, you can also run this non-parallel:
     // let canvas = render(&camera, world, &bar);
-    let canvas = render_parallel(&camera, &world, &bar);
+    let canvas = render_parallel(&camera, &world, &bar, false);
     bar.finish();
 
     let elapsed = now.elapsed();
