@@ -1,10 +1,10 @@
 use crate::{
-    intersections::{Intersection, Intersections},
+    intersections::Intersection,
     material::Material,
     matrix::Matrix4,
     ray::Ray,
     shape::{next_shape_id, Shape},
-    tuples::{point, vector, Tuple},
+    tuples::{vector, Tuple},
     util::EPSILON,
 };
 
