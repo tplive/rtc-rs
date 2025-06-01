@@ -51,7 +51,7 @@ impl Shape for Plane {
         }
     }
 
-    fn normal_at(&self, world_point: Tuple) -> Tuple {
+    fn normal_at(&self, _world_point: Tuple) -> Tuple {
         vector(0.0, 1.0, 0.0)
     }
 
