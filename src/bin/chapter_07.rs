@@ -44,7 +44,7 @@ fn main() {
         * rotation_y(-PI / 4.0)
         * rotation_z(PI / 2.0)
         * scaling(10.0, 0.01, 10.0);
-    left_wall.material = floor.material;
+    left_wall.material = floor.material.clone();
 
     // Right wall
     let mut right_wall = Sphere::default();
@@ -52,7 +52,7 @@ fn main() {
         * rotation_y(PI / 4.0)
         * rotation_z(PI / 2.0)
         * scaling(10.0, 0.01, 10.0);
-    right_wall.material = floor.material;
+    right_wall.material = floor.material.clone();
 
     // Middle sphere
     let mut middle = Sphere::default();
@@ -78,7 +78,7 @@ fn main() {
     // World
     let mut world = World::default();
     // Add objects
-    world.add_objects(vec![floor, left_wall, right_wall, left, middle, right]);
+    world.add_objects(vec![floor.clone(), left_wall, right_wall, left, middle, right]);
 
     world.light = vec![Light::point(point(-10.0, 10.0, -10.0), Color::white())];
 

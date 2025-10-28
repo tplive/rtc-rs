@@ -31,7 +31,7 @@ fn main() {
 
     // Floor
     let mut floor = Plane::default();
-    floor.material = Material::new(Color::random(), 0.1, 1.0, 1.0, 1.0);
+    floor.material = Material::new(Color::random(), None, 0.1, 1.0, 1.0, 1.0);
 
     // Middle sphere
     let mut middle = Sphere::default();

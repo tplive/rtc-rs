@@ -75,6 +75,7 @@ fn main() {
     for chunk in chunks {
         let tx = tx.clone();
         let chunk = chunk.to_vec();
+        let cloned_shape = shape.clone();
 
         thread::spawn(move || {
             for (x, y) in chunk {
@@ -83,7 +84,7 @@ fn main() {
                 let world_x = -half + pixel_size * x as RtcFl;
                 let position = (point(world_x, world_y, wall_z) - ray_origin).normalize();
                 let r = Ray::new(&ray_origin, &position);
-                let xs = Intersections::new(shape.intersect(&r));
+                let xs = Intersections::new(cloned_shape.intersect(&r).to_owned());
 
                 // Determine the color of the pixel
                 let color: Color = match xs.hit() {
@@ -93,7 +94,7 @@ fn main() {
                         let eye_vector = -r.direction;
                         
                         lighting(
-                            &shape.material,
+                            &cloned_shape.material,
                             &light,
                             &hit_point,
                             &eye_vector,
