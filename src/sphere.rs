@@ -7,7 +7,7 @@ use crate::{
     tuples::{point, Tuple},
 };
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Sphere {
     pub id: usize,
     pub transform: Matrix4,
@@ -103,7 +103,7 @@ impl Shape for Sphere {
     }
 
     fn clone_boxed(&self) -> Box<dyn Shape> {
-        Box::new(*self)
+        Box::new(self.clone())
     }
 }
 

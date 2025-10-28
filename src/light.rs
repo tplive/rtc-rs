@@ -23,7 +23,12 @@ pub fn lighting(
     normal_vector: &Tuple,
     in_shadow: bool,
 ) -> Color {
-    let effective_color = material.color * light.intensity;
+    let effective_color = if let Some(pattern) = &material.pattern {
+        pattern.pattern_at(*point) * light.intensity
+    } else {
+        material.color * light.intensity
+    };
+
     let light_vector = (light.position - *point).normalize();
     let ambient = effective_color * material.ambient;
     let light_dot_normal = light_vector.dot(*normal_vector);

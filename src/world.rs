@@ -283,7 +283,7 @@ mod tests {
         let s1 = Sphere::default();
         let s2 = Sphere::new(translation(0.0, 0.0, 10.0), Material::default());
 
-        w.add_objects(vec![s1, s2]);
+        w.add_objects(vec![s1.clone(), s2.clone()]);
 
         let r = Ray::new(&point(0.0, 0.0, 5.0), &vector(0.0, 0.0, 1.0));
         let i = Intersection::new(4.0, &s2);

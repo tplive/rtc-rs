@@ -8,7 +8,7 @@ use crate::{
     util::EPSILON,
 };
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Plane {
     pub id: usize,
     pub transform: Matrix4,
@@ -68,7 +68,7 @@ impl Shape for Plane {
     }
 
     fn clone_boxed(&self) -> Box<dyn Shape> {
-        Box::new(*self)
+        Box::new(self.clone())
     }
 }
 

@@ -1,17 +1,30 @@
-use std::any::Any;
-
 use crate::{color::Color, shape::Shape, tuples::Tuple};
 
-pub enum PatternEnum {
-    StripePattern(Color, Color),
+#[derive(Debug, Clone, PartialEq)]
+pub enum Pattern {
+    Stripe(StripePattern),
+    // Gradient(GradientPattern),
+    // Ring(RingPattern),
+    // Checker(CheckerPattern),
 }
 
-pub trait Pattern: Send + Sync + std::fmt::Debug + Any {
-    fn pattern_at(&self, world_point: Tuple) -> Color;
-    fn pattern_at_object(&self, shape: &dyn Shape, object_point: Tuple) -> Color;
-    fn eq_pattern(&self, other: &dyn Pattern) -> bool;
-    fn clone_boxed(&self) -> Box<dyn Pattern>;
-    fn as_any(&self) -> &dyn Any;
+impl Pattern {
+    pub fn pattern_at(&self, point: Tuple) -> Color {
+        match self {
+            Pattern::Stripe(p) => p.pattern_at(point),
+            // Match other patterns
+        }
+    }
+
+    pub fn pattern_at_object(&self, shape: &dyn Shape, world_point: Tuple) -> Color {
+        let object_point = shape
+            .transform()
+            .try_inverse()
+            .expect("Shape transform must be invertible for pattern calculation")
+            * world_point;
+
+        self.pattern_at(object_point)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -24,49 +37,12 @@ impl StripePattern {
     pub fn new(a: Color, b: Color) -> Self {
         Self { a, b }
     }
-}
 
-impl Pattern for StripePattern {
     fn pattern_at(&self, point: Tuple) -> Color {
-
         if point.x.floor().abs() as usize % 2 == 0 {
             self.a
         } else {
             self.b
-        }
-    }
-
-    fn pattern_at_object(&self, shape: &dyn Shape, world_point: Tuple) -> Color {
-        let object_point = shape
-            .transform()
-            .try_inverse()
-            .expect("Shape transform must be invertible for pattern calculation")
-            * world_point;
-
-            self.pattern_at(object_point)
-    }
-
-    fn eq_pattern(&self, other: &dyn Pattern) -> bool {
-        other
-            .as_any()
-            .downcast_ref::<Self>()
-            .map_or(false, |other| self == other)
-    }
-
-    fn clone_boxed(&self) -> Box<dyn Pattern> {
-        Box::new(self.clone())
-    }
-
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
-}
-
-impl Default for StripePattern {
-    fn default() -> Self {
-        Self {
-            b: Color::black(),
-            a: Color::white(),
         }
     }
 }
@@ -75,7 +51,7 @@ impl Default for StripePattern {
 mod tests {
     use crate::{
         color::Color,
-        pattern::{Pattern, StripePattern},
+        pattern::{StripePattern},
         tuples::point,
     };
 
