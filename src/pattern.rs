@@ -49,10 +49,10 @@ impl StripePattern {
 
 #[cfg(test)]
 mod tests {
+
     use crate::{
-        color::Color,
-        pattern::{StripePattern},
-        tuples::point,
+        color::Color, material::Material, pattern::{Pattern, StripePattern}, sphere::Sphere,
+        transformation::Transformation, tuples::point,
     };
 
     #[test]
@@ -87,5 +87,17 @@ mod tests {
         assert_eq!(pattern.pattern_at(point(-0.1, 0.0, 0.0)), Color::black());
         assert_eq!(pattern.pattern_at(point(-1.0, 0.0, 0.0)), Color::black());
         assert_eq!(pattern.pattern_at(point(-1.1, 0.0, 0.0)), Color::white());
+    }
+
+    #[test]
+    fn stripes_with_object_transformation() {
+        let t = Transformation::new().scaling(2.0, 2.0, 2.0);
+        let p = StripePattern::new(Color::white(), Color::black());
+        let mut m = Material::default();
+        m.pattern = Some(Pattern::Stripe(StripePattern::new(Color::white(), Color::black())));
+
+        let object = Sphere::new(t.get(), m);
+        
+
     }
 }
