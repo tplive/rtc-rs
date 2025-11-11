@@ -1,4 +1,4 @@
-use crate::{color::Color, matrix::Matrix4, shape::Shape, transformation::Transformation, tuples::Tuple, util::RtcFl};
+use crate::{color::Color, matrix::Matrix4, shape::Shape, tuples::Tuple};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Pattern {
@@ -23,7 +23,12 @@ impl Pattern {
             .expect("Shape transform must be invertible for pattern calculation")
             * world_point;
 
-        self.pattern_at(object_point)
+        let pattern_point = match self{
+            Pattern::Stripe(p) => p.transform.try_inverse().expect("Pattern Transform must be invertible for pattern calculation")
+            * object_point,
+        };
+
+        self.pattern_at(pattern_point)
     }
 }
 
@@ -36,7 +41,11 @@ pub struct StripePattern {
 
 impl StripePattern {
     pub fn new(a: Color, b: Color) -> Self {
-        Self { a, b, transform: Matrix4::identity() }
+        Self {
+            a,
+            b,
+            transform: Matrix4::identity(),
+        }
     }
 
     pub fn set_transform(&mut self, transform: Matrix4) {
@@ -125,6 +134,23 @@ mod tests {
         m.pattern = Some(pattern.clone());
         let object = Sphere::new(t.get(), m);
         let c = pattern.pattern_at_object(&object, point(1.5, 0.0, 0.0));
+
+        assert_eq!(c, Color::white());
+    }
+
+    #[test]
+    fn stripes_with_pattern_and_object_transformation() {
+        let ot = Transformation::new().scaling(2.0, 2.0, 2.0);
+        let pt = Transformation::new().translation(0.5, 0.0, 0.0);
+        let mut p = StripePattern::new(Color::white(), Color::black());
+        p.set_transform(pt.get());
+        let pattern = Pattern::Stripe(p);
+
+        let mut m = Material::default();
+        m.pattern = Some(pattern.clone());
+        let object = Sphere::new(ot.get(), m);
+
+        let c = pattern.pattern_at_object(&object, point(2.5, 0.0, 0.0));
 
         assert_eq!(c, Color::white());
     }
