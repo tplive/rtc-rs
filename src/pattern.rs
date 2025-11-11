@@ -1,4 +1,4 @@
-use crate::{color::Color, shape::Shape, tuples::Tuple};
+use crate::{color::Color, matrix::Matrix4, shape::Shape, transformation::Transformation, tuples::Tuple, util::RtcFl};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Pattern {
@@ -31,11 +31,16 @@ impl Pattern {
 pub struct StripePattern {
     pub a: Color,
     pub b: Color,
+    pub transform: Matrix4,
 }
 
 impl StripePattern {
     pub fn new(a: Color, b: Color) -> Self {
-        Self { a, b }
+        Self { a, b, transform: Matrix4::identity() }
+    }
+
+    pub fn set_transform(&mut self, transform: Matrix4) {
+        self.transform = transform;
     }
 
     fn pattern_at(&self, point: Tuple) -> Color {
@@ -47,13 +52,16 @@ impl StripePattern {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
 
     use crate::{
-        color::Color, material::Material, pattern::{Pattern, StripePattern}, sphere::Sphere,
-        transformation::Transformation, tuples::point,
+        color::Color,
+        material::Material,
+        pattern::{Pattern, StripePattern},
+        sphere::Sphere,
+        transformation::Transformation,
+        tuples::point,
     };
 
     #[test]
@@ -93,15 +101,31 @@ mod tests {
     #[test]
     fn stripes_with_object_transformation() {
         let t = Transformation::new().scaling(2.0, 2.0, 2.0);
-        let p = StripePattern::new(Color::white(), Color::black());
         let mut m = Material::default();
-        m.pattern = Some(Pattern::Stripe(StripePattern::new(Color::white(), Color::black())));
+        m.pattern = Some(Pattern::Stripe(StripePattern::new(
+            Color::white(),
+            Color::black(),
+        )));
 
         let object = Sphere::new(t.get(), m);
         let pattern = object.material.pattern.as_ref().unwrap();
         let color = pattern.pattern_at_object(&object, point(1.5, 0.0, 0.0));
 
         assert_eq!(color, Color::white());
+    }
 
+    #[test]
+    fn stripes_with_pattern_transformation() {
+        let t = Transformation::new().scaling(2.0, 2.0, 2.0);
+        let mut p = StripePattern::new(Color::white(), Color::black());
+        p.set_transform(t.get());
+        let pattern = Pattern::Stripe(p);
+
+        let mut m = Material::default();
+        m.pattern = Some(pattern.clone());
+        let object = Sphere::new(t.get(), m);
+        let c = pattern.pattern_at_object(&object, point(1.5, 0.0, 0.0));
+
+        assert_eq!(c, Color::white());
     }
 }
