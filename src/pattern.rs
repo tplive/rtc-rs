@@ -47,6 +47,7 @@ impl StripePattern {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
 
@@ -97,7 +98,10 @@ mod tests {
         m.pattern = Some(Pattern::Stripe(StripePattern::new(Color::white(), Color::black())));
 
         let object = Sphere::new(t.get(), m);
-        
+        let pattern = object.material.pattern.as_ref().unwrap();
+        let color = pattern.pattern_at_object(&object, point(1.5, 0.0, 0.0));
+
+        assert_eq!(color, Color::white());
 
     }
 }
