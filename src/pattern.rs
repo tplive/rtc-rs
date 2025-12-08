@@ -53,7 +53,7 @@ impl StripePattern {
     }
 
     fn pattern_at(&self, point: Tuple) -> Color {
-        if point.x.floor().abs() as usize % 2 == 0 {
+        if (point.x.floor().abs() as usize).is_multiple_of(2) {
             self.a
         } else {
             self.b
