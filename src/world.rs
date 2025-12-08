@@ -8,6 +8,7 @@ use crate::sphere::Sphere;
 use crate::transformation::scaling;
 use crate::tuples::{point, Tuple};
 
+#[derive(Default)]
 pub struct World {
     pub objects: Vec<Box<dyn Shape>>,
     pub light: Vec<Light>,
@@ -18,15 +19,6 @@ impl Clone for World {
         Self {
             objects: self.objects.iter().map(|obj| obj.clone_boxed()).collect(),
             light: self.light.clone(),
-        }
-    }
-}
-
-impl Default for World {
-    fn default() -> Self {
-        Self {
-            objects: Vec::new(),
-            light: Vec::new(),
         }
     }
 }
@@ -54,7 +46,7 @@ impl World {
 
     pub fn shade_hit(&self, comps: Computation) -> Color {
         lighting(
-            &comps.shape.material(),
+            comps.shape.material(),
             &self.light[0],
             &comps.point,
             &comps.eyev,
@@ -111,8 +103,10 @@ pub fn create_default_world_for_test() -> World {
     s1_created.material.diffuse = 0.7;
     s1_created.material.specular = 0.2;
 
-    let mut s2_created = Sphere::default();
-    s2_created.transform = scaling(0.5, 0.5, 0.5);
+    let s2_created = Sphere {
+        transform: scaling(0.5, 0.5, 0.5),
+        ..Default::default()
+    };
 
     let mut world = World::default();
     world.add_object(s1_created);
