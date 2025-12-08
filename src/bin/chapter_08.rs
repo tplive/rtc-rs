@@ -33,26 +33,30 @@ fn main() {
     println!("Image size: {}x{}", canvas_pixels, canvas_pixels);
 
     // Floor
-    let mut floor = Sphere::default();
-    floor.transform = scaling(10.0, 0.01, 10.0);
+    let mut floor = Sphere{ transform: scaling(10.0, 0.01, 10.0), ..Default::default() };
     floor.material.color = Color::new(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
 
     // Left wall
-    let mut left_wall = Sphere::default();
-    left_wall.transform = translation(0.0, 0.0, 5.0)
-        * rotation_y(-PI / 4.0)
-        * rotation_z(PI / 2.0)
-        * scaling(10.0, 0.01, 10.0);
-    left_wall.material = floor.material.clone();
+    let left_wall = Sphere { 
+        transform: 
+            translation(0.0, 0.0, 5.0)
+            * rotation_y(-PI / 4.0)
+            * rotation_z(PI / 2.0)
+            * scaling(10.0, 0.01, 10.0),
+            material: floor.material.clone(),
+            ..Default::default()
+        };
 
     // Right wall
-    let mut right_wall = Sphere::default();
-    right_wall.transform = translation(0.0, 0.0, 5.0)
+    let right_wall = Sphere {
+        transform: translation(0.0, 0.0, 5.0)
         * rotation_y(PI / 4.0)
         * rotation_z(PI / 2.0)
-        * scaling(10.0, 0.01, 10.0);
-    right_wall.material = floor.material.clone();
+        * scaling(10.0, 0.01, 10.0),
+        material: floor.material.clone(),
+        ..Default::default()
+    };
 
     // Middle sphere
     let mut middle = Sphere::default();
