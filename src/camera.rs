@@ -37,9 +37,9 @@ impl Camera {
         let pixel_size = (half_width * 2.0) / hsize as RtcFl;
 
         Self {
-            hsize: hsize,
-            vsize: vsize,
-            fov: fov,
+            hsize,
+            vsize,
+            fov,
             transform,
             pixel_size,
             half_width,
