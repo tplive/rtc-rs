@@ -3,15 +3,8 @@ extern crate rtc_rs as rtc;
 use std::{fs::File, io::Write, time::Instant};
 
 use rtc::{
-    canvas::Canvas,
-    color::Color,
-    ray::Ray,
-    shape::Shape,
-    sphere::Sphere,
-    intersections::Intersections,
-    transformation::Transformation,
-    tuples::point,
-    util::RtcFl,
+    canvas::Canvas, color::Color, intersections::Intersections, ray::Ray, shape::Shape,
+    sphere::Sphere, transformation::{scaling, shearing}, tuples::point, util::RtcFl,
 };
 
 // Putting it together Chapter 5
@@ -26,11 +19,10 @@ fn main() {
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
     let color = Color::new(1.0, 0.5, 0.5);
-    let mut shape = Sphere::default();
-    shape.transform = Transformation::new()
-    .scaling(0.6, 1.2, 0.8)
-    .shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7)
-    .get();
+    let shape = Sphere {
+        transform: scaling(0.6, 1.2, 0.8) * shearing(0.2, 0.6, 0.4, 1.2, 1.0, 0.7),
+        ..Default::default()
+    };
 
     for y in 0..canvas_pixels - 1 {
         let world_y = half - pixel_size * y as RtcFl;
