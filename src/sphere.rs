@@ -109,6 +109,8 @@ impl Shape for Sphere {
 
 #[cfg(test)]
 mod tests {
+    use std::f32::consts::FRAC_1_SQRT_2;
+
     use crate::{
         material::Material,
         matrix::Matrix4,
@@ -225,9 +227,9 @@ mod tests {
         let mut s = Sphere::default();
         s.transform = Transformation::new().translation(0.0, 1.0, 0.0).get();
 
-        let n = s.normal_at(point(0.0, 1.70711, -0.70711));
+        let n = s.normal_at(point(0.0, 1.70711, -FRAC_1_SQRT_2));
 
-        assert_eq!(vector(0.0, 0.70711, -0.70711), n);
+        assert_eq!(vector(0.0, FRAC_1_SQRT_2, -FRAC_1_SQRT_2), n);
     }
 
     #[test]

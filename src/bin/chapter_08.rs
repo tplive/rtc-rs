@@ -12,7 +12,7 @@ use rtc::{
     color::Color,
     light::Light,
     matrix::view_transform,
-    render::{render, render_parallel},
+    render::{render_parallel},
     sphere::Sphere,
     transformation::{rotation_y, rotation_z, scaling, translation},
     tuples::{point, vector},
