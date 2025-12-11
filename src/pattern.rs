@@ -110,11 +110,13 @@ mod tests {
     #[test]
     fn stripes_with_object_transformation() {
         let t = Transformation::new().scaling(2.0, 2.0, 2.0);
-        let mut m = Material::default();
-        m.pattern = Some(Pattern::Stripe(StripePattern::new(
-            Color::white(),
-            Color::black(),
-        )));
+        let m = Material {
+            pattern: Some(Pattern::Stripe(StripePattern::new(
+                Color::white(),
+                Color::black(),
+            ))),
+            ..Default::default()
+        };
 
         let object = Sphere::new(t.get(), m);
         let pattern = object.material.pattern.as_ref().unwrap();
