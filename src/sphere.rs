@@ -241,7 +241,6 @@ mod tests {
     #[test]
     fn computing_normal_on_transformed_sphere() {
         let s = Sphere {
-
             transform: scaling(1.0, 0.5, 1.0) * rotation_z(PI / 5.0),
             ..Default::default()
         };
@@ -264,8 +263,7 @@ mod tests {
     #[test]
     fn sphere_may_be_assigned_a_material() {
         let s = Sphere {
-
-         material: Material {
+            material: Material {
                 shininess: 900.0,
                 ..Default::default()
             },

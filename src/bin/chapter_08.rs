@@ -12,7 +12,7 @@ use rtc::{
     color::Color,
     light::Light,
     matrix::view_transform,
-    render::{render_parallel},
+    render::render_parallel,
     sphere::Sphere,
     transformation::{rotation_y, rotation_z, scaling, translation},
     tuples::{point, vector},
@@ -33,27 +33,29 @@ fn main() {
     println!("Image size: {}x{}", canvas_pixels, canvas_pixels);
 
     // Floor
-    let mut floor = Sphere{ transform: scaling(10.0, 0.01, 10.0), ..Default::default() };
+    let mut floor = Sphere {
+        transform: scaling(10.0, 0.01, 10.0),
+        ..Default::default()
+    };
     floor.material.color = Color::new(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
 
     // Left wall
-    let left_wall = Sphere { 
-        transform: 
-            translation(0.0, 0.0, 5.0)
+    let left_wall = Sphere {
+        transform: translation(0.0, 0.0, 5.0)
             * rotation_y(-PI / 4.0)
             * rotation_z(PI / 2.0)
             * scaling(10.0, 0.01, 10.0),
-            material: floor.material.clone(),
-            ..Default::default()
-        };
+        material: floor.material.clone(),
+        ..Default::default()
+    };
 
     // Right wall
     let right_wall = Sphere {
         transform: translation(0.0, 0.0, 5.0)
-        * rotation_y(PI / 4.0)
-        * rotation_z(PI / 2.0)
-        * scaling(10.0, 0.01, 10.0),
+            * rotation_y(PI / 4.0)
+            * rotation_z(PI / 2.0)
+            * scaling(10.0, 0.01, 10.0),
         material: floor.material.clone(),
         ..Default::default()
     };
@@ -70,8 +72,7 @@ fn main() {
 
     // Right sphere
     let mut right = Sphere {
-        transform: translation(1.5, 0.5, -0.5) 
-        * scaling(0.5, 0.5, 0.5),
+        transform: translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5),
         ..Default::default()
     };
 
@@ -81,8 +82,7 @@ fn main() {
 
     // Left sphere
     let mut left = Sphere {
-        transform: translation(-1.5, 0.33, -0.75) 
-        * scaling(0.33, 0.33, 0.33),
+        transform: translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33),
         ..Default::default()
     };
 
@@ -93,7 +93,14 @@ fn main() {
     // World
     let mut world = World::default();
     // Add objects
-    world.add_objects(vec![floor.clone(), left_wall, right_wall, left, middle, right]);
+    world.add_objects(vec![
+        floor.clone(),
+        left_wall,
+        right_wall,
+        left,
+        middle,
+        right,
+    ]);
 
     world.light = vec![Light::point(point(-10.0, 10.0, -10.0), Color::white())];
 
@@ -114,7 +121,6 @@ fn main() {
 
     let elapsed = now.elapsed();
     println!("Elapsed time for rendering: {:.2?}", elapsed);
-    
 
     // Report memory usage
     let mut system = System::new_all();
@@ -135,8 +141,7 @@ fn main() {
 
     let mut writer = encoder.write_header().unwrap();
     writer.write_image_data(&canvas.to_png()).unwrap();
-    
+
     let elapsed = now.elapsed();
     println!("Elapsed time for saving file: {:.2?}", elapsed);
-    
 }

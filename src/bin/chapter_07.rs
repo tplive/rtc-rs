@@ -47,10 +47,9 @@ fn main() {
             * rotation_y(-PI / 4.0)
             * rotation_z(PI / 2.0)
             * scaling(10.0, 0.01, 10.0),
-            material: floor.material.clone(),
+        material: floor.material.clone(),
         ..Default::default()
     };
-
 
     // Right wall
     let right_wall = Sphere {
@@ -58,7 +57,7 @@ fn main() {
             * rotation_y(PI / 4.0)
             * rotation_z(PI / 2.0)
             * scaling(10.0, 0.01, 10.0),
-            material: floor.material.clone(),
+        material: floor.material.clone(),
         ..Default::default()
     };
 
