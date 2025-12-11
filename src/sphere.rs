@@ -159,8 +159,10 @@ mod tests {
     #[test]
     fn intersect_scaled_sphere_with_ray() {
         let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
-        let mut s = Sphere::default();
-        s.transform = Transformation::new().scaling(2.0, 2.0, 2.0).get();
+        let s = Sphere {
+            transform: Transformation::new().scaling(2.0, 2.0, 2.0).get(),
+            ..Default::default()
+        };
 
         let xs = s.intersect(&r);
 
@@ -172,8 +174,10 @@ mod tests {
     #[test]
     fn intersect_translated_sphere_with_ray() {
         let r = Ray::new(&point(0.0, 0.0, -5.0), &vector(0.0, 0.0, 1.0));
-        let mut s = Sphere::default();
-        s.transform = Transformation::new().translation(5.0, 0.0, 0.0).get();
+        let s = Sphere {
+            transform: Transformation::new().translation(5.0, 0.0, 0.0).get(),
+            ..Default::default()
+        };
 
         let xs = s.intersect(&r);
 
@@ -224,8 +228,10 @@ mod tests {
 
     #[test]
     fn computing_normal_on_translated_sphere() {
-        let mut s = Sphere::default();
-        s.transform = Transformation::new().translation(0.0, 1.0, 0.0).get();
+        let s = Sphere {
+            transform: Transformation::new().translation(0.0, 1.0, 0.0).get(),
+            ..Default::default()
+        };
 
         let n = s.normal_at(point(0.0, 1.70711, -FRAC_1_SQRT_2));
 
@@ -234,8 +240,11 @@ mod tests {
 
     #[test]
     fn computing_normal_on_transformed_sphere() {
-        let mut s = Sphere::default();
-        s.transform = scaling(1.0, 0.5, 1.0) * rotation_z(PI / 5.0);
+        let s = Sphere {
+
+            transform: scaling(1.0, 0.5, 1.0) * rotation_z(PI / 5.0),
+            ..Default::default()
+        };
         let sqrt2over2 = (2.0 as RtcFl).sqrt() / 2.0;
 
         let n = s.normal_at(point(0.0, sqrt2over2, -sqrt2over2));
@@ -254,10 +263,14 @@ mod tests {
 
     #[test]
     fn sphere_may_be_assigned_a_material() {
-        let mut s = Sphere::default();
-        let mut m = Material::default();
-        m.shininess = 900.0;
-        s.material = m;
+        let s = Sphere {
+
+         material: Material {
+                shininess: 900.0,
+                ..Default::default()
+            },
+            ..Default::default()
+        };
 
         assert_eq!(s.material.shininess, 900.0);
     }
