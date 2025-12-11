@@ -23,9 +23,13 @@ impl Pattern {
             .expect("Shape transform must be invertible for pattern calculation")
             * world_point;
 
-        let pattern_point = match self{
-            Pattern::Stripe(p) => p.transform.try_inverse().expect("Pattern Transform must be invertible for pattern calculation")
-            * object_point,
+        let pattern_point = match self {
+            Pattern::Stripe(p) => {
+                p.transform
+                    .try_inverse()
+                    .expect("Pattern Transform must be invertible for pattern calculation")
+                    * object_point
+            }
         };
 
         self.pattern_at(pattern_point)
@@ -132,8 +136,10 @@ mod tests {
         p.set_transform(t.get());
         let pattern = Pattern::Stripe(p);
 
-        let mut m = Material::default();
-        m.pattern = Some(pattern.clone());
+        let m = Material {
+            pattern: Some(pattern.clone()),
+            ..Default::default()
+        };
         let object = Sphere::new(t.get(), m);
         let c = pattern.pattern_at_object(&object, point(1.5, 0.0, 0.0));
 
@@ -148,8 +154,10 @@ mod tests {
         p.set_transform(pt.get());
         let pattern = Pattern::Stripe(p);
 
-        let mut m = Material::default();
-        m.pattern = Some(pattern.clone());
+        let m = Material {
+            pattern: Some(pattern.clone()),
+            ..Default::default()
+        };
         let object = Sphere::new(ot.get(), m);
 
         let c = pattern.pattern_at_object(&object, point(2.5, 0.0, 0.0));
