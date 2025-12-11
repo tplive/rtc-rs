@@ -8,7 +8,18 @@ use std::{
 
 use indicatif::ProgressBar;
 use rtc::{
-    camera::Camera, color::Color, light::Light, material::Material, matrix::view_transform, plane::Plane, render::render_parallel, sphere::Sphere, transformation::{scaling, translation}, tuples::{point, vector}, util::PI, world::World
+    camera::Camera,
+    color::Color,
+    light::Light,
+    material::Material,
+    matrix::view_transform,
+    plane::Plane,
+    render::render_parallel,
+    sphere::Sphere,
+    transformation::{scaling, translation},
+    tuples::{point, vector},
+    util::PI,
+    world::World,
 };
 
 use sysinfo::{get_current_pid, System};
@@ -23,33 +34,37 @@ fn main() {
     let image_width = 1920;
     let aspect_ratio = (16.0_f32 / 9.0).round() as usize;
     let image_height = image_width / aspect_ratio;
-    println!(
-        "Image size: {}x{}",
-        image_width,
-        image_height,
-    );
+    println!("Image size: {}x{}", image_width, image_height,);
 
     // Floor
-    let mut floor = Plane::default();
-    floor.material = Material::new(Color::random(), None, 0.1, 1.0, 1.0, 1.0);
+    let floor = Plane {
+        material: Material::new(Color::random(), None, 0.1, 1.0, 1.0, 1.0),
+        ..Default::default()
+    };
 
     // Middle sphere
-    let mut middle = Sphere::default();
-    middle.transform = translation(-0.5, 1.0, 0.5);
+    let mut middle = Sphere {
+        transform: translation(-0.5, 1.0, 0.5),
+        ..Default::default()
+    };
     middle.material.color = Color::random();
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
 
     // Right sphere
-    let mut right = Sphere::default();
-    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
+    let mut right = Sphere {
+        transform: translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5),
+        ..Default::default()
+    };
     right.material.color = Color::random();
     right.material.diffuse = 0.7;
     right.material.specular = 0.3;
 
     // Left sphere
-    let mut left = Sphere::default();
-    left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
+    let mut left = Sphere {
+        transform: translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33),
+        ..Default::default()
+    };
     left.material.color = Color::random();
     left.material.diffuse = 0.7;
     left.material.specular = 0.3;
