@@ -95,6 +95,7 @@ fn main() {
                         
                         lighting(
                             &cloned_shape.material,
+                            &cloned_shape,
                             &light,
                             &hit_point,
                             &eye_vector,

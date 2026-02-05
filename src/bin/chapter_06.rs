@@ -55,6 +55,7 @@ fn main() {
                     let eye_vector = -r.direction;
                     let color = lighting(
                         &shape.material,
+                        &shape,
                         &light,
                         &hit_point,
                         &eye_vector,
