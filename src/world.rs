@@ -47,6 +47,7 @@ impl World {
     pub fn shade_hit(&self, comps: Computation) -> Color {
         lighting(
             comps.shape.material(),
+            comps.shape.as_ref(),
             &self.light[0],
             &comps.point,
             &comps.eyev,
