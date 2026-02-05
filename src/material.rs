@@ -50,6 +50,7 @@ mod tests {
         light::{lighting, Light},
         material::Material,
         pattern::{Pattern, StripePattern},
+        sphere::Sphere,
         tuples::{point, vector},
     };
 
@@ -71,21 +72,40 @@ mod tests {
 
     #[test]
     fn lighting_with_pattern_applied() {
-        let mut m = Material::default();
-        m.pattern = Some(Pattern::Stripe(StripePattern::new(
-            Color::white(),
-            Color::black(),
-        )));
-        m.ambient = 1.0;
-        m.diffuse = 0.0;
-        m.specular = 0.0;
+        let m = Material {
+            pattern: Some(Pattern::Stripe(StripePattern::new(
+                Color::white(),
+                Color::black(),
+            ))),
+            ambient: 1.0,
+            diffuse: 0.0,
+            specular: 0.0,
+            ..Default::default()
+        };
 
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::point(point(0.0, 0.0, -10.0), Color::white());
+        let an_object = Sphere::default();
 
-        let c1 = lighting(&m, &light, &point(0.9, 0.0, 0.0), &eyev, &normalv, false);
-        let c2 = lighting(&m, &light, &point(1.1, 0.0, 0.0), &eyev, &normalv, false);
+        let c1 = lighting(
+            &m,
+            &an_object,
+            &light,
+            &point(0.9, 0.0, 0.0),
+            &eyev,
+            &normalv,
+            false,
+        );
+        let c2 = lighting(
+            &m,
+            &an_object,
+            &light,
+            &point(1.1, 0.0, 0.0),
+            &eyev,
+            &normalv,
+            false,
+        );
 
         assert_eq!(c1, Color::white());
         assert_eq!(c2, Color::black());
