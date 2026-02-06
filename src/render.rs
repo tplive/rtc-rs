@@ -1,5 +1,5 @@
 use std::{
-    sync::mpsc,
+    sync::{mpsc, Arc},
     thread::{self, available_parallelism},
     time::{Duration, Instant},
 };
@@ -12,6 +12,8 @@ use crate::{
     canvas::Canvas,
     world::{color_at, World},
 };
+
+const TILE_SIZE: usize = 16;
 
 pub fn render(camera: &Camera, world: World, bar: &ProgressBar) -> Canvas {
     let mut canvas = Canvas::new(camera.hsize, camera.vsize);
@@ -40,31 +42,51 @@ pub fn render_parallel(camera: &Camera, world: &World, bar: &ProgressBar, single
 
     println!("Number of threads: {}", num_threads);
 
-    // Divide the work into chunks
-    let mut pairs = Vec::new();
-    for y in 0..camera.vsize - 1 {
-        for x in 0..camera.hsize - 1 {
-            pairs.push((x, y));
+    let max_x = camera.hsize.saturating_sub(1);
+    let max_y = camera.vsize.saturating_sub(1);
+
+    let mut tiles: Vec<(usize, usize)> = Vec::new();
+    let mut ty = 0;
+    while ty < max_y {
+        let mut tx0 = 0;
+        while tx0 < max_x {
+            tiles.push((tx0, ty));
+            tx0 += TILE_SIZE;
         }
+        ty += TILE_SIZE;
     }
 
-    let chunk_size = pairs.len() / num_threads;
-    let chunks: Vec<_> = pairs.chunks(chunk_size).collect();
+    if tiles.is_empty() {
+        return Canvas::new(camera.hsize, camera.vsize);
+    }
 
-    // Run the threads
-    for chunk in chunks {
+    let tiles = Arc::new(tiles);
+    let num_tiles = tiles.len();
+    let chunk_size = num_tiles.div_ceil(num_threads);
+
+    for start in (0..num_tiles).step_by(chunk_size) {
+        let end = (start + chunk_size).min(num_tiles);
         let tx = tx.clone();
-        let chunk = chunk.to_vec();
+        let tiles = Arc::clone(&tiles);
         let world = world.clone();
         let camera = camera.clone();
         let bar = bar.clone();
 
         thread::spawn(move || {
-            for (x, y) in chunk {
-                bar.inc(1);
-                let ray = ray_for_pixel(&camera, x, y);
-                let color = color_at(&world, ray);
-                tx.send((x, y, color)).expect("Failed to send pixel data.");
+            let tile_slice = &tiles[start..end];
+
+            for (tx0, ty0) in tile_slice {
+                let y_end = (*ty0 + TILE_SIZE).min(max_y);
+                let x_end = (*tx0 + TILE_SIZE).min(max_x);
+
+                for y in *ty0..y_end {
+                    for x in *tx0..x_end {
+                        bar.inc(1);
+                        let ray = ray_for_pixel(&camera, x, y);
+                        let color = color_at(&world, ray);
+                        tx.send((x, y, color)).expect("Failed to send pixel data.");
+                    }
+                }
             }
         });
     }
@@ -97,34 +119,56 @@ where
 
     println!("Number of threads: {}", num_threads);
 
-    let mut pairs = Vec::new();
-    for y in 0..camera.vsize - 1 {
-        for x in 0..camera.hsize - 1 {
-            pairs.push((x, y));
+    let max_x = camera.hsize.saturating_sub(1);
+    let max_y = camera.vsize.saturating_sub(1);
+
+    let mut tiles: Vec<(usize, usize)> = Vec::new();
+    let mut ty = 0;
+    while ty < max_y {
+        let mut tx0 = 0;
+        while tx0 < max_x {
+            tiles.push((tx0, ty));
+            tx0 += TILE_SIZE;
         }
+        ty += TILE_SIZE;
+    }
+
+    if tiles.is_empty() {
+        return Canvas::new(camera.hsize, camera.vsize);
     }
 
     // Set to true to randomize pixels for effect
     // TODO: Implement GUI toggle
-    if false {
+    if true {
         let mut rng = rand::rng();
-        pairs.shuffle(&mut rng);
+        tiles.shuffle(&mut rng);
     }
 
-    let chunk_size = pairs.len() / num_threads;
-    let chunks: Vec<_> = pairs.chunks(chunk_size).collect();
+    let tiles = Arc::new(tiles);
+    let num_tiles = tiles.len();
+    let chunk_size = num_tiles.div_ceil(num_threads);
 
-    for chunk in chunks {
+    for start in (0..num_tiles).step_by(chunk_size) {
+        let end = (start + chunk_size).min(num_tiles);
         let tx = tx.clone();
-        let chunk = chunk.to_vec();
+        let tiles = Arc::clone(&tiles);
         let world = world.clone();
         let camera = camera.clone();
 
         thread::spawn(move || {
-            for (x, y) in chunk {
-                let ray = ray_for_pixel(&camera, x, y);
-                let color = color_at(&world, ray);
-                tx.send((x, y, color)).expect("Failed to send pixel data.");
+            let tile_slice = &tiles[start..end];
+
+            for (tx0, ty0) in tile_slice {
+                let y_end = (*ty0 + TILE_SIZE).min(max_y);
+                let x_end = (*tx0 + TILE_SIZE).min(max_x);
+
+                for y in *ty0..y_end {
+                    for x in *tx0..x_end {
+                        let ray = ray_for_pixel(&camera, x, y);
+                        let color = color_at(&world, ray);
+                        tx.send((x, y, color)).expect("Failed to send pixel data.");
+                    }
+                }
             }
         });
     }

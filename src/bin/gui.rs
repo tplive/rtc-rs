@@ -1,7 +1,7 @@
 use std::{
     sync::{mpsc, Arc, Mutex},
-    thread,
-    time::Duration,
+    thread::{self, available_parallelism},
+    time::{Duration, Instant},
 };
 
 use eframe::{egui, run_native, App, Frame, NativeOptions};
@@ -22,6 +22,7 @@ use rtc::{
     world::World,
 };
 use rtc_rs::render::render_parallel;
+use sysinfo::{get_current_pid, System};
 
 const UPDATE_INTERVAL_MS: u64 = 16;
 const PROGRESS_BAR_INTERVAL_MS: u64 = 250;
@@ -43,6 +44,10 @@ struct RayGuiApp {
     status: String,
     show_during_render: bool,
     shared_rgba: Option<Arc<Mutex<Vec<u8>>>>,
+    render_start: Option<Instant>,
+    last_render_ms: Option<f64>,
+    memory_mb: Option<f64>,
+    thread_count: usize,
 }
 
 impl Default for RayGuiApp {
@@ -59,6 +64,10 @@ impl Default for RayGuiApp {
             status: "Idle".to_string(),
             show_during_render: false,
             shared_rgba: None,
+            render_start: None,
+            last_render_ms: None,
+            memory_mb: None,
+            thread_count: available_parallelism().map(|n| n.get()).unwrap_or(1),
         }
     }
 }
@@ -71,6 +80,8 @@ impl RayGuiApp {
 
         self.is_rendering = true;
         self.status = "Rendering...".to_string();
+        self.render_start = Some(Instant::now());
+        self.thread_count = available_parallelism().map(|n| n.get()).unwrap_or(1);
 
         let (tx, rx) = mpsc::channel();
         self.rx = Some(rx);
@@ -163,9 +174,21 @@ impl App for RayGuiApp {
                 }
 
                 if done {
-                    self.status = format!("Done ({}x{}", w, h);
+                    self.status = format!("Done ({}x{})", w, h);
                     self.is_rendering = false;
                     self.rx = None;
+
+                    if let Some(start) = self.render_start.take() {
+                        self.last_render_ms = Some(start.elapsed().as_secs_f64() * 1000.0);
+                    }
+
+                    let mut system = System::new_all();
+                    system.refresh_all();
+                    if let Ok(pid) = get_current_pid() {
+                        if let Some(process) = system.process(pid) {
+                            self.memory_mb = Some(process.memory() as f64 / 1024.0 / 1024.0);
+                        }
+                    }
                 }
             }
         }
@@ -190,6 +213,17 @@ impl App for RayGuiApp {
                 ui.checkbox(&mut self.show_during_render, "Display while rendering");
                 ui.separator();
                 ui.label(&self.status);
+
+                ui.separator();
+                ui.label(format!("Threads: {}", self.thread_count));
+
+                if let Some(ms) = self.last_render_ms {
+                    ui.label(format!("Last render: {:.1} ms", ms));
+                }
+
+                if let Some(mem) = self.memory_mb {
+                    ui.label(format!("Memory: {:.2} MB", mem));
+                }
             });
         });
 
