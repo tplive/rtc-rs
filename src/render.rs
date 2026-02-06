@@ -85,8 +85,6 @@ pub fn render_parallel(camera: &Camera, world: &World, bar: &ProgressBar, single
 pub fn render_parallel_incremental<F>(
     camera: &Camera,
     world: &World,
-    bar: &ProgressBar,
-    single: bool,
     update_interval: Duration,
     mut on_update: F,
 ) -> Canvas
@@ -95,11 +93,7 @@ where
 {
     let (tx, rx) = mpsc::channel();
 
-    let num_threads: usize = if single {
-        1
-    } else {
-        available_parallelism().map(|n| n.get()).unwrap_or(1)
-    };
+    let num_threads: usize = available_parallelism().map(|n| n.get()).unwrap_or(1);
 
     println!("Number of threads: {}", num_threads);
 
@@ -110,8 +104,12 @@ where
         }
     }
 
-    let mut rng = rand::rng();
-    pairs.shuffle(&mut rng);
+    // Set to true to randomize pixels for effect
+    // TODO: Implement GUI toggle
+    if false {
+        let mut rng = rand::rng();
+        pairs.shuffle(&mut rng);
+    }
 
     let chunk_size = pairs.len() / num_threads;
     let chunks: Vec<_> = pairs.chunks(chunk_size).collect();
@@ -121,11 +119,9 @@ where
         let chunk = chunk.to_vec();
         let world = world.clone();
         let camera = camera.clone();
-        let bar = bar.clone();
 
         thread::spawn(move || {
             for (x, y) in chunk {
-                bar.inc(1);
                 let ray = ray_for_pixel(&camera, x, y);
                 let color = color_at(&world, ray);
                 tx.send((x, y, color)).expect("Failed to send pixel data.");
