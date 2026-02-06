@@ -55,6 +55,10 @@ impl Canvas {
         &self.data[y * self.width + x]
     }
 
+    pub fn rgba_bytes(&self) -> &[u8] {
+        &self.rgba
+    }
+
     pub fn rgba_vec(&self) -> Vec<u8> {
         self.rgba.clone()
     }

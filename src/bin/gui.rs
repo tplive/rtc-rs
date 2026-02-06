@@ -1,6 +1,10 @@
-use std::{sync::mpsc, thread, time::Duration};
+use std::{
+    sync::{mpsc, Arc, Mutex},
+    thread,
+    time::Duration,
+};
 
-use eframe::{App, Frame, NativeOptions, egui, run_native};
+use eframe::{egui, run_native, App, Frame, NativeOptions};
 use egui::{Button, CentralPanel, ColorImage, Context, DragValue, TextureOptions, TopBottomPanel};
 use indicatif::ProgressBar;
 use rtc::{
@@ -25,8 +29,8 @@ const MAX_WIDTH: u64 = 16384;
 const MAX_HEIGHT: u64 = 16384;
 
 enum RenderMessage {
-    Partial { w: usize, h: usize, rgba: Vec<u8> },
-    Done { w: usize, h: usize, rgba: Vec<u8> },
+    Partial { w: usize, h: usize },
+    Done { w: usize, h: usize },
 }
 
 extern crate rtc_rs as rtc;
@@ -38,6 +42,7 @@ struct RayGuiApp {
     texture: Option<egui::TextureHandle>,
     status: String,
     show_during_render: bool,
+    shared_rgba: Option<Arc<Mutex<Vec<u8>>>>,
 }
 
 impl Default for RayGuiApp {
@@ -53,6 +58,7 @@ impl Default for RayGuiApp {
             texture: None,
             status: "Idle".to_string(),
             show_during_render: false,
+            shared_rgba: None,
         }
     }
 }
@@ -73,13 +79,15 @@ impl RayGuiApp {
         let h = self.image_height;
         let show = self.show_during_render;
 
+        let shared = Arc::new(Mutex::new(vec![0u8; w * h * 4]));
+        self.shared_rgba = Some(shared.clone());
+
         thread::spawn(move || {
             let (camera, world) = build_scene(w, h);
 
             let bar = if show {
                 ProgressBar::hidden()
             } else {
-
                 let bar = ProgressBar::new((w * h) as u64);
                 bar.enable_steady_tick(Duration::from_millis(PROGRESS_BAR_INTERVAL_MS));
                 bar
@@ -88,29 +96,35 @@ impl RayGuiApp {
             if show {
                 let interval = Duration::from_millis(UPDATE_INTERVAL_MS);
 
-                let canvas =
-                    render_parallel_incremental(&camera, &world, &bar, false, interval, |c| {
-                        let rgba = c.rgba_vec();
-                        let _ = tx.send(RenderMessage::Partial {
-                            w: c.width,
-                            h: c.height,
-                            rgba,
-                        });
-                    });
+                let canvas = render_parallel_incremental(&camera, &world, interval, |c| {
+                    if let Ok(mut buf) = shared.lock() {
+                        buf.copy_from_slice(c.rgba_bytes());
+                    }
 
-                let rgba = canvas.rgba_vec();
+                    let _ = tx.send(RenderMessage::Partial {
+                        w: c.width,
+                        h: c.height,
+                    });
+                });
+
+                if let Ok(mut buf) = shared.lock() {
+                    buf.copy_from_slice(canvas.rgba_bytes());
+                }
+
                 let _ = tx.send(RenderMessage::Done {
                     w: canvas.width,
                     h: canvas.height,
-                    rgba,
                 });
             } else {
                 let canvas = render_parallel(&camera, &world, &bar, false);
-                let rgba = canvas.to_png();
+
+                if let Ok(mut buf) = shared.lock() {
+                    buf.copy_from_slice(canvas.rgba_bytes());
+                }
+
                 let _ = tx.send(RenderMessage::Done {
                     w: canvas.width,
                     h: canvas.height,
-                    rgba,
                 });
             }
         });
@@ -120,30 +134,38 @@ impl RayGuiApp {
 impl App for RayGuiApp {
     fn update(&mut self, ctx: &Context, _frame: &mut Frame) {
         if let Some(rx) = &self.rx {
+            let mut latest: Option<(usize, usize, bool)> = None;
+
             while let Ok(msg) = rx.try_recv() {
                 match msg {
-                    RenderMessage::Partial { w, h, rgba } => {
-                        let image = ColorImage::from_rgba_unmultiplied([w, h], &rgba);
-                        
-                        if let Some(tex) = &mut self.texture {
-                            tex.set(image, TextureOptions::LINEAR);
-                        } else {
-                            self.texture = Some(ctx.load_texture("render", image, TextureOptions::LINEAR));
-                        }                
+                    RenderMessage::Partial { w, h } => {
+                        latest = Some((w, h, false));
                     }
-                    RenderMessage::Done { w, h, rgba } => {
-                        let image = ColorImage::from_rgba_unmultiplied([w, h], &rgba);
-                        
-                        if let Some(tex) = &mut self.texture {
-                            tex.set(image, TextureOptions::LINEAR);
-                        } else {
-                            self.texture = Some(ctx.load_texture("render", image, TextureOptions::LINEAR));
-                        }
+                    RenderMessage::Done { w, h } => {
+                        latest = Some((w, h, true));
+                        break;
+                    }
+                }
+            }
 
-                        self.status = format!("Done ({}x{})", w, h);
-                        self.is_rendering = false;
-                        //self.rx = None;
+            if let Some((w, h, done)) = latest {
+                if let Some(shared) = &self.shared_rgba {
+                    if let Ok(buf) = shared.lock() {
+                        let image = ColorImage::from_rgba_unmultiplied([w, h], &buf);
+
+                        if let Some(tex) = &mut self.texture {
+                            tex.set(image, TextureOptions::LINEAR);
+                        } else {
+                            self.texture =
+                                Some(ctx.load_texture("render", image, TextureOptions::LINEAR));
+                        }
                     }
+                }
+
+                if done {
+                    self.status = format!("Done ({}x{}", w, h);
+                    self.is_rendering = false;
+                    self.rx = None;
                 }
             }
         }
