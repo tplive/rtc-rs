@@ -4,16 +4,24 @@ pub struct Canvas {
     pub width: usize,
     pub height: usize,
     data: Vec<Color>,
+    rgba: Vec<u8>,
 }
 
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
         let data: Vec<Color> = vec![Color::black(); width * height];
+        let mut rgba = vec![0u8; width * height * 4];
+
+        // Init alpha channel to opaque
+        for i in (0..rgba.len()).step_by(4) {
+            rgba[i + 3] = 255;
+        }
 
         Self {
             width,
             height,
             data,
+            rgba,
         }
     }
 
@@ -27,6 +35,12 @@ impl Canvas {
             return;
         }
         self.data[index] = color;
+
+        let i = index * 4;
+        self.rgba[i] = Self::scale(color.red);
+        self.rgba[i + 1] = Self::scale(color.green);
+        self.rgba[i + 2] = Self::scale(color.blue);
+        //self.rgba[i + 3] = 255;
     }
 
     pub fn write_rect(&mut self, x: usize, y: usize, w: usize, h: usize, color: Color) {
@@ -39,6 +53,10 @@ impl Canvas {
 
     pub fn pixel_at(&self, x: usize, y: usize) -> &Color {
         &self.data[y * self.width + x]
+    }
+
+    pub fn rgba_vec(&self) -> Vec<u8> {
+        self.rgba.clone()
     }
 
     pub fn to_ppm(&self) -> String {
@@ -89,17 +107,7 @@ impl Canvas {
     }
 
     pub fn to_png(&self) -> Vec<u8> {
-        self.data
-            .iter()
-            .flat_map(|col| {
-                vec![
-                    Self::scale(col.red),
-                    Self::scale(col.green),
-                    Self::scale(col.blue),
-                    255, // Alpha channel
-                ]
-            })
-            .collect()
+        self.rgba.clone()
     }
 
     fn scale(v: RtcFl) -> u8 {

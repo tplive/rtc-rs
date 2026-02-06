@@ -42,8 +42,8 @@ struct RayGuiApp {
 
 impl Default for RayGuiApp {
     fn default() -> Self {
-        let image_width = 1024;
-        let image_height = 768;
+        let image_width = 2560;
+        let image_height = 1440;
 
         Self {
             image_width,
@@ -90,7 +90,7 @@ impl RayGuiApp {
 
                 let canvas =
                     render_parallel_incremental(&camera, &world, &bar, false, interval, |c| {
-                        let rgba = c.to_png();
+                        let rgba = c.rgba_vec();
                         let _ = tx.send(RenderMessage::Partial {
                             w: c.width,
                             h: c.height,
@@ -98,7 +98,7 @@ impl RayGuiApp {
                         });
                     });
 
-                let rgba = canvas.to_png();
+                let rgba = canvas.rgba_vec();
                 let _ = tx.send(RenderMessage::Done {
                     w: canvas.width,
                     h: canvas.height,
