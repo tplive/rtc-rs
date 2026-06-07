@@ -73,7 +73,7 @@ mod tests {
         material::Material,
         pattern::{Pattern, StripePattern},
         sphere::Sphere,
-        transformation::Transformation,
+        transformation::{Transformation, scaling, translation},
         tuples::point,
     };
 
