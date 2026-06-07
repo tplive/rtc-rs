@@ -27,7 +27,7 @@ impl Pattern {
             Pattern::Stripe(p) => {
                 p.transform
                     .try_inverse()
-                    .expect("Pattern Transform must be invertible for pattern calculation")
+                    .expect("Pattern transform must be invertible for pattern calculation")
                     * object_point
             }
         };
@@ -148,17 +148,17 @@ mod tests {
 
     #[test]
     fn stripes_with_pattern_and_object_transformation() {
-        let ot = Transformation::new().scaling(2.0, 2.0, 2.0);
-        let pt = Transformation::new().translation(0.5, 0.0, 0.0);
+        let ot = scaling(2.0, 2.0, 2.0);
+        let pt = translation(0.5, 0.0, 0.0);
         let mut p = StripePattern::new(Color::white(), Color::black());
-        p.set_transform(pt.get());
+        p.set_transform(pt);
         let pattern = Pattern::Stripe(p);
 
         let m = Material {
             pattern: Some(pattern.clone()),
             ..Default::default()
         };
-        let object = Sphere::new(ot.get(), m);
+        let object = Sphere::new(ot, m);
 
         let c = pattern.pattern_at_object(&object, point(2.5, 0.0, 0.0));
 
