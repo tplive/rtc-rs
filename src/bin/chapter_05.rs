@@ -3,12 +3,25 @@ extern crate rtc_rs as rtc;
 use std::{fs::File, io::Write, time::Instant};
 
 use rtc::{
-    canvas::Canvas, color::Color, intersections::Intersections, ray::Ray, shape::Shape,
-    sphere::Sphere, transformation::{scaling, shearing}, tuples::point, util::RtcFl,
+    canvas::Canvas,
+    color::Color,
+    intersections::Intersections,
+    ray::Ray,
+    shape::Shape,
+    sphere::Sphere,
+    transformation::{scaling, shearing},
+    tuples::point,
+    util::{ensure_image_dir, RtcFl},
 };
 
 // Putting it together Chapter 5
 fn main() {
+    // Make sure the folder for rendered images exists.
+    if let Err(err) = ensure_image_dir("rendered") {
+        eprintln!("{err}");
+        return;
+    }
+
     let now = Instant::now();
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z: RtcFl = 10.0;

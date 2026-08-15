@@ -9,19 +9,25 @@ use std::{
 use rtc::{
     canvas::Canvas,
     color::Color,
+    intersections::Intersections,
     light::{lighting, Light},
     ray::Ray,
     shape::Shape,
     sphere::Sphere,
-    intersections::Intersections,
     tuples::point,
-    util::RtcFl,
+    util::{ensure_image_dir, RtcFl},
 };
 
 use indicatif::ProgressBar;
 
 // Putting it together Chapter 6
 fn main() {
+    // Make sure the folder for rendered images exists.
+    if let Err(err) = ensure_image_dir("rendered") {
+        eprintln!("{err}");
+        return;
+    }
+
     let now = Instant::now();
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z: RtcFl = 10.0;

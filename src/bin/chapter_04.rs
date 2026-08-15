@@ -2,6 +2,7 @@ extern crate rtc_rs as rtc;
 
 use std::{f32::consts::PI, fs::File, io::Write};
 
+use rtc::util::ensure_image_dir;
 use rtc::{
     canvas::Canvas,
     color::Color,
@@ -14,6 +15,12 @@ fn main() {
     let width = 300.0;
     let height = 300.0;
     let radius = 6.0 / 8.0;
+
+    // Make sure the folder for rendered images exists.
+    if let Err(err) = ensure_image_dir("rendered") {
+        eprintln!("{err}");
+        return
+    }
 
     let twelve = point(0.0, 0.0, 1.0 * radius);
     let mut can = Canvas::new(width as usize, height as usize);

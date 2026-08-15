@@ -11,13 +11,13 @@ use std::{
 use rtc::{
     canvas::Canvas,
     color::Color,
+    intersections::Intersections,
     light::{lighting, Light},
     ray::Ray,
     shape::Shape,
     sphere::Sphere,
-    intersections::Intersections,
     tuples::point,
-    util::RtcFl,
+    util::{ensure_image_dir, RtcFl},
 };
 
 use indicatif::ProgressBar;
@@ -25,6 +25,12 @@ use sysinfo::{get_current_pid, System};
 
 // Putting it together Chapter 6
 fn main() {
+    // Make sure the folder for rendered images exists.
+    if let Err(err) = ensure_image_dir("rendered") {
+        eprintln!("{err}");
+        return;
+    }
+
     // Start timing the run:
     let now = Instant::now();
     println!("Rendering...");
@@ -92,7 +98,7 @@ fn main() {
                         let hit_point = r.position(the_hit.t);
                         let normal_vector = &the_hit.shape.normal_at(hit_point);
                         let eye_vector = -r.direction;
-                        
+
                         lighting(
                             &cloned_shape.material,
                             &cloned_shape,
@@ -105,7 +111,7 @@ fn main() {
                     }
 
                     // Otherwise, return a black pixel
-                    None => Color::black()
+                    None => Color::black(),
                 };
 
                 // Send pixel coordinates and color to the main thread

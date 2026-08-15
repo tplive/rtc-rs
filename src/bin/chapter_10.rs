@@ -19,7 +19,7 @@ use rtc::{
     sphere::Sphere,
     transformation::{scaling, translation, Transformation},
     tuples::{point, vector},
-    util::PI,
+    util::{ensure_image_dir, PI},
     world::World,
 };
 
@@ -27,6 +27,11 @@ use sysinfo::{get_current_pid, System};
 
 // Putting it together Chapter 10
 fn main() {
+    // Make sure the folder for rendered images exists.
+    if let Err(err) = ensure_image_dir("rendered") {
+        eprintln!("{err}");
+        return;
+    }
     // Start timing the run:
     let now = Instant::now();
     println!("Rendering...");
@@ -61,10 +66,10 @@ fn main() {
 
     // Second, create StripePattern
     let mut p = StripePattern::new(Color::random(), Color::random());
-    
+
     // Third, set transform on pattern
     p.set_transform(pattern_transform);
-    
+
     // Fourth, create a Pattern and make it a StripePattern
     let pattern = Pattern::Stripe(p);
 
