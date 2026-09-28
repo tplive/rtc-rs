@@ -13,7 +13,7 @@ use rtc::{
     light::Light,
     material::Material,
     matrix::view_transform,
-    pattern::{Pattern, StripePattern},
+    pattern::Pattern,
     plane::Plane,
     render::render_parallel,
     sphere::Sphere,
@@ -65,15 +65,12 @@ fn main() {
         .get();
 
     // Second, create StripePattern
-    let mut p = StripePattern::new(Color::random(), Color::random());
+    let mut pattern = Pattern::stripe(Color::random(), Color::random());
 
     // Third, set transform on pattern
-    p.set_transform(pattern_transform);
+    pattern.set_transform(pattern_transform);
 
-    // Fourth, create a Pattern and make it a StripePattern
-    let pattern = Pattern::Stripe(p);
-
-    // Fifth, add pattern to existing middle material
+    // Fourth, add pattern to existing middle material
     middle.material.pattern = Some(pattern);
 
     // Right sphere

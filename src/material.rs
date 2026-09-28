@@ -49,7 +49,7 @@ mod tests {
         color::Color,
         light::{lighting, Light},
         material::Material,
-        pattern::{Pattern, StripePattern},
+        pattern::Pattern,
         sphere::Sphere,
         tuples::{point, vector},
     };
@@ -73,10 +73,10 @@ mod tests {
     #[test]
     fn lighting_with_pattern_applied() {
         let m = Material {
-            pattern: Some(Pattern::Stripe(StripePattern::new(
+            pattern: Some(Pattern::stripe(
                 Color::white(),
                 Color::black(),
-            ))),
+            )),
             ambient: 1.0,
             diffuse: 0.0,
             specular: 0.0,
