@@ -211,4 +211,36 @@ mod tests {
 
         assert_eq!(pattern.transform, translation(1.0, 2.0, 3.0));
     }
+
+    #[test]
+    fn pattern_with_object_transformation() {
+      
+      let shape = Sphere::new(scaling(2.0, 2.0, 2.0), Material::default());
+      let pattern = Pattern::test();
+      let color = pattern.pattern_at_object(&shape, point(2.0, 3.0, 4.0));
+      
+      assert_eq!(color, Color::new(1.0, 1.5, 2.0));
+    }
+
+    #[test]
+    fn pattern_with_pattern_transformation() {
+
+      let shape = Sphere::new(Transformation::new().get(), Material::default());
+      let mut pattern = Pattern::test();
+      pattern.set_transform(scaling(2.0, 2.0, 2.0));
+      let color = pattern.pattern_at_object(&shape, point(2.0, 3.0, 4.0));
+
+      assert_eq!(color, Color::new(1.0, 1.5, 2.0));
+    }
+
+    #[test]
+    fn pattern_with_object_and_pattern_transformation() {
+
+      let shape = Sphere::new(scaling(2.0, 2.0, 2.0), Material::default());
+      let mut pattern = Pattern::test();
+      pattern.set_transform(translation(0.5, 1.0, 1.5));
+      let color = pattern.pattern_at_object(&shape, point(2.5, 3.0, 3.5));
+
+      assert_eq!(color, Color::new(0.75, 0.5, 0.25));
+    }
 }
