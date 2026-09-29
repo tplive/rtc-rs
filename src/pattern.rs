@@ -1,4 +1,6 @@
-use crate::{color::Color, matrix::Matrix4, shape::Shape, tuples::Tuple};
+use std::ops::Sub;
+
+use crate::{color::Color, matrix::Matrix4, shape::Shape, tuples::Tuple, util::RtcFl};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Pattern {
@@ -10,6 +12,7 @@ pub struct Pattern {
 pub enum PatternKind {
     Stripe { a: Color, b: Color },
     Test,
+    Gradient { a: Color, b: Color },
 }
 
 impl Pattern {
@@ -23,6 +26,13 @@ impl Pattern {
     pub fn test() -> Self {
         Self {
             kind: PatternKind::Test,
+            transform: Matrix4::identity(),
+        }
+    }
+
+    pub fn gradient(a: Color, b: Color) -> Self {
+        Self {
+            kind: PatternKind::Gradient { a, b },
             transform: Matrix4::identity(),
         }
     }
@@ -41,6 +51,7 @@ impl Pattern {
                 }
             }
             PatternKind::Test => Color::new(point.x, point.y, point.z),
+            PatternKind::Gradient { a, b } => *a + (b.sub(*a)) * (point.x - RtcFl::floor(point.x)),
         }
     }
 
@@ -91,6 +102,27 @@ impl TestPattern {
         Self {
             transform: Matrix4::identity(),
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct GradientPattern {
+    pub a: Color,
+    pub b: Color,
+    pub transform: Matrix4,
+}
+
+impl GradientPattern {
+    pub fn new(a: Color, b: Color) -> Self {
+        Self {
+            a,
+            b,
+            transform: Matrix4::identity(),
+        }
+    }
+
+    pub fn set_transform(&mut self, transform: Matrix4) {
+        self.transform = transform;
     }
 }
 
@@ -214,33 +246,49 @@ mod tests {
 
     #[test]
     fn pattern_with_object_transformation() {
-      
-      let shape = Sphere::new(scaling(2.0, 2.0, 2.0), Material::default());
-      let pattern = Pattern::test();
-      let color = pattern.pattern_at_object(&shape, point(2.0, 3.0, 4.0));
-      
-      assert_eq!(color, Color::new(1.0, 1.5, 2.0));
+        let shape = Sphere::new(scaling(2.0, 2.0, 2.0), Material::default());
+        let pattern = Pattern::test();
+        let color = pattern.pattern_at_object(&shape, point(2.0, 3.0, 4.0));
+
+        assert_eq!(color, Color::new(1.0, 1.5, 2.0));
     }
 
     #[test]
     fn pattern_with_pattern_transformation() {
+        let shape = Sphere::new(Transformation::new().get(), Material::default());
+        let mut pattern = Pattern::test();
+        pattern.set_transform(scaling(2.0, 2.0, 2.0));
+        let color = pattern.pattern_at_object(&shape, point(2.0, 3.0, 4.0));
 
-      let shape = Sphere::new(Transformation::new().get(), Material::default());
-      let mut pattern = Pattern::test();
-      pattern.set_transform(scaling(2.0, 2.0, 2.0));
-      let color = pattern.pattern_at_object(&shape, point(2.0, 3.0, 4.0));
-
-      assert_eq!(color, Color::new(1.0, 1.5, 2.0));
+        assert_eq!(color, Color::new(1.0, 1.5, 2.0));
     }
 
     #[test]
     fn pattern_with_object_and_pattern_transformation() {
+        let shape = Sphere::new(scaling(2.0, 2.0, 2.0), Material::default());
+        let mut pattern = Pattern::test();
+        pattern.set_transform(translation(0.5, 1.0, 1.5));
+        let color = pattern.pattern_at_object(&shape, point(2.5, 3.0, 3.5));
 
-      let shape = Sphere::new(scaling(2.0, 2.0, 2.0), Material::default());
-      let mut pattern = Pattern::test();
-      pattern.set_transform(translation(0.5, 1.0, 1.5));
-      let color = pattern.pattern_at_object(&shape, point(2.5, 3.0, 3.5));
+        assert_eq!(color, Color::new(0.75, 0.5, 0.25));
+    }
 
-      assert_eq!(color, Color::new(0.75, 0.5, 0.25));
+    #[test]
+    fn a_gradient_pattern_linearly_interpolates_between_colors() {
+        let pattern = Pattern::gradient(Color::white(), Color::black());
+
+        assert_eq!(pattern.pattern_at(point(0.0, 0.0, 0.0)), Color::white());
+        assert_eq!(
+            pattern.pattern_at(point(0.25, 0.0, 0.0)),
+            Color::new(0.75, 0.75, 0.75)
+        );
+        assert_eq!(
+            pattern.pattern_at(point(0.5, 0.0, 0.0)),
+            Color::new(0.5, 0.5, 0.5)
+        );
+        assert_eq!(
+            pattern.pattern_at(point(0.75, 0.0, 0.0)),
+            Color::new(0.25, 0.25, 0.25)
+        );
     }
 }
