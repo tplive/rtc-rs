@@ -13,6 +13,7 @@ pub enum PatternKind {
     Stripe { a: Color, b: Color },
     Test,
     Gradient { a: Color, b: Color },
+    Ring { a: Color, b: Color },
 }
 
 impl Pattern {
@@ -37,6 +38,13 @@ impl Pattern {
         }
     }
 
+    pub fn ring(a: Color, b: Color) -> Self {
+        Self {
+            kind: PatternKind::Ring { a, b },
+            transform: Matrix4::identity(),
+        }
+    }
+
     pub fn set_transform(&mut self, transform: Matrix4) {
         self.transform = transform;
     }
@@ -52,6 +60,13 @@ impl Pattern {
             }
             PatternKind::Test => Color::new(point.x, point.y, point.z),
             PatternKind::Gradient { a, b } => *a + (b.sub(*a)) * (point.x - RtcFl::floor(point.x)),
+            PatternKind::Ring { a, b } => {
+                if RtcFl::sqrt(point.x.powi(2) + point.z.powi(2)) % 2.0 == 0.0 {
+                    *a
+                } else {
+                    *b
+                }
+            }
         }
     }
 
@@ -290,5 +305,16 @@ mod tests {
             pattern.pattern_at(point(0.75, 0.0, 0.0)),
             Color::new(0.25, 0.25, 0.25)
         );
+    }
+
+    #[test]
+    fn a_ring_should_extend_in_both_x_and_z() {
+        let pattern = Pattern::ring(Color::white(), Color::black());
+
+        assert_eq!(pattern.pattern_at(point(0.0, 0.0, 0.0)), Color::white());
+        assert_eq!(pattern.pattern_at(point(1.0, 0.0, 0.0)), Color::black());
+        assert_eq!(pattern.pattern_at(point(0.0, 0.0, 1.0)), Color::black());
+        assert_eq!(pattern.pattern_at(point(0.708, 0.0, 0.708)), Color::black());
+        // 0.708 is slightly more than sqrt2over2
     }
 }
