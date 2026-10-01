@@ -1,4 +1,7 @@
-use std::{io::{self, Error, ErrorKind}, path::Path};
+use std::{
+    io::{self, Error, ErrorKind},
+    path::Path,
+};
 
 pub type RtcFl = f32;
 pub const PI: RtcFl = std::f32::consts::PI;

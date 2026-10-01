@@ -1,10 +1,10 @@
-use std::ops;
-use nalgebra::{SMatrix, Vector4};
 use crate::{
     transformation::Transformation,
     tuples::Tuple,
     util::{equal, RtcFl},
 };
+use nalgebra::{SMatrix, Vector4};
+use std::ops;
 
 /// We are of course using the nalgebra library instead of writing our own.
 /// Been there, done that.

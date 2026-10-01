@@ -3,12 +3,7 @@ extern crate rtc_rs as rtc;
 use std::{f32::consts::PI, fs::File, io::Write};
 
 use rtc::util::ensure_image_dir;
-use rtc::{
-    canvas::Canvas,
-    color::Color,
-    transformation::Transformation,
-    tuples::point,
-};
+use rtc::{canvas::Canvas, color::Color, transformation::Transformation, tuples::point};
 
 // Putting it together Chapter 4
 fn main() {
@@ -25,7 +20,11 @@ fn main() {
     let twelve = point(0.0, 0.0, 1.0 * radius);
     let mut can = Canvas::new(width as usize, height as usize);
 
-    can.write_pixel((width/2.0) as usize, (height/2.0) as usize, Color::white());
+    can.write_pixel(
+        (width / 2.0) as usize,
+        (height / 2.0) as usize,
+        Color::white(),
+    );
     for n in 1..13 {
         let rotation = Transformation::new().rotation_y(n as f32 * PI / 6.0).get();
         let rotated = rotation * twelve;

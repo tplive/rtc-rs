@@ -1,9 +1,4 @@
-use crate::{
-    matrix::Matrix4,
-    ray::Ray,
-    tuples::point,
-    util::RtcFl,
-};
+use crate::{matrix::Matrix4, ray::Ray, tuples::point, util::RtcFl};
 
 #[derive(Clone)]
 pub struct Camera {

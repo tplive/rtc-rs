@@ -73,10 +73,7 @@ mod tests {
     #[test]
     fn lighting_with_pattern_applied() {
         let m = Material {
-            pattern: Some(Pattern::stripe(
-                Color::white(),
-                Color::black(),
-            )),
+            pattern: Some(Pattern::stripe(Color::white(), Color::black())),
             ambient: 1.0,
             diffuse: 0.0,
             specular: 0.0,

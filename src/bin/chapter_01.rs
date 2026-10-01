@@ -12,7 +12,7 @@ fn main() {
 
     impl Projectile {
         fn new(position: Tuple, velocity: Tuple) -> Self {
-            Self {position, velocity}
+            Self { position, velocity }
         }
     }
 
@@ -23,7 +23,7 @@ fn main() {
 
     impl Environment {
         fn new(gravity: Tuple, wind: Tuple) -> Self {
-            Self {gravity, wind}
+            Self { gravity, wind }
         }
     }
 
@@ -35,12 +35,11 @@ fn main() {
     }
 
     let mut p = Projectile::new(point(0.0, 1.0, 0.0), vector(1.0, 1.0, 0.0).normalize());
-    let e = Environment::new(vector(0.0, -0.1,0.0), vector(-0.01, 0.0, 0.0));
+    let e = Environment::new(vector(0.0, -0.1, 0.0), vector(-0.01, 0.0, 0.0));
 
     while p.position.y >= 0.0 {
-
         p = tick(&e, p);
-        
+
         println!("Position: {:?}", p.position);
     }
 }

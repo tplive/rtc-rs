@@ -31,7 +31,6 @@ impl Ray {
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
     use crate::transformation::Transformation;
     use crate::{
         intersections::{Intersection, Intersections},
@@ -40,6 +39,7 @@ mod tests {
         sphere::Sphere,
         tuples::{point, vector},
     };
+    use std::vec;
 
     #[test]
     fn creating_and_querying_a_ray() {

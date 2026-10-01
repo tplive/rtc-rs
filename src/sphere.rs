@@ -31,7 +31,7 @@ impl PartialEq for Sphere {
 }
 
 impl Sphere {
-    pub fn  new(transform: Matrix4, material: Material) -> Self {
+    pub fn new(transform: Matrix4, material: Material) -> Self {
         Self {
             id: next_shape_id(),
             transform,
