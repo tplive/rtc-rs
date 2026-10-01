@@ -76,8 +76,11 @@ impl Pattern {
                 }
             }
             PatternKind::Checkers { a, b } => {
-                if RtcFl::floor(point.x) + RtcFl::floor(point.y) + RtcFl::floor(point.z) % 2.0
-                    == 0.0
+                if (
+                  RtcFl::floor(point.x) + 
+                  RtcFl::floor(point.y) + 
+                  RtcFl::floor(point.z)
+                ) % 2.0 == 0.0
                 {
                     *a
                 } else {
