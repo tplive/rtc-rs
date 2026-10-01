@@ -1,0 +1,180 @@
+extern crate rtc_rs as rtc;
+
+use std::{fs::File, io::BufWriter, time::Instant};
+
+use indicatif::ProgressBar;
+use rtc::{
+    camera::Camera,
+    color::Color,
+    light::Light,
+    material::Material,
+    matrix::view_transform,
+    pattern::Pattern,
+    plane::Plane,
+    render::render_parallel,
+    sphere::Sphere,
+    transformation::{scaling, translation, Transformation},
+    tuples::{point, vector},
+    util::{ensure_image_dir, PI},
+    world::World,
+};
+
+use sysinfo::{get_current_pid, System};
+
+// Putting it together Chapter 10
+fn main() {
+    // Make sure the folder for rendered images exists.
+    if let Err(err) = ensure_image_dir("rendered") {
+        eprintln!("{err}");
+        return;
+    }
+    // Start timing the run:
+    let now = Instant::now();
+    println!("Rendering...");
+    // ...existing code...
+
+    // Set up the scene
+    let image_width = 3840;
+    let aspect_ratio = 16.0_f32 / 9.0;
+    let image_height = (image_width as f32 / aspect_ratio) as usize;
+    println!("Image size: {}x{}", image_width, image_height);
+
+    // Checkerboard floor.
+    let mut floor = Plane {
+        material: Material::new(Color::white(), None, 0.1, 0.9, 0.2, 1.0),
+        ..Default::default()
+    };
+    let mut floor_pattern =
+        Pattern::checkered(Color::new(0.16, 0.17, 0.23), Color::new(0.5, 0.54, 0.64));
+    floor_pattern.set_transform(scaling(2.0, 2.0, 2.0));
+    floor.material.pattern = Some(floor_pattern);
+
+    // Central striped sphere.
+    let mut center = Sphere {
+        transform: translation(0.0, 1.0, 0.0),
+        ..Default::default()
+    };
+    center.material.diffuse = 0.7;
+    center.material.specular = 0.3;
+    center.material.ambient = 0.18;
+
+    let mut stripes = Pattern::stripe(Color::new(0.05, 0.25, 0.8), Color::new(0.8, 0.08, 0.25));
+    stripes.set_transform(
+        Transformation::new()
+            .scaling(0.18, 0.18, 0.18)
+            .rotation_y(PI / 4.0)
+            .get(),
+    );
+    center.material.pattern = Some(stripes);
+
+    // Left gradient sphere.
+    let mut left = Sphere {
+        transform: translation(-1.75, 0.65, 0.25) * scaling(0.65, 0.65, 0.65),
+        ..Default::default()
+    };
+    left.material.diffuse = 0.75;
+    left.material.specular = 0.25;
+    left.material.ambient = 0.18;
+
+    let mut gradient = Pattern::gradient(Color::new(0.95, 0.2, 0.05), Color::new(0.95, 0.85, 0.05));
+    gradient.set_transform(Transformation::new().scaling(0.5, 0.5, 0.5).get());
+    left.material.pattern = Some(gradient);
+
+    // Right ring sphere.
+    let mut right = Sphere {
+        transform: translation(1.75, 0.75, 0.3) * scaling(0.75, 0.75, 0.75),
+        ..Default::default()
+    };
+    right.material.diffuse = 0.7;
+    right.material.specular = 0.35;
+    right.material.ambient = 0.18;
+
+    let mut rings = Pattern::ring(Color::new(0.08, 0.8, 0.75), Color::new(0.04, 0.16, 0.32));
+    rings.set_transform(
+        Transformation::new()
+            .scaling(0.35, 0.35, 0.35)
+            .rotation_z(PI / 5.0)
+            .get(),
+    );
+    right.material.pattern = Some(rings);
+
+    // Two small accent spheres, placed beside the main composition so they
+    // remain visible from the camera rather than being hidden behind it.
+    let mut rear_left = Sphere {
+        transform: translation(-3.25, 0.5, 0.9) * scaling(0.45, 0.45, 0.45),
+        ..Default::default()
+    };
+    rear_left.material.ambient = 0.2;
+    rear_left.material.diffuse = 0.8;
+    rear_left.material.pattern = Some(Pattern::checkered(
+        Color::new(0.9, 0.08, 0.65),
+        Color::new(0.14, 0.04, 0.22),
+    ));
+
+    let mut rear_right = Sphere {
+        transform: translation(3.25, 0.55, 0.95) * scaling(0.5, 0.5, 0.5),
+        ..Default::default()
+    };
+    rear_right.material.ambient = 0.2;
+    rear_right.material.diffuse = 0.8;
+    rear_right.material.pattern = Some(Pattern::stripe(
+        Color::new(0.95, 0.95, 0.95),
+        Color::new(0.2, 0.25, 0.45),
+    ));
+
+    let mut world = World::default();
+    world.add_object(floor);
+    world.add_objects(vec![center, left, right, rear_left, rear_right]);
+
+    world.light = vec![
+        Light::point(point(-10.0, 10.0, -10.0), Color::white()),
+        Light::point(point(6.0, 5.0, -2.0), Color::new(0.3, 0.4, 1.0)),
+        Light::point(point(0.0, 6.0, -1.0), Color::new(0.7, 0.7, 0.7)),
+    ];
+
+    // ...existing code...
+
+    let mut camera = Camera::new(image_width, image_height, PI / 3.0);
+    camera.transform = view_transform(
+        point(0.0, 3.0, -9.0),
+        point(0.0, 0.4, 0.7),
+        vector(0.0, 1.0, 0.0),
+    );
+
+    let bar = ProgressBar::new((image_width * image_height) as u64);
+
+    let canvas = render_parallel(&camera, &world, &bar, false);
+    bar.finish();
+
+    let elapsed = now.elapsed();
+    println!("Elapsed time for rendering: {:.2?}", elapsed);
+
+    // Report memory usage
+    let mut system = System::new_all();
+    system.refresh_all();
+    if let Ok(pid) = get_current_pid() {
+        if let Some(process) = system.process(pid) {
+            println!(
+                "Memory usage: {:.2} MB",
+                process.memory() as f64 / 1024.0 / 1024.0
+            );
+        }
+    }
+
+    let now = Instant::now();
+
+    // Write to PNG file
+    let path = "rendered/chapter_10.png";
+    println!("Writing to file '{}'...", &path);
+    let png_file = File::create(path).expect("Unable to create file.");
+    let w = &mut BufWriter::new(png_file);
+    let mut encoder = png::Encoder::new(w, canvas.width as u32, canvas.height as u32);
+    encoder.set_color(png::ColorType::Rgba);
+    encoder.set_depth(png::BitDepth::Eight);
+
+    let mut writer = encoder.write_header().unwrap();
+    writer.write_image_data(&canvas.to_png()).unwrap();
+
+    let elapsed = now.elapsed();
+    println!("Elapsed time for saving file: {:.2?}", elapsed);
+}
